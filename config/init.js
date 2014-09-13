@@ -4,7 +4,6 @@
  * Module dependencies.
  */
 var glob = require('glob');
-
 /**
  * Module init function.
  */
