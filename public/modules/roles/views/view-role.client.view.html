@@ -1,0 +1,22 @@
+<section data-ng-controller="RolesController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1 data-ng-bind="role.name"></h1>
+	</div>
+	<div class="pull-right" >
+		<a class="btn btn-primary" href="/#!/roles/{{role._id}}/edit">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+    <p data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
+        <em class="text-muted">
+            <strong>{{module.name}}: </strong>
+            {{_.map(_.where(_.findByValues(all_actions, '_id', role._actions), {_module:module._id}), 'name').join(', ')}}.
+            <br/>
+            <!--<span data-ng-bind="role.user.displayName"></span>-->
+        </em>
+    </p>
+
+</section>
