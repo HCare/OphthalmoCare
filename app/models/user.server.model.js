@@ -25,17 +25,11 @@ var validateLocalStrategyPassword = function(password) {
  * User Schema
  */
 var UserSchema = new Schema({
-	firstName: {
+	fullName: {
 		type: String,
 		trim: true,
 		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your first name']
-	},
-	lastName: {
-		type: String,
-		trim: true,
-		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your last name']
+		required: 'Please fill in user full name'
 	},
 	displayName: {
 		type: String,
@@ -45,43 +39,43 @@ var UserSchema = new Schema({
 		type: String,
 		trim: true,
 		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your email'],
+		required: 'Please fill in user email',
+        unique:'A user with that email already exists',
 		match: [/.+\@.+\..+/, 'Please fill a valid email address']
-	},
-	username: {
-		type: String,
-		unique: 'testing error message',
-		required: 'Please fill in a username',
-		trim: true
 	},
 	password: {
 		type: String,
 		default: '',
+        required: 'Please fill in user password',
 		validate: [validateLocalStrategyPassword, 'Password should be longer']
 	},
 	salt: {
 		type: String
 	},
-	provider: {
-		type: String,
-		required: 'Provider is required'
+	_role: {
+			type: String,
+            required: 'Please fill in user role',
+            ref: 'Role'
 	},
-	providerData: {},
-	additionalProvidersData: {},
-	roles: {
-		type: [{
-			type: String
-//            ,enum: ['user', 'admin']
-		}],
-		default: ['user']
-	},
-	updated: {
-		type: Date
-	},
-	created: {
-		type: Date,
-		default: Date.now
-	},
+    created: {
+        time: {
+            type: Date,
+            default: Date.now
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        }
+    },
+    updated: {
+        time: {
+            type: Date
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        }
+    },
 	/* For reset password */
 	resetPasswordToken: {
 		type: String
@@ -143,4 +137,32 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	});
 };
 
-mongoose.model('User', UserSchema);
+UserSchema.statics.hashPassword = function(password, salt) {
+    return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+};
+
+UserSchema.statics.getSalt = function() {
+    return new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+};
+
+
+var User = mongoose.model('User', UserSchema);
+
+
+/**Init User data*/
+///System Administrator...
+User.findOne({email: 'admin@ophthalmo.care'})
+    .exec(function(err, user) {
+    if (err){
+        console.log('Error Creating System Administrator ' + JSON.stringify(err));
+        return;
+    }
+    if (!user){
+       var admin=new User({fullName: 'System Administrator', displayName: 'Admin', email:'admin@ophthalmo.care', password:'hardrock', _role:'sysAdmin'});
+        admin.save(function(err){
+            if(err){
+                console.log('Error Creating System Administrator ' + JSON.stringify(err));
+            }
+        });
+    }
+});

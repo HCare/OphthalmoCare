@@ -3,15 +3,17 @@
 /**
  * Module dependencies.
  */
-var passport = require('passport');
+//var passport = require('passport');
 
 module.exports = function(app) {
-	// User Routes
+
+    var auth = require('../../app/controllers/authentication');
 	var users = require('../../app/controllers/users');
 
 	// Setting up the users profile api
+/*
 	app.route('/users/me').get(users.me);
-	app.route('/users').put(users.update);
+	//app.route('/users').put(users.update);
 	app.route('/users/accounts').delete(users.removeOAuthProvider);
 
 	// Setting up the users password api
@@ -51,6 +53,17 @@ module.exports = function(app) {
 	// Setting the github oauth routes
 	app.route('/auth/github').get(passport.authenticate('github'));
 	app.route('/auth/github/callback').get(users.oauthCallback('github'));
+*/
+
+    app.route('/users')
+        .get(auth.requiresLogin, users.list)
+        .post(auth.requiresLogin, users.create);
+
+    app.route('/users/:userId')
+        .get(auth.requiresLogin, users.read)
+        .put(auth.requiresLogin, users.update)
+        .delete(auth.requiresLogin, users.delete);
+
 
 	// Finish by binding the user middleware
 	app.param('userId', users.userByID);
