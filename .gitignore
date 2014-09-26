@@ -2,7 +2,6 @@
 .nodemonignore
 .sass-cache/
 npm-debug.log
-node_modules/
 app/tests/coverage/
 .bower-*/
 .idea/

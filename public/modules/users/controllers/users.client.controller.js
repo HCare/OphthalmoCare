@@ -1,8 +1,8 @@
 'use strict';
 
 // Roles controller
-angular.module('users').controller('UsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Users', 'Roles', 'lodash',
-	function($scope, $stateParams, $location, Authentication, Users, Roles, lodash ) {
+angular.module('users').controller('UsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Users', 'Roles', 'lodash', 'Logger',
+	function($scope, $stateParams, $location, Authentication, Users, Roles, lodash, Logger ) {
         /**
          * Init variables
          */
@@ -42,26 +42,42 @@ angular.module('users').controller('UsersController', ['$scope', '$stateParams',
 			// Redirect after save
             user.$save(function(response) {
 				$location.path('users/' + response._id);
+                ///log success message
+                Logger.success('User created successfully', true);
 				// Clear form fields
 				$scope.initOne();
 			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
+                console.log(errorResponse);
+                ///log error message
+                Logger.error(errorResponse.data.message, true);
+				//$scope.error = errorResponse.data.message;
 			});
 		};
 
 		// Remove existing User
 		$scope.remove = function( user ) {
-			if ( user ) { user.$remove();
+			if ( user ) { user.$remove(function(){
+                for (var i in $scope.users ) {
+                    if ($scope.users [i] === user ) {
+                        $scope.users.splice(i, 1);
+                    }
+                }
+                ///log success message
+                Logger.success('User deleted successfully', true);
+            }, function(errorResponse){
+                ///log error message
+                Logger.error(errorResponse.data.message, true);
+            });
 
-				for (var i in $scope.users ) {
-					if ($scope.users [i] === user ) {
-						$scope.users.splice(i, 1);
-					}
-				}
 			} else {
 				$scope.user.$remove(function() {
 					$location.path('users');
-				});
+                    ///log success message
+                    Logger.success('User deleted successfully', true);
+				}, function(errorResponse){
+                    ///log error message
+                    Logger.error(errorResponse.data.message, true);
+                });
 			}
 		};
 
@@ -70,8 +86,12 @@ angular.module('users').controller('UsersController', ['$scope', '$stateParams',
 			var user = $scope.user ;
 			user.$update(function() {
 				$location.path('users/' + user._id);
+                ///log success message
+                Logger.success('User updated successfully', true);
 			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
+                ///log error message
+                Logger.error(errorResponse.data.message, true);
+				//$scope.error = errorResponse.data.message;
 			});
 		};
 

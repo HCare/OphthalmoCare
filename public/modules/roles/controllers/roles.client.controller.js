@@ -62,32 +62,48 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
 			role.$save(function(response) {
 				$location.path('roles/' + response._id);
 
-				// Clear form fields
+                ///log success message
+                Logger.success('Role created successfully', true);
+
+				/// Clear form fields
 				$scope.name = '';
                 $scope.selected_module=null;
                 $scope.actions=[];
                 $scope.role_actions=[];
 
 			}, function(errorResponse) {
-                //toaster.pop('error', 'Error', errorResponse.data.message);
+                ///log error message
                 Logger.error(errorResponse.data.message, true);
-				$scope.error = errorResponse.data.message;
+                //$scope.error = errorResponse.data.message;
 			});
 		};
 
 		// Remove existing Role
 		$scope.remove = function( role ) {
-			if ( role ) { role.$remove();
-
-				for (var i in $scope.roles ) {
-					if ($scope.roles [i] === role ) {
-						$scope.roles.splice(i, 1);
-					}
-				}
+			if ( role ) { role.$remove(function(){
+                    for (var i in $scope.roles ) {
+                        if ($scope.roles [i] === role ) {
+                            $scope.roles.splice(i, 1);
+                        }
+                    }
+                    ///log success message
+                    Logger.success('Role deleted successfully', true);
+                }, function(errorResponse){
+                    ///log error message
+                    Logger.error(errorResponse.data.message, true);
+                    //$scope.error = errorResponse.data.message;
+                }
+            );
 			} else {
 				$scope.role.$remove(function() {
+                    ///log success message
+                    Logger.success('Role deleted successfully', true);
 					$location.path('roles');
-				});
+				}, function(errorResponse){
+                    ///log error message
+                    Logger.error(errorResponse.data.message, true);
+                    //$scope.error = errorResponse.data.message;
+                });
 			}
 		};
 
@@ -97,8 +113,12 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             role._actions=$scope.role_actions;
 			role.$update(function() {
 				$location.path('roles/' + role._id);
+                ///log success message
+                Logger.success('Role updated successfully', true);
 			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
+                ///log error message
+                Logger.error(errorResponse.data.message, true);
+				//$scope.error = errorResponse.data.message;
 			});
 		};
 
