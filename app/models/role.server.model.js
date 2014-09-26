@@ -43,13 +43,5 @@ var RoleSchema = new Schema({
 	}
 });
 
-var Role=mongoose.model('Role', RoleSchema);
-
-///sysAdmin Role..
-Role.findOneAndUpdate({name:'sysAdmin'}, {name: 'sysAdmin', _actions:['create_role', 'update_role', 'delete_role', 'list_roles', 'create_user', 'update_user', 'delete_user', 'list_users']}, {upsert:true}, function(err){
-    if(err){
-        console.log('Error Creating "List Users" Action: '+JSON.stringify(err));
-        return;
-    }
-});
+mongoose.model('Role', RoleSchema);
 

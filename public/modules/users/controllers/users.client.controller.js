@@ -42,7 +42,6 @@ angular.module('users').controller('UsersController', ['$scope', '$stateParams',
 			// Redirect after save
             user.$save(function(response) {
 				$location.path('users/' + response._id);
-
 				// Clear form fields
 				$scope.initOne();
 			}, function(errorResponse) {

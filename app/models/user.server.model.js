@@ -151,18 +151,34 @@ var User = mongoose.model('User', UserSchema);
 
 /**Init User data*/
 ///System Administrator...
-User.findOne({email: 'admin@ophthalmo.care'})
-    .exec(function(err, user) {
-    if (err){
-        console.log('Error Creating System Administrator ' + JSON.stringify(err));
+
+var Role=mongoose.model('Role');
+
+///SysAdmin Role..
+Role.findOneAndUpdate({name:'SysAdmin'}, {name: 'SysAdmin', _actions:['create_role', 'update_role', 'delete_role', 'list_roles', 'create_user', 'update_user', 'delete_user', 'list_users']}, {upsert:true}, function(err, role){
+    if(err){
+        console.log('Error Creating "SysAdmin" Role: '+JSON.stringify(err));
         return;
     }
-    if (!user){
-       var admin=new User({fullName: 'System Administrator', displayName: 'Admin', email:'admin@ophthalmo.care', password:'hardrock', _role:'sysAdmin'});
-        admin.save(function(err){
-            if(err){
+    if(!role){
+        console.log('Error Creating "SysAdmin" Role');
+        return;
+    }
+    User.findOne({email: 'admin@ophthalmo.care'})
+        .exec(function(err, user) {
+            if (err){
                 console.log('Error Creating System Administrator ' + JSON.stringify(err));
+                return;
+            }
+            if (!user){
+                var admin=new User({fullName: 'System Administrator', displayName: 'Admin', email:'admin@ophthalmo.care', password:'hardrock', _role:role._id});
+                admin.save(function(err){
+                    if(err){
+                        console.log('Error Creating System Administrator ' + JSON.stringify(err));
+                    }
+                });
             }
         });
-    }
 });
+
+
