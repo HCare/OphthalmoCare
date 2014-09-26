@@ -44,8 +44,10 @@
 
 <body class="ng-cloak">
 	<header data-ng-include="'/modules/core/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
+    <toaster-container toaster-options="{'time-out': 3000}"></toaster-container>
 	<section class="content">
 		<section class="container">
+
 			{% block content %}{% endblock %}
 		</section>
 	</section>
@@ -64,6 +66,7 @@
 	<script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
 
 	{% endif %}
+
 </body>
 
 </html>

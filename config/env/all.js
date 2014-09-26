@@ -15,7 +15,8 @@ module.exports = {
 			css: [
 				'public/lib/bootstrap/dist/css/bootstrap.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
-                'public/lib/angular-loading-bar/build/loading-bar.css'
+                'public/lib/angular-loading-bar/build/loading-bar.css',
+                'public/lib/angularjs-toaster/toaster.css'
 			],
 			js: [
 				'public/lib/angular/angular.js',
@@ -28,7 +29,8 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
                 'public/lib/ng-lodash/build/ng-lodash.js',
-                'public/lib/angular-loading-bar/build/loading-bar.js'
+                'public/lib/angular-loading-bar/build/loading-bar.js',
+                'public/lib/angularjs-toaster/toaster.js'
 			]
 		},
 		css: [

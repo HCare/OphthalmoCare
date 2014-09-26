@@ -1,8 +1,8 @@
 'use strict';
 
 // Roles controller
-angular.module('roles').controller('RolesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Roles', 'Module', 'Action', 'lodash',
-	function($scope, $stateParams, $location, Authentication, Roles, Module, Action, lodash ) {
+angular.module('roles').controller('RolesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Roles', 'Module', 'Action', 'lodash', 'Logger',
+	function($scope, $stateParams, $location, Authentication, Roles, Module, Action, lodash, Logger ) {
         /**
          * Init variables
          */
@@ -69,6 +69,8 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
                 $scope.role_actions=[];
 
 			}, function(errorResponse) {
+                //toaster.pop('error', 'Error', errorResponse.data.message);
+                Logger.error(errorResponse.data.message, true);
 				$scope.error = errorResponse.data.message;
 			});
 		};
