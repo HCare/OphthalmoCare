@@ -29,6 +29,7 @@ angular.module('users').config(['$httpProvider',
 	}
 ]);
 
+/*
 angular.module('users').run(['Menus',
     function(Menus) {
         // Set top bar menu items
@@ -36,4 +37,4 @@ angular.module('users').run(['Menus',
         Menus.addSubMenuItem('topbar', 'users', 'List Users', 'users');
         Menus.addSubMenuItem('topbar', 'users', 'New User', 'users/create');
     }
-]);
+]);*/

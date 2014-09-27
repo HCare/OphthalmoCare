@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 /**
  * List of Actions
  */
-exports.list = function(req, res) {
+exports.list = function (req, res) {
     Action.find().sort('order').exec(function (err, actions) {
         if (err) {
             return res.status(400).send({
@@ -21,3 +21,16 @@ exports.list = function(req, res) {
         res.jsonp(actions);
     });
 };
+
+/**
+ * Action middleware
+ */
+exports.actionByID = function (req, res, next, id) {
+    Action.findById(id).exec(function (err, action) {
+        if (err) return next(err);
+        if (!action) return next(new Error('Failed to load Action ' + id));
+        req.action = action;
+        next();
+    });
+};
+

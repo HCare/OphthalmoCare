@@ -1,18 +1,18 @@
 'use strict';
 
 module.exports = function(app) {
-	var auth = require('../../app/controllers/authentication');
+    var security = require('../../app/controllers/security');
 	var roles = require('../../app/controllers/roles');
 
 	// Roles Routes
 	app.route('/roles')
-		.get(auth.requiresLogin, roles.list)
-		.post(auth.requiresLogin, roles.create);
+		.get(security.authorizedToDo('list_roles'), roles.list)
+		.post(security.authorizedToDo('create_role'), roles.create);
 
 	app.route('/roles/:roleId')
-		.get(auth.requiresLogin, roles.read)
-		.put(auth.requiresLogin, roles.update)
-		.delete(auth.requiresLogin, roles.delete);
+		.get(security.authorizedToDo('list_roles'), roles.read)
+		.put(security.authorizedToDo('update_role'), roles.update)
+		.delete(security.authorizedToDo('delete_role'), roles.delete);
 
 	// Finish by binding the Role middleware
 	app.param('roleId', roles.roleByID);
