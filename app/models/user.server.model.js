@@ -54,7 +54,7 @@ var UserSchema = new Schema({
 	},
 	_role: {
 			type: String,
-            required: 'Please fill in user role',
+            required: 'Please select user role',
             ref: 'Role'
 	},
     created: {

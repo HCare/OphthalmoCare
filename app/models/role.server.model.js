@@ -44,4 +44,3 @@ var RoleSchema = new Schema({
 });
 
 mongoose.model('Role', RoleSchema);
-

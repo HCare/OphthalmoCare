@@ -8,7 +8,7 @@ var getUniqueErrorMessage = function (err) {
 
     try {
         var fieldName = err.err.substring(err.err.lastIndexOf('.$') + 2, err.err.lastIndexOf('_1'));
-        output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exist';
+        output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
 
     } catch (ex) {
         output = 'Unique field already exist';
