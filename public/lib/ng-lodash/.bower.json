@@ -1,0 +1,44 @@
+{
+  "name": "ng-lodash",
+  "version": "0.0.2",
+  "description": "An Angular module wrapper for lodash",
+  "author": [
+    "Rockabox <tech@rockabox.com> (http://www.rockabox.com)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "nglodash",
+    "angular",
+    "lodash"
+  ],
+  "ignore": [
+    "test",
+    "*.",
+    "karma.conf.js",
+    "Gruntfile.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rockabox/ng-lodash.git"
+  },
+  "main": [
+    "build/ng-lodash.js"
+  ],
+  "dependencies": {
+    "angular": "~1.2.0"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.0"
+  },
+  "homepage": "https://github.com/rockabox/ng-lodash",
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.2",
+    "commit": "ef33cbcf8dfaf78aaae0add3ae2160799db43318"
+  },
+  "_source": "git://github.com/rockabox/ng-lodash.git",
+  "_target": "~0.0.2",
+  "_originalSource": "ng-lodash",
+  "_direct": true
+}
