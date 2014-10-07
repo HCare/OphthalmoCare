@@ -3,6 +3,7 @@
 // Setting up route
 angular.module('users').config(['$stateProvider',
 	function($stateProvider) {
+        /*console.log('config users module');*/
 		// Users state routing
 		$stateProvider.
 		state('profile', {
@@ -43,19 +44,27 @@ angular.module('users').config(['$stateProvider',
 		}).
             state('listUsers', {
                 url: '/users',
-                templateUrl: 'modules/users/views/list-users.client.view.html'
+                templateUrl: 'modules/users/views/list-users.client.view.html',
+                requiresLogin: true,
+                action: 'list_users'
             }).
             state('createUser', {
                 url: '/users/create',
-                templateUrl: 'modules/users/views/create-user.client.view.html'
+                templateUrl: 'modules/users/views/create-user.client.view.html',
+                requiresLogin: true,
+                action: 'create_user'
             }).
             state('viewUser', {
                 url: '/users/:userId',
-                templateUrl: 'modules/users/views/view-user.client.view.html'
+                templateUrl: 'modules/users/views/view-user.client.view.html',
+                requiresLogin: true,
+                action: 'view_user'
             }).
             state('editUser', {
                 url: '/users/:userId/edit',
-                templateUrl: 'modules/users/views/edit-user.client.view.html'
+                templateUrl: 'modules/users/views/edit-user.client.view.html',
+                requiresLogin: true,
+                action: 'edit_user'
             });
 	}
 ]);

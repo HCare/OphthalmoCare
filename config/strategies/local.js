@@ -16,7 +16,7 @@ module.exports = function() {
 		function(username, password, done) {
 			User.findOne({
 				email: username
-			}, function(err, user) {
+			}).populate('_role').exec(function(err, user) {
 				if (err) {
 					return done(err);
 				}

@@ -155,7 +155,7 @@ var User = mongoose.model('User', UserSchema);
 var Role=mongoose.model('Role');
 
 ///SysAdmin Role..
-Role.findOneAndUpdate({name:'SysAdmin'}, {name: 'SysAdmin', _actions:['create_role', 'update_role', 'delete_role', 'list_roles', 'create_user', 'update_user', 'delete_user', 'list_users']}, {upsert:true}, function(err, role){
+Role.findOneAndUpdate({name:'SysAdmin'}, {name: 'SysAdmin', _actions:['create_role', 'edit_role', 'delete_role', 'list_roles', 'view_role', 'create_user', 'edit_user', 'delete_user', 'list_users', 'view_user']}, {upsert:true}, function(err, role){
     if(err){
         console.log('Error Creating "SysAdmin" Role: '+JSON.stringify(err));
         return;

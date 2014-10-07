@@ -2,12 +2,14 @@
 
 // Init the application configuration module for AngularJS application
 var ApplicationConfiguration = (function() {
+    //console.log('config');
 	// Init module configuration options
 	var applicationModuleName = 'ophthalmocare';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngLodash', 'angular-loading-bar', 'toaster'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
+        //console.log('register module : '+moduleName);
 		// Create angular module
 		angular.module(moduleName, dependencies || []);
 
@@ -21,3 +23,4 @@ var ApplicationConfiguration = (function() {
 		registerModule: registerModule
 	};
 })();
+

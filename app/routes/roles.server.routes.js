@@ -10,8 +10,8 @@ module.exports = function(app) {
 		.post(security.authorizedToDo('create_role'), roles.create);
 
 	app.route('/roles/:roleId')
-		.get(security.authorizedToDo('list_roles'), roles.read)
-		.put(security.authorizedToDo('update_role'), roles.update)
+		.get(security.authorizedToDo('view_role'), roles.read)
+		.put(security.authorizedToDo('edit_role'), roles.update)
 		.delete(security.authorizedToDo('delete_role'), roles.delete);
 
 	// Finish by binding the Role middleware

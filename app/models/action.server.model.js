@@ -41,9 +41,9 @@ Action.findOneAndUpdate({_id:'create_role'}, {name: 'Create Role', order:1, _mod
     }
 });
 ///Update_Role Action..
-Action.findOneAndUpdate({_id:'update_role'}, {name: 'Update Role', order:2, _module:'roles'}, {upsert:true}, function(err){
+Action.findOneAndUpdate({_id:'edit_role'}, {name: 'Edit Role', order:2, _module:'roles'}, {upsert:true}, function(err){
     if(err){
-        console.log('Error Creating "Update Role" Action: '+JSON.stringify(err));
+        console.log('Error Creating "Edit Role" Action: '+JSON.stringify(err));
         return;
     }
 });
@@ -61,7 +61,13 @@ Action.findOneAndUpdate({_id:'list_roles'}, {name: 'List Roles', order:4, _modul
         return;
     }
 });
-
+///View_Role Action..
+Action.findOneAndUpdate({_id:'view_role'}, {name: 'View Role', order:4, _module:'roles'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View Role" Action: '+JSON.stringify(err));
+        return;
+    }
+});
 ///Create_User Action..
 Action.findOneAndUpdate({_id:'create_user'}, {name: 'Create User', order:1, _module:'users'}, {upsert:true}, function(err){
     if(err){
@@ -70,9 +76,9 @@ Action.findOneAndUpdate({_id:'create_user'}, {name: 'Create User', order:1, _mod
     }
 });
 ///Update_User Action..
-Action.findOneAndUpdate({_id:'update_user'}, {name: 'Update User', order:2, _module:'users'}, {upsert:true}, function(err){
+Action.findOneAndUpdate({_id:'edit_user'}, {name: 'Edit User', order:2, _module:'users'}, {upsert:true}, function(err){
     if(err){
-        console.log('Error Creating "Update User" Action: '+JSON.stringify(err));
+        console.log('Error Creating "Edit User" Action: '+JSON.stringify(err));
         return;
     }
 });
@@ -87,6 +93,13 @@ Action.findOneAndUpdate({_id:'delete_user'}, {name: 'Delete Users', order:3, _mo
 Action.findOneAndUpdate({_id:'list_users'}, {name: 'List Users', order:4, _module:'users'}, {upsert:true}, function(err){
     if(err){
         console.log('Error Creating "List Users" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///View_User Action..
+Action.findOneAndUpdate({_id:'view_user'}, {name: 'View User', order:4, _module:'users'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View User" Action: '+JSON.stringify(err));
         return;
     }
 });
