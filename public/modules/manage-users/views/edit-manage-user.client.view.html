@@ -1,0 +1,43 @@
+<section data-ng-controller="ManageUsersController" data-ng-init="findOne()">
+    <div class="page-header">
+        <h1>Edit User</h1>
+    </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="update()" novalidate autocomplete="off">
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Full Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="manageUser.fullName" id="name" class="form-control" placeholder="Full Name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="email">Email</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="manageUser.email" id="email" class="form-control" placeholder="Email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="role">Role</label>
+                    <div class="controls">
+                        <div class="btn-group" data-toggle="buttons" id="role">
+                            <label class="btn btn-primary" ng-class="{active:role._id===(manageUser._role._id||manageUser._role)}" ng-repeat="role in roles">
+                                <input type="checkbox"
+                                       value="{{role.name}}"
+                                       ng-checked="role._id===manageUser._role"
+                                       ng-click="toggleRoleSelection(role._id)">{{role.name}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>
