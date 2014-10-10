@@ -20,7 +20,8 @@ var RoleSchema = new Schema({
 	},
     _actions:[{
         type:String,
-        ref:'Action'
+        ref:'Action',
+        required: 'Please select actions'
     }],
 	created: {
         time: {
@@ -42,5 +43,9 @@ var RoleSchema = new Schema({
         }
 	}
 });
+
+RoleSchema.path('_actions').validate(function (value) {
+    return value.length > 0;
+}, 'Please select actions');
 
 mongoose.model('Role', RoleSchema);
