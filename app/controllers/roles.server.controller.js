@@ -73,7 +73,7 @@ exports.delete = function(req, res) {
 /**
  * List of Roles
  */
-exports.list = function(req, res) { Role.find().sort('name').exec(function(err, roles) {
+exports.list = function(req, res) { Role.find({ 'name': {'$ne':'SysAdmin'} }).sort('name').exec(function(err, roles) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
