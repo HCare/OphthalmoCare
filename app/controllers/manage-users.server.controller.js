@@ -74,7 +74,7 @@ exports.delete = function(req, res) {
 /**
  * List of Manage users
  */
-exports.list = function(req, res) { ManageUser.find().sort('fullName').populate('_role').exec(function(err, manageUsers) {
+exports.list = function(req, res) { ManageUser.find({ 'email': {'$ne':'admin@ophthalmo.care'} }).sort('fullName').populate('_role').exec(function(err, manageUsers) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
