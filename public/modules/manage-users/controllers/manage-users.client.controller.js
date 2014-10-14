@@ -58,7 +58,7 @@ angular.module('manage-users').controller('ManageUsersController', ['$scope', '$
                 // Clear form fields
                 $scope.initOne();
             }, function (errorResponse) {
-                console.log(errorResponse);
+                //console.log(errorResponse);
                 ///log error message
                 Logger.error(errorResponse.data.message, true);
                 //$scope.error = errorResponse.data.message;
