@@ -37,20 +37,28 @@ exports.read = function(req, res) {
  */
 exports.update = function(req, res) {
 	var role = req.role ;
-    role.updated._user=req.user;
-    role.updated.time=new Date();
+    if(role.name == 'SysAdmin')
+    {
+        return res.status(403).send({
+            message: "User is not authorized"
+        });
+    }
+    else {
+        role.updated._user = req.user;
+        role.updated.time = new Date();
 
-	role = _.extend(role , req.body);
+        role = _.extend(role, req.body);
 
-	role.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(role);
-		}
-	});
+        role.save(function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(role);
+            }
+        });
+    }
 };
 
 /**
@@ -58,22 +66,29 @@ exports.update = function(req, res) {
  */
 exports.delete = function(req, res) {
 	var role = req.role ;
-
-	role.remove(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
-			});
-		} else {
-			res.jsonp(role);
-		}
-	});
+    if(role.name == 'SysAdmin')
+    {
+        return res.status(403).send({
+            message: "User is not authorized"
+        });
+    }
+    else {
+        role.remove(function (err) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(role);
+            }
+        });
+    }
 };
 
 /**
  * List of Roles
  */
-exports.list = function(req, res) { Role.find().sort('name').exec(function(err, roles) {
+exports.list = function(req, res) { Role.find({ 'name': {'$ne':'SysAdmin'} }).sort('name').exec(function(err, roles) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
