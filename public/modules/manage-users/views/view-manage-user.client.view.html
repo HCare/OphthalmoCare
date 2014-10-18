@@ -6,9 +6,7 @@
         <a class="btn btn-primary" href="/#!/manage-users/{{manageUser._id}}/edit">
             <i class="glyphicon glyphicon-edit"></i>
         </a>
-        <a class="btn btn-primary" data-ng-click="remove();">
-            <i class="glyphicon glyphicon-trash"></i>
-        </a>
+        <h-care-del-button del-message="Are you sure to delete {{manageUser.email}} user?" hcare-del-click="remove()"></h-care-del-button>
     </div>
     <p class="list-group-item-text">
         <em class="text-muted">
