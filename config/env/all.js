@@ -16,7 +16,8 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap.css',
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
                 'public/lib/angular-loading-bar/build/loading-bar.css',
-                'public/lib/angularjs-toaster/toaster.css'
+                'public/lib/angularjs-toaster/toaster.css',
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.css'
 			],
 			js: [
 				'public/lib/angular/angular.js',
@@ -30,7 +31,12 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
                 'public/lib/ng-lodash/build/ng-lodash.js',
                 'public/lib/angular-loading-bar/build/loading-bar.js',
-                'public/lib/angularjs-toaster/toaster.js'
+                'public/lib/angularjs-toaster/toaster.js',
+                'public/lib/moment/moment.js',
+                'public/lib/angular-moment/angular-moment.js',
+                'public/lib/webcam-directive/app/scripts/webcam.js',
+                'public/lib/angular-deckgrid/angular-deckgrid.js',
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
 			]
 		},
 		css: [

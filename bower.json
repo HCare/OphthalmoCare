@@ -16,6 +16,11 @@
     "angular-ui-router": "~0.2.10",
     "ng-lodash": "~0.0.2",
     "angular-loading-bar": "~0.5.2",
-    "angularjs-toaster": "0.4.4"
+    "angularjs-toaster": "0.4.4",
+    "moment": "~2.8.3",
+    "webcam-directive": "~1.1.0",
+    "angular-deckgrid": "~0.4.4",
+    "ngImgCrop": "~0.2.0",
+    "angular-moment": "~0.8.2"
   }
 }

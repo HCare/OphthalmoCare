@@ -2,6 +2,7 @@
 
 module.exports = {
 	db: 'mongodb://localhost/ophthalmocare-test',
+    graphDB:'http://localhost:7474/ophthalmocare-test',
 	port: 3001,
 	app: {
 		title: 'OphthalmoCare - Test Environment'

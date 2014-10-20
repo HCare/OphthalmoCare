@@ -30,16 +30,25 @@ var Module = mongoose.model('Module', ModuleSchema);
 
 /**Init Module data*/
 ///Roles Module..
-Module.findOneAndUpdate({_id: 'roles'}, {name: 'Roles', order: 2}, {upsert: true}, function (err) {
+Module.findOneAndUpdate({_id: 'roles'}, {name: 'Roles', order: 0}, {upsert: true}, function (err) {
     if (err) {
         console.log('Error Creating "Roles" Module' + JSON.stringify(err));
         return;
     }
 });
+
 ///Users Module..
 Module.findOneAndUpdate({_id: 'users'}, {name: 'Users', order:1}, {upsert: true}, function (err) {
     if (err) {
         console.log('Error Creating "Users" Module: ' + JSON.stringify(err));
+        return;
+    }
+});
+
+///Patients Module..
+Module.findOneAndUpdate({_id: 'patients'}, {name: 'Patients', order:2}, {upsert: true}, function (err) {
+    if (err) {
+        console.log('Error Creating "Patients" Module: ' + JSON.stringify(err));
         return;
     }
 });

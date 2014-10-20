@@ -13,3 +13,57 @@
 .ng-valid.ng-dirty{
     border-color:#78FA89;
 }
+.circular {
+    width: 128px;
+    height: 128px;
+    border-radius: 150px;
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+}
+.circular img {
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.webcam-live{
+    width: 100%    !important;
+    height: auto   !important;
+    display: block;
+    padding: 4px;
+    /*margin-bottom: 10px;*/
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+.deckgrid[deckgrid]::before {
+    /* Specifies that the grid should have a maximum of 4 columns. Each column will have the classes 'column' and 'column-1-4' */
+    content: '4 .column.column-1-4';
+    font-size: 0; /* See https://github.com/akoenig/angular-deckgrid/issues/14#issuecomment-35728861 */
+    visibility: hidden;
+}
+
+.deckgrid .column {
+    float: left;
+}
+
+.deckgrid .column-1-4 {
+    width: 25%;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+.cropArea {
+    background: #E4E4E4;
+    overflow: hidden;
+    width: 256px;
+    height: 256px;
+}

@@ -1,0 +1,152 @@
+<section data-ng-controller="PatientsController" data-ng-init="initOne()">
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-body">
+        <tabset justified="true">
+            <tab heading="Take a Photo" active="tabs[0].active" disabled="tabs[0].disabled">
+                <div class="controls">
+                <div ng-hide="webcamError">
+                    <webcam on-error="onCamError(err)" on-streaming="onSuccess(video)">
+                    </webcam>
+                </div>
+                <div class="alert alert-danger" ng-show="webcamError">
+                    <span>Webcam could not be started. Did you give access to it?</span>
+                </div>
+                <button type="button" class="btn btn-default" ng-click="makeSnapshot()">
+                    <i class="glyphicon glyphicon-camera"></i></button>
+                <div deckgrid class="deckgrid" source="photos">
+                    <div>
+                        <a href="" class="thumbnail" ng-click="mother.selectPhoto(card.src)">
+                            <img src="" data-ng-src="{{card.src}}">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            </tab>
+            <!--<tab heading="Browse" active="tabs[1].active" disabled="tabs[1].disabled">
+                    <div class="form-group">
+                        <label class="control-label" for="name">Choose a pic</label>
+
+                        <div class="controls">
+                            <input type="file" id="fileInput" onchange="angular.element(this).scope().inputPhoto(this.files)"/>
+                        </div>
+                        <a href="" class="thumbnail" ng-click="selectInputPhoto()">
+                        <img data-ng-show="inputImage" id="inputImage" src="" data-ng-src="{{inputImage}}"/>
+                            </a>
+
+                    </div>
+            </tab>-->
+            <tab heading="Crop" active="tabs[2].active" disabled="tabs[2].disabled">
+                <!--<img src="" data-ng-src="{{selectedPhoto}}"/>-->
+                <div class="cropArea" ng-style="{'width': photoWidth, 'height': photoHeight }">
+                <img-crop area-min-size="128" result-image-size="128" image="selectedPhoto" result-image="finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
+                    </div>
+                <!--<img src="" data-ng-src="{{finalPhoto}}"/>-->
+            </tab>
+        </tabset>
+            <!--<div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>-->
+
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary"  ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <div class="page-header">
+        <h1>New Patient</h1>
+    </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <div class="circular" back-img="{{photo}}"><a href="" ng-click="openModal()"><img src="" data-ng-src="{{photo}}" alt="Patient Photo" /></a> </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+
+                    <div class="controls">
+                        <input type="text" data-ng-model="patient.fullName" id="name" class="form-control"
+                               placeholder="Name" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="gender">Gender</label>
+
+                    <div class="controls">
+                        <div class="btn-group" data-toggle="buttons" id="gender">
+                            <label class="btn btn-primary" ng-class="{active:gender._id===patient.gender}"
+                                   ng-repeat="gender in genders">
+                                <input type="checkbox"
+                                       value="{{gender._id}}"
+                                       ng-checked="gender._id===patient.gender"
+                                       ng-click="toggleGenderSelection(gender._id)">{{gender.name}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="birthDate">Birth Date</label>
+
+                    <div class="controls">
+                        <p class="input-group">
+                            <input type="text" id="birthDate" placeholder="Birth Date" class="form-control" datepicker-popup="{{format}}" ng-change="birthDateChanged(patient.birthDate)"
+                                   ng-model="patient.birthDate"
+                                   is-open="opened" min-date="minDate" max-date="maxDate"
+                                   datepicker-options="dateOptions"
+                                   show-button-bar="false"
+                                   close-text="Close"
+                                    required/>
+                        <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="age">Age</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="patient.age" id="age" class="form-control"
+                               placeholder="Age" ng-change="ageChanged(patient.age)"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="tel">Tel</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="patient.tel" id="tel" class="form-control"
+                               placeholder="Tel"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="address">Address</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="patient.address" id="address" class="form-control"
+                               placeholder="Address"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="email">Email</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="patient.email" id="email" class="form-control"
+                               placeholder="Email"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="notes">Notes</label>
+                    <div class="controls">
+                        <textarea name="content" data-ng-model="patient.notes" id="notes" class="form-control" cols="30" rows="10" placeholder="Notes"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

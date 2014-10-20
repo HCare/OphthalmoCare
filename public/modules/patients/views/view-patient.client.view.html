@@ -1,0 +1,56 @@
+<section data-ng-controller="PatientsController" data-ng-init="findOne()">
+	<div class="page-header">
+		<h1 data-ng-bind="patient.fullName"></h1>
+	</div>
+	<div class="pull-right">
+		<a class="btn btn-primary" href="/#!/patients/{{patient.id}}/edit">
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Gender: </strong>
+            {{patient.gender}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Birth Date: </strong>
+            {{patient.birthDate | amDateFormat: 'YYYY/MM/DD'}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Age: </strong>
+            {{patient.age}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Tel: </strong>
+            {{patient.tel}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Address: </strong>
+            {{patient.address}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Email: </strong>
+            {{patient.email}}
+        </em>
+    </p>
+    <p class="list-group-item-text">
+        <em class="text-muted">
+            <strong>Notes: </strong>
+            {{patient.notes}}
+        </em>
+    </p>
+
+</section>

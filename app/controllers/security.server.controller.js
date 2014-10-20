@@ -63,7 +63,6 @@ exports.requiresLogin = function(req, res, next) {
  * User authorizations routing middleware
  */
 exports.authorizedToDo = function(action) {
-    console.log('check auth\n\r');
     var _this = this;
     return function(req, res, next) {
         _this.requiresLogin(req, res, function() {
@@ -79,15 +78,11 @@ exports.authorizedToDo = function(action) {
                 else{
                     if(!action){
                         action=req.params.actionId;
-                        console.log('parameter: '+req.params.actionId+'\n\r');
                     }
-                    console.log('action: '+action);
-                    console.log(manageUser._role._actions+'\n\r');
-                    var x=_.contains(manageUser._role._actions, action);
-                    console.log(x+'\n\r');
                     if (_.contains(manageUser._role._actions, action)) {
                         return next();
                     } else {
+                        console.log('not authorized to : '+action);
                         return res.status(403).send({
                             message: 'User is not authorized'
                         });

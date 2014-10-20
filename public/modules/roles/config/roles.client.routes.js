@@ -55,33 +55,24 @@ angular.module('roles').config(['$stateProvider',
                 templateUrl: 'modules/roles/views/list-roles.client.view.html',
                 requiresLogin: true,
                 action: 'list_roles'
-                /*,
-                resolve: {authorized: function(){return authProvider.config('ss');}
-                }*/
             }).
             state('createRole', {
                 url: '/roles/create',
                 templateUrl: 'modules/roles/views/create-role.client.view.html',
                 requiresLogin: true,
                 action: 'create_role'
-                /*,
-                 resolve:{authorized:security.isAuthorized}*/
             }).
             state('viewRole', {
                 url: '/roles/:roleId',
                 templateUrl: 'modules/roles/views/view-role.client.view.html',
                 requiresLogin: true,
                 action: 'view_role'
-                /*,
-                 resolve:{authorized:security.isAuthorized}*/
             }).
             state('editRole', {
                 url: '/roles/:roleId/edit',
                 templateUrl: 'modules/roles/views/edit-role.client.view.html',
                 requiresLogin: true,
                 action: 'edit_role'
-                /*,
-                 resolve:{authorized:security.isAuthorized}*/
             });
     }
 ]);

@@ -2,6 +2,7 @@
 
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/ophthalmocare',
+    graphDB:'http://localhost:7474/ophthalmocare',
 	assets: {
 		lib: {
 			css: [
