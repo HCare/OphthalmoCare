@@ -73,6 +73,13 @@ Action.findOneAndUpdate({_id:'view_role'}, {name: 'View Role', order:5, _module:
         return;
     }
 });
+///Search_Roles Action..
+Action.findOneAndUpdate({_id:'search_roles'}, {name: 'Search Roles', order:6, _module:'roles'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Search Roles" Action: '+JSON.stringify(err));
+        return;
+    }
+});
 //endregion Role Actions
 
 //region User Actions

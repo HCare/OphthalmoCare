@@ -3,12 +3,10 @@
 		<h1 data-ng-bind="role.name"></h1>
 	</div>
 	<div class="pull-right" >
-		<a class="btn btn-primary" href="/#!/roles/{{role._id}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
+
+        <h-care-edit-button href="/#!/roles/{{role._id}}/edit" action="edit_role"></h-care-edit-button>
+
+        <h-care-del-button del-message="Are you sure to delete {{role.name}} Role?" action="delete_role"></h-care-del-button>
 	</div>
     <p data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
         <em class="text-muted">

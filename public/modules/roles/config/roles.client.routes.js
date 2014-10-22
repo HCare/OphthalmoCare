@@ -62,17 +62,23 @@ angular.module('roles').config(['$stateProvider',
                 requiresLogin: true,
                 action: 'create_role'
             }).
-            state('viewRole', {
-                url: '/roles/:roleId',
-                templateUrl: 'modules/roles/views/view-role.client.view.html',
+            state('searchRoles', {
+                url: '/roles/search',
+                templateUrl: 'modules/roles/views/search-roles.client.view.html',
                 requiresLogin: true,
-                action: 'view_role'
+                action: 'search_roles'
             }).
             state('editRole', {
                 url: '/roles/:roleId/edit',
                 templateUrl: 'modules/roles/views/edit-role.client.view.html',
                 requiresLogin: true,
                 action: 'edit_role'
+            }).
+            state('viewRole', {
+                url: '/roles/:roleId',
+                templateUrl: 'modules/roles/views/view-role.client.view.html',
+                requiresLogin: true,
+                action: 'view_role'
             });
     }
 ]);

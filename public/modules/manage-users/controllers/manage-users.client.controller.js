@@ -1,13 +1,15 @@
 'use strict';
 
 // Manage users controller
-angular.module('manage-users').controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'ManageUsers', 'Roles', 'lodash', 'Logger',
+angular.module('manage-users')
+    .controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'ManageUsers', 'Roles', 'lodash', 'Logger',
     function ($scope, $stateParams, $location, Authentication, ManageUsers, Roles, lodash, Logger) {
         //region Init variables
 
         $scope.authentication = Authentication;
         $scope._ = lodash;
         $scope.roles = Roles.query();
+
 
         //endregion Init variables
 
@@ -119,6 +121,7 @@ angular.module('manage-users').controller('ManageUsersController', ['$scope', '$
             });
         };
 
+
         //endregion CRUD functions
     }
-]);
+    ]);

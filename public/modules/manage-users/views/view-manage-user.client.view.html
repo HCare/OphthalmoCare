@@ -3,10 +3,8 @@
         <h1 data-ng-bind="manageUser.fullName"></h1>
     </div>
     <div class="pull-right" >
-        <a class="btn btn-primary" href="/#!/manage-users/{{manageUser._id}}/edit">
-            <i class="glyphicon glyphicon-edit"></i>
-        </a>
-        <h-care-del-button del-message="Are you sure to delete {{manageUser.email}} user?" hcare-del-click="remove()"></h-care-del-button>
+        <h-care-edit-button href="/#!/manage-users/{{manageUser._id}}/edit"  action="edit_user"></h-care-edit-button>
+        <h-care-del-button del-message="Are you sure to delete {{manageUser.email}} user?" hcare-del-click="remove()" action="delete_user"></h-care-del-button>
     </div>
     <p class="list-group-item-text">
         <em class="text-muted">
