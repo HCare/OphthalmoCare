@@ -2,7 +2,9 @@
 
 module.exports = {
 	db: 'mongodb://localhost/ophthalmocare-dev',
-    graphDB:'http://localhost:7474/ophthalmocare-dev',
+    graphDB:'http://localhost:7474/',
+    filesTemp:'files/temp/',
+    filesUpload:'files/upload/',
 	app: {
 		title: 'OphthalmoCare - Development Environment'
 	},

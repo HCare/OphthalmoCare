@@ -3,8 +3,7 @@
 /**
  * Module dependencies.
  */
-var
-    //type = require('../../app/models/type'),
+var moment=require('moment'),
 	errorHandler = require('./errors'),
     model = require('../../app/models/person'),
     db=model.db,
@@ -14,7 +13,7 @@ var
 /**
  * Create a Patient
  */
-exports.create = function(req, res) {
+exports.create = function(req, res, next) {
     console.log('create patient \n\r');
 	var patient = req.body;
     //patient.created=new type.UserAndTime(req.user._id);
@@ -28,6 +27,19 @@ exports.create = function(req, res) {
 			});
 		} else {
             //console.log('added : '+newPatient+'\n\r');
+            if(patient.photo)
+            {
+                var time = newPatient._createdTime;
+                var path = moment(time).year()+'/'+
+                          (moment(time).month+1)+'/'+
+                           moment(time).date()+'/'+
+                            newPatient.id+'/';
+
+                _.extend(req.body, {filePath : path});
+                _.extend(req.body, newPatient);
+                next();
+                return;
+            }
 			res.jsonp(newPatient);
 		}
 	});
