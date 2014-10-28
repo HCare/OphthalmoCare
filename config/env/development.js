@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/ophthalmocare-dev',
+	db: 'mongodb://yass:HardRock_777@linus.mongohq.com:10001/ophthalmocare',
     graphDB:'http://localhost:7474/',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
