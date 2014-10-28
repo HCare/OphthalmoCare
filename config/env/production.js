@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/ophthalmocare',
+	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://yass:HardRock_777@linus.mongohq.com:10001/ophthalmocare',
     graphDB:'http://localhost:7474/',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
