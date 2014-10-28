@@ -3,18 +3,45 @@
 /**
  * Module dependencies.
  */
-var moment=require('moment'),
+var config = require('../../config/config'),
+    moment=require('moment'),
 	errorHandler = require('./errors'),
     model = require('../../app/models/person'),
+    fileHandler =require('../../app/controllers/file-handle'),
     db=model.db,
     Patient=model.Person,
-	_ = require('lodash');
+	_ = require('lodash'),
+    moment=require('moment'),
+    filesRoot=config.filesUpload;
+
+/**
+ * render patient photo
+ */
+exports.renderPhoto=function(req, res){
+    var patient=req.patient;
+    console.log(patient);
+    var time = patient._createdTime;
+    var photoPath =filesRoot+ moment(time).year()+'/'+
+        (moment(time).month()+1)+'/'+
+        moment(time).date()+'/'+
+        patient.id+'/personal-photo.png';
+        fileHandler.getFile(photoPath, function(err, data){
+        if(err){
+            console.log('err: '+err);
+        }
+        else{
+            res.writeHead(200, {'Content-Type': 'image/png'});
+            res.end(data);
+        }
+    });
+
+};
 
 /**
  * Create a Patient
  */
 exports.create = function(req, res, next) {
-    console.log('create patient \n\r');
+    //console.log('create patient \n\r');
 	var patient = req.body;
     //patient.created=new type.UserAndTime(req.user._id);
 	patient._createdUser = req.user._id;
@@ -27,15 +54,14 @@ exports.create = function(req, res, next) {
 			});
 		} else {
             //console.log('added : '+newPatient+'\n\r');
-            if(patient.photo)
+            if(patient.personalPhoto)
             {
                 var time = newPatient._createdTime;
-                var path = moment(time).year()+'/'+
-                          (moment(time).month+1)+'/'+
+                var photoPath = moment(time).year()+'/'+
+                          (moment(time).month()+1)+'/'+
                            moment(time).date()+'/'+
                             newPatient.id+'/';
-
-                _.extend(req.body, {filePath : path});
+                _.extend(req.body, {filePath : photoPath});
                 _.extend(req.body, newPatient);
                 next();
                 return;
@@ -61,7 +87,7 @@ exports.update = function(req, res) {
     //console.log(JSON.stringify(patient)+'\n\r');
     //patient.updated=type.UserAndTime(req.user._id);
     patient._updateUser = req.user._id;
-    patient._updatedTime = new Date();
+    patient._updatedTime = moment();
     //console.log(JSON.stringify(patient)+'\n\r');
 
 	patient = _.extend(patient , req.body);
@@ -116,7 +142,7 @@ exports.patientByID = function(req, res, next, id) {
     //console.log('find:'+id+' \n\r');
     Patient.read(id, function(err, patient) {
         //console.log('read:'+id+' \n\r');
-    console.log(JSON.stringify(patient)+'\n\r');
+    //console.log(JSON.stringify(patient)+'\n\r');
 		if (err) {
             //console.log('err :' + err + '\n\r');
             return next(err);

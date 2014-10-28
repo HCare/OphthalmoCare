@@ -5,6 +5,7 @@
  */
 var	config = require('../../config/config'),
     errorHandler = require('./errors'),
+    _ = require('lodash'),
     path=require('path'),
     fs=require('fs'),
     mime = require('mime-types'),
@@ -12,12 +13,11 @@ var	config = require('../../config/config'),
 
 
 var saveFile=function(file, filePath, callback){
-    console.log(file);
-    var ext=mime.extension(file.type);
+    var ext=mime.extension(file.mimetype);
     if(ext){
         ext='.'+ext;
     }
-    fs.rename(file.path, filesRoot + filePath + file.name + ext, function(err) {
+    fs.rename(file.path, filesRoot + filePath + file.originalname + ext, function(err) {
         if(err){
             callback(err);
         }
@@ -29,33 +29,35 @@ var saveFile=function(file, filePath, callback){
 
 var createDir=function(filePath, callback, position) {
     var parts = path.normalize(filePath).split(path.sep);
+    console.log(parts);
     var rootDir = path.normalize(filesRoot);
     position = position || 0;
     if (position >= parts.length) {
         return callback();
     }
     var directory = rootDir+parts.slice(0, position + 1).join(path.sep) || path.sep;
+    console.log(directory);
     fs.stat(directory, function(err) {
         if (err === null) {
-            createDir(path, callback, position + 1);
+            createDir(filePath, callback, position + 1);
         } else {
             fs.mkdir(directory, function(err) {
                 if (err && err.code !== 'EEXIST') {
                     return callback(err);
                 } else {
-                    createDir(path, callback, position + 1);
+                    createDir(filePath, callback, position + 1);
                 }
             });
         }
     });
 };
 
-exports.fileUpload=function(req, res){
+exports.uploadFile=function(req, res){
     var filePath = req.body.filePath;
     var warn=null;
     fs.exists(filesRoot+filePath, function(exist){
        if(!exist){
-           createDir(path, function(err) {
+           createDir(filePath, function(err) {
                if(err){
                    warn={warn:errorHandler.getErrorMessage(err)};
                    _.extend(req.body, warn);
@@ -86,3 +88,7 @@ exports.fileUpload=function(req, res){
        }
     });
 };
+
+exports.getFile=function(fullPath, callback){
+    fs.readFile(fullPath, callback);
+}

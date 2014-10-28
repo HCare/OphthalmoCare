@@ -16,12 +16,15 @@ module.exports = function(app) {
 	// Patients Routes
 	app.route('/patients')
 		.get(security.authorizedToDo('list_patients'), patients.list)
-		.post(security.authorizedToDo('create_patient'), patients.create, multerTemp, fileHandler.uploadFile);
+		.post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
 
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)
 		.put(security.authorizedToDo('edit_patient'), patients.update)
 		.delete(security.authorizedToDo('delete_patient'), patients.delete);
+
+    app.route('/patients/personal-photo/:patientId')
+        .get(security.authorizedToDo('view_patient'), patients.renderPhoto);
 
 	// Finish by binding the Patient middleware
 	app.param('patientId', patients.patientByID);
