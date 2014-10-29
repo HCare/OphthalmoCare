@@ -119,7 +119,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if($scope.photo){
-                lodash.extend(patient,{personalPhoto:true});
+                lodash.extend(patient,{personalPhoto:'personal-photo'});
             }
             var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
             $upload.upload({

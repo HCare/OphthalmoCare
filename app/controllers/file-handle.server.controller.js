@@ -8,16 +8,11 @@ var	config = require('../../config/config'),
     _ = require('lodash'),
     path=require('path'),
     fs=require('fs'),
-    mime = require('mime-types'),
     filesRoot=config.filesUpload;
 
 
 var saveFile=function(file, filePath, callback){
-    var ext=mime.extension(file.mimetype);
-    if(ext){
-        ext='.'+ext;
-    }
-    fs.rename(file.path, filesRoot + filePath + file.originalname + ext, function(err) {
+    fs.rename(file.path, filesRoot + filePath + file.originalname , function(err) {
         if(err){
             callback(err);
         }
