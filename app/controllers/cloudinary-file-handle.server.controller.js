@@ -7,13 +7,12 @@ var config = require('../../config/config'),
     errorHandler = require('./errors'),
     _ = require('lodash'),
     cloudinary = require('cloudinary');
-if (!config.cloudinarySpace) {
     cloudinary.config({
         cloud_name: config.cloudinaryCloud,
         api_key: config.cloudinaryKey,
         api_secret: config.cloudinarySecret
     });
-}
+
 exports.uploadFile = function (req, res) {
     var filePath = req.body.filePath;
     var warn = null;
