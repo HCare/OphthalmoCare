@@ -5,7 +5,7 @@ module.exports = function(app) {
         security = require('../../app/controllers/security'),
 	    patients = require('../../app/controllers/patients'),
         multer =require('multer'),
-        fileHandler =require('../../app/controllers/file-handle'),
+        fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
         multerTemp=multer({ dest: config.filesTemp, limits: {
         fieldNameSize: 255,
             fields: 7,

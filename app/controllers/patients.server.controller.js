@@ -7,13 +7,11 @@ var config = require('../../config/config'),
     moment=require('moment'),
 	errorHandler = require('./errors'),
     model = require('../../app/models/person'),
-    fileHandler =require('../../app/controllers/file-handle'),
+    fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
     db=model.db,
     Patient=model.Person,
 	_ = require('lodash'),
-    moment=require('moment'),
-    mime = require('mime-types'),
-    filesRoot=config.filesUpload;
+    moment=require('moment');
 
 /**
  * render patient photo
@@ -21,21 +19,11 @@ var config = require('../../config/config'),
 exports.renderPhoto=function(req, res){
     var patient=req.patient;
     var time = patient._createdTime;
-    var photoPath =filesRoot+ moment(time).year()+'/'+
+    var photoPath =moment(time).year()+'/'+
         (moment(time).month()+1)+'/'+
         moment(time).date()+'/'+
         patient.id+'/'+patient.personalPhoto;
-        fileHandler.getFile(photoPath, function(err, data){
-        if(err){
-            console.log('err: '+err);
-        }
-        else{
-            var fileType=mime.lookup(photoPath);
-            res.writeHead(200, {'Content-Type': fileType});
-            res.end(data);
-        }
-    });
-
+        fileHandler.responseFile(photoPath, res);
 };
 
 /**

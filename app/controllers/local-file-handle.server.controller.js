@@ -8,6 +8,7 @@ var	config = require('../../config/config'),
     _ = require('lodash'),
     path=require('path'),
     fs=require('fs'),
+    mime = require('mime-types'),
     filesRoot=config.filesUpload;
 
 
@@ -84,6 +85,16 @@ exports.uploadFile=function(req, res){
     });
 };
 
-exports.getFile=function(fullPath, callback){
-    fs.readFile(fullPath, callback);
+exports.responseFile=function(filePath, res){
+    fs.readFile(filesRoot+filePath, function(err, data){
+        if(err){
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        var fileType=mime.lookup(filesRoot+filePath);
+        res.writeHead(200, {'Content-Type': fileType});
+        res.write(data);
+        res.end();
+    });
 }

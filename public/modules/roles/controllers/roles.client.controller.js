@@ -124,7 +124,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
 
 		// Find a list of Roles
 		$scope.find = function() {
-			var roles = Roles.query({name:'Roles'}, function(){
+			var roles = Roles.query(function(){
                 $scope.roles=roles;
             });
 		};

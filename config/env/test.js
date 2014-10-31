@@ -3,8 +3,13 @@
 module.exports = {
 	db: 'mongodb://localhost/ophthalmocare-test',
     graphDB:'http://localhost:7474/',
+    fileHandler:(process.env.CLOUDINARY_URL)?'cloudinary':'local',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
+    cloudinarySpace:process.env.CLOUDINARY_URL,
+    cloudinaryCloud:'ophthalmocare',
+    cloudinaryKey:'238558841776758',
+    cloudinarySecret:'YklUomC6avzCLYAsnwQIYfp4Yco',
 	port: 3001,
 	app: {
 		title: 'OphthalmoCare - Test Environment'

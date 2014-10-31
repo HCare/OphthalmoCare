@@ -3,8 +3,13 @@
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI ||'mongodb://localhost/ophthalmocare-dev',
     graphDB: process.env.NEO4JGRAPHENE_URL || 'http://localhost:7474/',
+    fileHandler:(process.env.CLOUDINARY_URL)?'cloudinary':'local',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
+    cloudinarySpace:process.env.CLOUDINARY_URL,
+    cloudinaryCloud:'ophthalmocare',
+    cloudinaryKey:'238558841776758',
+    cloudinarySecret:'YklUomC6avzCLYAsnwQIYfp4Yco',
 	app: {
 		title: 'OphthalmoCare - Development Environment'
 	},
