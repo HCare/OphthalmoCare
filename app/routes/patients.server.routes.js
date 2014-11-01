@@ -24,7 +24,7 @@ module.exports = function(app) {
 		.delete(security.authorizedToDo('delete_patient'), patients.delete);
 
     app.route('/patients/personal-photo/:patientId')
-        .get(security.authorizedToDo('view_patient'), patients.renderPhoto);
+        .get(security.authorizedToDo(['list_patients', 'create_patient', 'edit_patient', 'view_patient']), patients.renderPhoto);
 
 	// Finish by binding the Patient middleware
 	app.param('patientId', patients.patientByID);
