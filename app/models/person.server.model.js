@@ -3,10 +3,11 @@
 /**
  * Module dependencies.
  */
-var //type = require('../../app/models/type'),
-    db = require('seraph')(process.env.graphDB),
+var config = require('../../config/config'),
+    db = require('seraph')(config.graphDB),
     model = require('seraph-model'),
-    personModel = model(db, 'Person');
+    personModel = model(db, 'Person'),
+    moment=require('moment');
 
 
 /**
@@ -49,7 +50,7 @@ var PersonSchema = {
     },
     _createdTime:{
         type:Date,
-        default: new Date()
+        default: moment()
     },
     _updatedUser: {
         type:String
