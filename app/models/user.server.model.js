@@ -164,17 +164,32 @@ Role.findOneAndUpdate({name:'SysAdmin'}, {name: 'SysAdmin', _actions:['create_ro
         console.log('Error Creating "SysAdmin" Role');
         return;
     }
-    User.findOne({email: 'admin@ophthalmo.care'})
+    User.findOne({email: 'sysadmin@ophthalmo.care'})
         .exec(function(err, user) {
             if (err){
                 console.log('Error Creating System Administrator ' + JSON.stringify(err));
                 return;
             }
             if (!user){
-                var admin=new User({fullName: 'System Administrator', displayName: 'Admin', email:'admin@ophthalmo.care', password:'hardrock', _role:role._id});
+                var admin=new User({fullName: 'System Administrator', displayName: 'SysAdmin', email:'sysadmin@ophthalmo.care', password:'hardrock', _role:role._id});
                 admin.save(function(err){
                     if(err){
                         console.log('Error Creating System Administrator ' + JSON.stringify(err));
+                    }
+                });
+            }
+        });
+    User.findOne({email: 'admin@ophthalmo.care'})
+        .exec(function(err, user) {
+            if (err){
+                console.log('Error Creating Administrator ' + JSON.stringify(err));
+                return;
+            }
+            if (!user){
+                var admin=new User({fullName: 'Administrator', displayName: 'Admin', email:'admin@ophthalmo.care', password:'admin444', _role:role._id});
+                admin.save(function(err){
+                    if(err){
+                        console.log('Error Creating Administrator ' + JSON.stringify(err));
                     }
                 });
             }

@@ -66,7 +66,7 @@ exports.update = function(req, res) {
  */
 exports.delete = function(req, res) {
 	var role = req.role ;
-    if(role.name == 'SysAdmin')
+    if(role.name === 'SysAdmin'||role._id===req.user._role)
     {
         return res.status(403).send({
             message: "User is not authorized"

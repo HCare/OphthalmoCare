@@ -6,7 +6,7 @@ module.exports = function(app) {
 
 	// Roles Routes
 	app.route('/roles')
-		.get(security.authorizedToDo('list_roles'), roles.list)
+		.get(security.authorizedToDo(['list_roles', 'list_users', 'create_user', 'edit_user']), roles.list)
 		.post(security.authorizedToDo('create_role'), roles.create);
 
 	app.route('/roles/:roleId')

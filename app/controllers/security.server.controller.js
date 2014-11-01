@@ -8,7 +8,13 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
     passport = require('passport'),
 	_ = require('lodash');
-
+_.mixin({
+    'findByValues': function (collection, property, values) {
+        return _.filter(collection, function (item) {
+            return _.contains(values, item[property]);
+        });
+    }
+});
 //exports.isAuthenticated=function(req, res){
 //    if (!req.isAuthenticated()) {
 //        return res.status(401).send({
@@ -62,7 +68,12 @@ exports.requiresLogin = function(req, res, next) {
 /**
  * User authorizations routing middleware
  */
-exports.authorizedToDo = function(action) {
+exports.authorizedToDo = function(actions) {
+    if(!Array.isArray(actions)){
+      var action=actions;
+        actions=[];
+        actions.push(action);
+    };
     var _this = this;
     return function(req, res, next) {
         _this.requiresLogin(req, res, function() {
@@ -76,13 +87,17 @@ exports.authorizedToDo = function(action) {
                     return res.status(400).send(new Error('Failed to load User ' + req.user._id));
                 }
                 else{
-                    if(!action){
-                        action=req.params.actionId;
+                    if(!actions){
+                        actions=[];
+                        actions.push[req.params.actionId];
                     }
-                    if (_.contains(manageUser._role._actions, action)) {
+                    console.log(manageUser._role._actions);
+                    console.log(actions);
+                    console.log(_.intersection(manageUser._role._actions, actions));
+                    if (_.intersection(manageUser._role._actions, actions).length>0) {
                         return next();
                     } else {
-                        console.log('not authorized to : '+action);
+                        console.log('not authorized to : '+actions.join(' or '));
                         return res.status(403).send({
                             message: 'User is not authorized'
                         });
