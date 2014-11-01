@@ -11,10 +11,12 @@ angular.module('directives')
                     var buttonText = "<a class='btn btn-primary' ><i class='glyphicon glyphicon-trash'></i></a>";
                     el.html(buttonText);
                     el.on("click", function(){
+                        console.log(typeof atts.hcareDelClick);
                         var result = confirm(atts.delMessage);
                         if(result)
                         {
                             //apply only
+                            console.log(typeof atts.hcareDelClick);
                             scope.$apply(atts.hcareDelClick);
 
                         }

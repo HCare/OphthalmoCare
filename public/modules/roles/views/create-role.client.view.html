@@ -16,30 +16,16 @@
                 <div class="form-group">
                     <label class="control-label" for="modules">Modules</label>
                     <div class="controls">
-                        <div class="btn-group" data-toggle="buttons" id="modules">
-                            <label class="btn btn-primary" ng-class="{active:_.where(role_actions, {_module:module._id}).length>0}"
-                                   ng-repeat="module in modules">
-                                <input type="checkbox"
-                                        value="{{module.name}}"
-                                        ng-checked="_.where(role_actions, {_module:module._id}).length>0"
-                                        ng-click="toggleModuleSelection(module)">{{module.name}}
-                            </label>
-                        </div>
+                        <h-care-checkbtn-list id="modules" source="modules" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="false" selected-items="selected_modules" current-tapped-item="selected_module"></h-care-checkbtn-list>
                     </div>
+
                 </div>
+
                 <div class="form-group" ng-show="selected_module">
                     <label class="control-label" for="actions">{{selected_module.name}} Actions</label>
                     <div class="controls">
-                        <div class="btn-group" data-toggle="buttons" id="actions">
-                            <label class="btn btn-primary" ng-class="{active:role_actions.indexOf(action) > -1}"
-                                   ng-repeat="action in actions">
-                                <input type="checkbox"
-                                        value="{{action.name}}"
-                                        ng-checked="role_modules.indexOf(action) > -1"
-                                        ng-click="toggleActionSelection(action)">{{action.name}}
-                            </label>
+                        <h-care-checkbtn-list id="actions" source="actions" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="true" selected-items="role_actions"  current-tapped-item="selected_action"></h-care-checkbtn-list>
                         </div>
-                    </div>
                 </div>
 
                 <div class="form-group">
