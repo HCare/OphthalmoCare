@@ -31,7 +31,7 @@ angular.module('directives')
                     scope.selectedItems = scope.selectedItems || [];
                     scope.selectedItemsIds =  [];
 
-                    scope.currentTappedItem = scope.selectedItems[0];
+
                     for(var i in scope.selectedItems)
                     {
                         if (!lodash.contains(scope.selectedItemsIds, scope.selectedItems[i][scope.itemValueField])) {

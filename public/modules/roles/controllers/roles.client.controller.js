@@ -165,10 +165,22 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
 
         // Find existing Role
         $scope.findOne = function () {
-            $scope.role = Roles.get({
+
+            var role = Roles.get({
                 roleId: $stateParams.roleId
             }, function () {
+                $scope.role = role;
+
                 $scope.role_actions = lodash.findByValues($scope.all_actions, '_id', $scope.role._actions);
+
+                for (var i = 0; i < $scope.modules.length; i++) {
+                    if(lodash.where($scope.role_actions,{'_module':$scope.modules[i]._id}).length >0) {
+                        $scope.selected_module = $scope.modules[i];
+                        break;
+                    }
+                }
+
+
             });
         };
     }
