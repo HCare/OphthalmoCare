@@ -39,7 +39,7 @@ exports.read = function(req, res) {
  */
 exports.update = function(req, res) {
 	var manageUser = req.manageUser;
-    if(manageUser.email == 'admin@ophthalmo.care')
+    if(manageUser.email === 'admin@ophthalmo.care' || manageUser.email ==='sysadmin@ophthalmo.care'|| manageUser.email===req.user.email)
     {
         return res.status(403).send({
             message: "User is not authorized"
@@ -67,7 +67,7 @@ exports.update = function(req, res) {
  */
 exports.delete = function(req, res) {
 	var manageUser = req.manageUser ;
-    if(manageUser.email == 'admin@ophthalmo.care')
+    if(manageUser.email === 'admin@ophthalmo.care' || manageUser.email ==='sysadmin@ophthalmo.care'|| manageUser.email===req.user.email)
     {
         return res.status(403).send({
             message: "User is not authorized"
@@ -89,7 +89,7 @@ exports.delete = function(req, res) {
 /**
  * List of Manage users
  */
-exports.list = function(req, res) { ManageUser.find({ 'email': {'$ne':'admin@ophthalmo.care'} }).sort('fullName').populate('_role').exec(function(err, manageUsers) {
+exports.list = function(req, res) { ManageUser.find({ 'email': {'$nin':['admin@ophthalmo.care', 'sysadmin@ophthalmo.care']} }).sort('fullName').populate('_role').exec(function(err, manageUsers) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
