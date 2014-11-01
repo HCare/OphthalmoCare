@@ -18,6 +18,7 @@ exports.list = function (req, res) {
                 message: errorHandler.getErrorMessage(err)
             });
         }
+        //console.log(actions);
         res.jsonp(actions);
     });
 };
