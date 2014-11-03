@@ -32,13 +32,18 @@ exports.renderPhoto=function(req, res){
 exports.create = function(req, res, next) {
 	var patient = req.body;
 	patient._createdUser = req.user._id;
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();
+    var hasPhoto=patient.personalPhoto;
+    if(hasPhoto==='true'){
+        patient.personalPhoto=config.patientPhotoFileName;;
+    }
     Patient.save(patient, function(err, newPatient) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-            if(patient.personalPhoto)
+            if(hasPhoto==='true')
             {
                 var time = newPatient._createdTime;
                 var photoPath = moment(time).year()+'/'+
@@ -67,15 +72,33 @@ exports.read = function(req, res) {
  */
 exports.update = function(req, res) {
 	var patient = req.patient ;
+    patient = _.extend(patient , req.body);
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();
     patient._updateUser = req.user._id;
-    patient._updatedTime = moment();
-	patient = _.extend(patient , req.body);
+    patient._updatedTime = moment().toISOString();
+    var hasPhoto=patient.personalPhoto;
+    if(hasPhoto==='true'){
+        patient.personalPhoto=config.patientPhotoFileName;
+    }
+    //console.log(moment(patient.birthDate).format('YYYY/MM/DD'));
 	Patient.save(patient, function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+            if(hasPhoto==='true')
+            {
+                var time = patient._createdTime;
+                var photoPath = moment(time).year()+'/'+
+                    (moment(time).month()+1)+'/'+
+                    moment(time).date()+'/'+
+                    patient.id+'/';
+                _.extend(req.body, {filePath : photoPath});
+                _.extend(req.body, patient);
+                next();
+                return;
+            }
 			res.jsonp(patient);
 		}
 	});

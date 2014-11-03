@@ -26,8 +26,8 @@ var PersonSchema = {
         enum: ['male', 'female']
     },
     birthDate: {
-        type: Date
-        //required: 'Please fill Patient birth date'
+        type: String,
+        required: 'Please fill Patient birth date'
     },
     tel: {
         type: String,
@@ -46,24 +46,22 @@ var PersonSchema = {
         type: String
     },
     _createdUser:{
-        type:String
+        type: String
     },
     _createdTime:{
-        type:Date,
-        default: moment()
+        type: String,
+        default: moment().toISOString()
     },
     _updatedUser: {
-        type:String
+        type: String
     },
     _updatedDate:{
-        type:Date
+        type: String
     }
 };
 
 personModel.schema = PersonSchema;
-/*patientModel.addComputedField(function (patient) {
- return patient.birthDate - Date.now;
- });*/
+
 
 exports.db = db;
 exports.Person = personModel;

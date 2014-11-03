@@ -20,7 +20,7 @@ module.exports = function(app) {
 
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)
-		.put(security.authorizedToDo('edit_patient'), patients.update)
+		.put(security.authorizedToDo('edit_patient'), multerTemp, patients.update, fileHandler.uploadFile)
 		.delete(security.authorizedToDo('delete_patient'), patients.delete);
 
     app.route('/patients/personal-photo/:patientId')

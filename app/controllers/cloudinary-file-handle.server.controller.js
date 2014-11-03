@@ -26,7 +26,7 @@ exports.uploadFile = function (req, res) {
                 res.jsonp(req.body);
             }
         },
-        { public_id: filePath + req.files.file.originalname });
+        { public_id: filePath + config.patientPhotoFileName });
 
 };
 

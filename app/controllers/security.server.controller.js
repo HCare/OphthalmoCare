@@ -91,13 +91,13 @@ exports.authorizedToDo = function(actions) {
                         actions=[];
                         actions.push[req.params.actionId];
                     }
-                    console.log(manageUser._role._actions);
-                    console.log(actions);
-                    console.log(_.intersection(manageUser._role._actions, actions));
+                    //console.log(manageUser._role._actions);
+                    //console.log(actions);
+                    //console.log(_.intersection(manageUser._role._actions, actions));
                     if (_.intersection(manageUser._role._actions, actions).length>0) {
                         return next();
                     } else {
-                        console.log('not authorized to : '+actions.join(' or '));
+                        //console.log('not authorized to : '+actions.join(' or '));
                         return res.status(403).send({
                             message: 'User is not authorized'
                         });

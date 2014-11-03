@@ -13,7 +13,7 @@ var	config = require('../../config/config'),
 
 
 var saveFile=function(file, filePath, callback){
-    fs.rename(file.path, filesRoot + filePath + file.originalname , function(err) {
+    fs.rename(file.path, filesRoot + filePath + config.patientPhotoFileName , function(err) {
         if(err){
             callback(err);
         }

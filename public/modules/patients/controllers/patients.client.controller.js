@@ -12,6 +12,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             {_id: 'female', name: 'Female'}
         ];
         $scope.photo = null;
+        $scope.age=null;
         //$scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
 
         //region Date functions
@@ -40,12 +41,15 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.format = 'yyyy/MM/dd';
 
-        $scope.ageChanged = function (age) {
-            $scope.patient.birthDate = new Moment().subtract(age, 'years').format('YYYY/MM/DD');
+        $scope.ageChanged = function (newAge) {
+            $scope.patient.birthDate = new Moment().subtract(newAge, 'years').format('YYYY/MM/DD');
+            console.log($scope.patient.birthDate);
         };
 
         $scope.birthDateChanged = function (birthDate) {
-            $scope.patient.age = new Moment().diff(new Moment(birthDate), 'years');
+            $scope.patient.birthDate=new Moment(birthDate, 'YYYY/MM/DD').format('YYYY/MM/DD');
+            $scope.age = new Moment().diff(new Moment(birthDate, 'YYYY/MM/DD'), 'years');
+            console.log($scope.patient.birthDate);
         };
 
 
@@ -119,7 +123,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if($scope.photo){
-                lodash.extend(patient,{personalPhoto:'personal-photo'});
+                lodash.extend(patient,{personalPhoto:true});
             }
             var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
             $upload.upload({
@@ -128,8 +132,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
                 data: patient,
-                file: blob, // or list of files ($files) for html5 only
-                fileName: 'personal-photo' // to modify the name of the file(s)
+                file: blob // or list of files ($files) for html5 only
+                //fileName: 'personal-photo' // to modify the name of the file(s)
                 // customize file formData name ('Content-Disposition'), server side file variable name.
                 //fileFormDataName: myFile, //or a list of names for multiple files (html5). Default is 'file'
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
@@ -149,19 +153,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 }
             ).error(function (err) {
                     Logger.error(err, true);
+                    //$scope.error = errorResponse.data.message;
                 }
             );
-
-            // Redirect after save
-            /*patient.$save(function (response) {
-
-
-             }, function (errorResponse) {
-             ///log error message
-             Logger.error(errorResponse.data.message, true);
-
-             //$scope.error = errorResponse.data.message;
-             });*/
         };
 
         // Remove existing Patient
@@ -194,8 +188,41 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Update existing Patient
         $scope.update = function () {
-            var patient = $scope.patient;
-
+            var patient = angular.fromJson(angular.toJson($scope.patient));
+            if($scope.photo){
+                lodash.extend(patient,{personalPhoto:true});
+            }
+            var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
+            $upload.upload({
+                url: '/patients/'+patient.id, //upload.php script, node.js route, or servlet url
+                method: 'PUT',
+                headers: {'Content-Type': 'multipart/form-data'},
+                //withCredentials: true,
+                data: patient,
+                file: blob, // or list of files ($files) for html5 only
+                //fileName: 'personal-photo' // to modify the name of the file(s)
+                // customize file formData name ('Content-Disposition'), server side file variable name.
+                //fileFormDataName: myFile, //or a list of names for multiple files (html5). Default is 'file'
+                // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
+                //formDataAppender: function(formData, key, val){}
+            }).success(function (response, status) {
+                    $location.path('patients/' + response.id);
+                    if (response.warn) {
+                        Logger.warn(response.error.message, true);
+                    }
+                    else {
+                        ///log success message
+                        Logger.success('Patient updated successfully', true);
+                    }
+                    // Clear form fields
+                    $scope.initOne();
+                }
+            ).error(function (err) {
+                    Logger.error(err, true);
+                    //$scope.error = errorResponse.data.message;
+                }
+            );
+/*
             patient.$update(function () {
                 $location.path('patients/' + patient.id);
                 ///log success message
@@ -206,7 +233,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 Logger.error(errorResponse.data.message, true);
 
                 //$scope.error = errorResponse.data.message;
-            });
+            });*/
         };
 
         // Find a list of Patients
@@ -216,9 +243,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Find existing Patient
         $scope.findOne = function () {
-            $scope.patient = Patients.get({
+            var patient = Patients.get({
                 patientId: $stateParams.patientId
             }, function(){
+                $scope.patient=patient;
+                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if($scope.patient.personalPhoto){
                     var filePath = 'patients/personal-photo/'+$scope.patient.id;
                     $scope.patient.personalPhoto=filePath;
@@ -381,7 +410,6 @@ angular.module('patients').directive('widthCss', function () {
         });
     };
 });
-
 
 angular.module('patients').directive('heightCss', function () {
     return function (scope, element, attrs) {

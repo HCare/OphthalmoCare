@@ -10,6 +10,7 @@ module.exports = {
     cloudinaryCloud:'ophthalmocare',
     cloudinaryKey:'238558841776758',
     cloudinarySecret:'YklUomC6avzCLYAsnwQIYfp4Yco',
+    patientPhotoFileName:'personal-photo',
 	app: {
 		title: 'OphthalmoCare - Development Environment'
 	},
