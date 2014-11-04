@@ -35,7 +35,7 @@ exports.create = function(req, res, next) {
     patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
-        patient.personalPhoto=config.patientPhotoFileName;;
+        patient.personalPhoto=config.patientPhotoFileName;
     }
     Patient.save(patient, function(err, newPatient) {
 		if (err) {
@@ -70,7 +70,7 @@ exports.read = function(req, res) {
 /**
  * Update a Patient
  */
-exports.update = function(req, res) {
+exports.update = function(req, res, next) {
 	var patient = req.patient ;
     patient = _.extend(patient , req.body);
     patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();

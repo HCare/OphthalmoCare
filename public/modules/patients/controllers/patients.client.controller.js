@@ -249,8 +249,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 $scope.patient=patient;
                 $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if($scope.patient.personalPhoto){
-                    var filePath = 'patients/personal-photo/'+$scope.patient.id;
-                    $scope.patient.personalPhoto=filePath;
+                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient.id;
+                    //$scope.patient.personalPhoto=filePath;
                 }
             });
         };

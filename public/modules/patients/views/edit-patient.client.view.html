@@ -61,9 +61,9 @@
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <div class="circular" back-img="{{photo||patient.personalPhoto||'modules/core/img/userpic.png'}}">
+                    <div class="circular" back-img="{{photo||personalPhotoPath||'modules/core/img/userpic.png'}}">
                         <a href="" ng-click="openModal()">
-                        <img src="modules/core/img/userpic.png" data-ng-src="{{photo||patient.photo}}" alt="Patient Photo" />
+                        <img src="modules/core/img/userpic.png" data-ng-src="{{photo||personalPhotoPath}}" alt="Patient Photo" />
                         </a>
                     </div>
                 </div>
