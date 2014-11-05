@@ -52,3 +52,12 @@ Module.findOneAndUpdate({_id: 'patients'}, {name: 'Patients', order:2}, {upsert:
         return;
     }
 });
+
+
+///Examinations Module..
+Module.findOneAndUpdate({_id: 'examinations'}, {name: 'Examinations', order:3}, {upsert: true}, function (err) {
+    if (err) {
+        console.log('Error Creating "Examinations" Module: ' + JSON.stringify(err));
+        return;
+    }
+});

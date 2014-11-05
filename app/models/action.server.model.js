@@ -35,9 +35,9 @@ var ActionSchema = new Schema({
 var Action=mongoose.model('Action', ActionSchema);
 
 /**
- * Init Action data
+ * Init Actions data
  */
-//region Role Actions
+//region Roles Actions
 ///Create_Role Action..
 Action.findOneAndUpdate({_id:'create_role'}, {name: 'Create Role', order:1, _module:'roles'}, {upsert:true}, function(err){
     if(err){
@@ -80,9 +80,9 @@ Action.findOneAndUpdate({_id:'search_roles'}, {name: 'Search Roles', order:6, _m
         return;
     }
 });
-//endregion Role Actions
+//endregion Roles Actions
 
-//region User Actions
+//region Users Actions
 ///Create_User Action..
 Action.findOneAndUpdate({_id:'create_user'}, {name: 'Create User', order:1, _module:'users'}, {upsert:true}, function(err){
     if(err){
@@ -118,9 +118,9 @@ Action.findOneAndUpdate({_id:'view_user'}, {name: 'View User', order:5, _module:
         return;
     }
 });
-//endregion User Actions
+//endregion Users Actions
 
-//region Patient Actions
+//region Patients Actions
 ///Create_Patient Action..
 Action.findOneAndUpdate({_id:'create_patient'}, {name: 'Create Patient', order:1, _module:'patients'}, {upsert:true}, function(err){
     if(err){
@@ -156,4 +156,42 @@ Action.findOneAndUpdate({_id:'view_patient'}, {name: 'View Patient', order:5, _m
         return;
     }
 });
-//endregion Patient Actions
+//endregion Patients Actions
+
+//region Examinations Actions
+///Create_Examination Action..
+Action.findOneAndUpdate({_id:'create_examination'}, {name: 'Create Examination', order:1, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Create Examination" Action'+JSON.stringify(err));
+        return;
+    }
+});
+///Update_Examination Action..
+Action.findOneAndUpdate({_id:'edit_examination'}, {name: 'Edit Examination', order:2, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Edit Examination" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///Delete_Examination Action..
+Action.findOneAndUpdate({_id:'delete_examination'}, {name: 'Delete Examination', order:3, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Delete Examination" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///List_Examinations Action..
+Action.findOneAndUpdate({_id:'list_examinations'}, {name: 'List Examinations', order:4, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "List Examinations" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///View_Examination Action..
+Action.findOneAndUpdate({_id:'view_examination'}, {name: 'View Examination', order:5, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View Examination" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+//endregion Examinations Actions
