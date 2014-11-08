@@ -93,9 +93,15 @@
 
                     <div class="controls">
                         <p class="input-group">
-                            <input type="text" id="birthDate" placeholder="Birth Date" class="form-control" datepicker-popup="{{format}}" ng-change="birthDateChanged(patient.birthDate)"
+                            <input type="text" id="birthDate"
+                                   placeholder="Birth Date"
+                                   class="form-control"
+                                   datepicker-popup="{{format}}"
+                                   ng-change="birthDateChanged(patient.birthDate)"
                                    ng-model="patient.birthDate"
-                                   is-open="opened" min-date="minDate" max-date="maxDate"
+                                   is-open="opened"
+                                   min-date="minDate"
+                                   max-date="maxDate"
                                    datepicker-options="dateOptions"
                                    show-button-bar="false"
                                    close-text="Close"
@@ -110,8 +116,8 @@
                 <div class="form-group">
                     <label class="control-label" for="age">Age</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="patient.age" id="age" class="form-control"
-                               placeholder="Age" ng-change="ageChanged(patient.age)"/>
+                        <input type="text" data-ng-model="age" id="age" class="form-control"
+                               placeholder="Age" ng-change="ageChanged(age)"/>
                     </div>
                 </div>
                 <div class="form-group">
