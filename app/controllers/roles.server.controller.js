@@ -105,9 +105,9 @@ exports.search = function (req, res) {
 exports.list = function (req, res) {
     if (req.query && Object.keys(req.query).length > 0) {
 
+        var name;
         if (req.query.hasOwnProperty('name') && req.query.name && req.query.name.length > 0 && req.query.name != 'SysAdmin') {
-            req.query.name = {$regex: '.*' + req.query.name + '.*', $options: 'i'};
-            console.log('name1');
+            req.query.name = {$regex: '.*' + req.query.name + '.*', $options: 'i'};;
         }
         else if (req.query.name == 'SysAdmin') {
             console.log('name2');
@@ -115,8 +115,6 @@ exports.list = function (req, res) {
             return;
         }
         else {
-            //console.log('name3');
-            //delete req.query.name;
             req.query.name = {'$ne': 'SysAdmin'};
         }
 
@@ -155,7 +153,7 @@ exports.list = function (req, res) {
 
 
         console.log('find req.query :::: ' + JSON.stringify(req.query));
-        Role.find(req.query).sort('name').exec(function (err, roles) {
+        Role.find(req.query).where('name').ne('SysAdmin').sort('name').exec(function (err, roles) {
             if (err) {
 
                 return res.status(400).send({
@@ -163,8 +161,7 @@ exports.list = function (req, res) {
                 });
             } else {
 
-                //console.log('find::::::::::::::::');
-                //console.log(roles);
+
                 res.jsonp(roles);
             }
         });
