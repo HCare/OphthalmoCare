@@ -1,6 +1,51 @@
 <section data-ng-controller="RolesController">
     <div class="page-header">
         <h1>Search Roles</h1>
-        <select ng-model="myRoles" ng-options="role.name for role in actions"></select><br>
+        <!--<select ng-model="myRoles" ng-options="role.name for role in actions"></select><br>-->
     </div>
+    <div class="col-md-12">
+        <form class="form-horizontal" data-ng-submit="search()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="name">Name</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="modules">Modules</label>
+                    <div class="controls">
+                        <h-care-checkbtn-list id="modules" source="modules" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="false" selected-items="selected_modules" current-tapped-item="selected_module"></h-care-checkbtn-list>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="selected_module">
+                    <label class="control-label" for="actions">{{selected_module.name}} Actions</label>
+                    <div class="controls">
+                        <h-care-checkbtn-list id="actions" source="actions" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="true" selected-items="role_actions"  current-tapped-item="selected_action"></h-care-checkbtn-list>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Search" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>
+        <div class="list-group">
+            <a data-ng-repeat="role in roles" data-ng-href="#!/roles/{{role._id}}" class="list-group-item">
+
+                <h4 class="list-group-item-heading" data-ng-bind="role.name"></h4>
+                <small data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
+                    <em class="text-muted">
+                        <strong>{{module.name}}: </strong>
+                        {{_.map(_.where(_.findByValues(all_actions, '_id', role._actions), {_module:module._id}), 'name').join(', ')}}.
+                        <br/>
+                        <!--<span data-ng-bind="role.user.displayName"></span>-->
+                    </em>
+                </small>
+            </a>
+        </div>
+    </div>
+
 </section>

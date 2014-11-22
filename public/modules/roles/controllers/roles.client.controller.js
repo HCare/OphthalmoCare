@@ -92,9 +92,8 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
                 name: this.name,
                 _actions: this.role_actions
             });
-
             // Redirect after save
-            role.$save(function (response) {
+            role.$save(function (response){
                 $location.path('roles/' + response._id);
 
                 ///log success message
@@ -158,9 +157,28 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             });
         };
 
+        // Search existing Roles
+        $scope.search = function () {
+            if((!$scope.name || $scope.name == '' || $scope.name == undefined) && (!$scope.role_actions || $scope.role_actions.length == 0))
+            {
+                Logger.error("Please Enter Search Criteria", true);
+            }
+            else
+            {
+                var searchCriteria = {name:$scope.name,_actions:$scope.role_actions};
+                Roles.query(searchCriteria, function(_roles){
+                    $scope.roles =_roles;
+                });
+            }
+
+        };
+
         // Find a list of Roles
         $scope.find = function () {
-            $scope.roles = Roles.query();
+            Roles.query(function(_roles){
+                $scope.roles =_roles;
+            });
+
         };
 
         // Find existing Role

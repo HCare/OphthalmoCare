@@ -14,7 +14,7 @@ var RoleSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
-		required: 'Please fill in Role name',
+		required: 'Please Fill in Role Name',
         unique:'There is already a Role with that name',
 		trim: true
 	},
@@ -46,6 +46,6 @@ var RoleSchema = new Schema({
 
 RoleSchema.path('_actions').validate(function (value) {
     return value.length > 0;
-}, 'Please select actions');
+}, 'Please Select Actions');
 
 mongoose.model('Role', RoleSchema);
