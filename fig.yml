@@ -10,3 +10,7 @@ db:
   image: mongo
   ports: 
    - "27017:27017"
+graphDB:
+  image: tpires/neo4j
+  ports:
+  - "7474:7474"
