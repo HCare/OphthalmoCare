@@ -92,8 +92,6 @@ exports.delete = function(req, res) {
 exports.list = function(req, res) {
 
     if (req.query && Object.keys(req.query).length > 0) {
-        console.log('lllllist');
-        console.log(req.query);
         //password
         delete req.query.password; // didn't search by password
         //fullName
@@ -124,7 +122,7 @@ exports.list = function(req, res) {
         else {
             delete req.query._role; // didn't search by _role
         }
-        ManageUser.find(req.query).sort('fullName').populate('_role').exec(function (err, manageUsers) {
+        ManageUser.find(req.query).where('email').nin(['admin@ophthalmo.care', 'sysadmin@ophthalmo.care']).sort('fullName').populate('_role').exec(function (err, manageUsers) {
          if (err) {
              return res.status(400).send({
              message: errorHandler.getErrorMessage(err)
