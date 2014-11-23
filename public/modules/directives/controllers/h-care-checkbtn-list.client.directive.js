@@ -13,7 +13,6 @@ angular.module('directives')
                 selectedItems: '=',
                 selectedItemsIds: '@',
                 currentTappedItem: '='
-
             },
             template: '<div class="btn-group" data-toggle="buttons" id={{atts.id}}>' +
                 '<label class="btn btn-primary" ' +
@@ -26,12 +25,10 @@ angular.module('directives')
                 '</label>' +
                 '</div>',
             link: function (scope, el, atts) {
+
                 scope.$watch('selectedItems', function(value){
-                    //console.log("selectedItems : " + value);
                     scope.selectedItems = scope.selectedItems || [];
                     scope.selectedItemsIds =  [];
-
-
                     for(var i in scope.selectedItems)
                     {
                         if (!lodash.contains(scope.selectedItemsIds, scope.selectedItems[i][scope.itemValueField])) {
@@ -43,34 +40,46 @@ angular.module('directives')
                 scope.itemClicked = function (item) {
                     scope.selectedItemsIds = scope.selectedItemsIds || [];
                     scope.selectedItems = scope.selectedItems || [];
-                    if (atts.isActiveOnClick == "true"){
-                        if (atts.isMultiSelection == "true"){
-                            if (!lodash.contains(scope.selectedItemsIds, item[scope.itemValueField])) {
+                    if (atts.isActiveOnClick && atts.isActiveOnClick == "true"){
 
+                        if (atts.isMultiSelection && atts.isMultiSelection == "true"){
+                            if (!lodash.contains(scope.selectedItemsIds, item[scope.itemValueField])) {
                                 scope.selectedItemsIds.push(item[scope.itemValueField]);
                                 scope.selectedItems.push(item);
-                                /*var selectedItemss = scope.selectedItems;
-                                selectedItemss.push(item);
-                                scope.selectedItems = selectedItemss;*/
+                                scope.currentTappedItem = item;
                             }
                             else{
                                 var index = scope.selectedItemsIds.indexOf(item[scope.itemValueField]);
                                 scope.selectedItemsIds.splice(index, 1);
                                 scope.selectedItems.splice(index, 1);
+                                scope.currentTappedItem = null;
                             }
                         }
                         else {
-
-                            scope.selectedItemsIds = item[scope.itemValueField];
-                            scope.selectedItems = item;
-
+                            // contains only one item
+                            if (!lodash.contains(scope.selectedItemsIds, item[scope.itemValueField])) {
+                                scope.selectedItemsIds = [];
+                                scope.selectedItems = [];
+                                scope.selectedItemsIds.push(item[scope.itemValueField]);
+                                scope.selectedItems.push(item);
+                                scope.currentTappedItem = item;
+                            }
+                            else
+                            {
+                                var index = scope.selectedItemsIds.indexOf(item[scope.itemValueField]);
+                                scope.selectedItemsIds.splice(index, 1);
+                                scope.selectedItems.splice(index, 1);
+                                scope.selectedItemsIds = [];
+                                scope.selectedItems = [];
+                                scope.currentTappedItem = null;
+                            }
                         }
+
                     }
-                    scope.currentTappedItem = item;
-
+                    else{
+                        scope.currentTappedItem = item;
+                    }
                 };
-
-
             }
         }
     });

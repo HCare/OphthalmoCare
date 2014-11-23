@@ -118,6 +118,13 @@ Action.findOneAndUpdate({_id:'view_user'}, {name: 'View User', order:5, _module:
         return;
     }
 });
+///Search_Users Action..
+Action.findOneAndUpdate({_id:'search_users'}, {name: 'Search Users', order:6, _module:'users'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Search Users" Action: '+JSON.stringify(err));
+        return;
+    }
+});
 //endregion Users Actions
 
 //region Patients Actions

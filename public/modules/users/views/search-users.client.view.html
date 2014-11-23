@@ -1,42 +1,45 @@
-<section data-ng-controller="ManageUsersController" data-ng-init="findOne()">
+<section data-ng-controller="UsersController" data-ng-init="initOne()">
     <div class="page-header">
-        <h1>Edit User</h1>
+        <h1>New User</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate autocomplete="off">
+        <form class="form-horizontal" data-ng-submit="create()" novalidate autocomplete="off">
             <fieldset>
                 <div class="form-group">
                     <label class="control-label" for="name">Full Name</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="manageUser.fullName" id="name" class="form-control" placeholder="Full Name" required>
+                        <input type="text" data-ng-model="user.fullName" id="name" class="form-control" placeholder="Full Name" required>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="control-label" for="email">Email</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="manageUser.email" id="email" class="form-control" placeholder="Email" required>
+                        <input type="text" data-ng-model="user.email" id="email" class="form-control" placeholder="Email" required>
                     </div>
                 </div>
-                <!--<div class="form-group">
+
+                <div class="form-group">
+                    <label class="control-label" for="password">Password</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="user.password" id="password" class="form-control" placeholder="Password" required>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label" for="role">Role</label>
                     <div class="controls">
                         <div class="btn-group" data-toggle="buttons" id="role">
-                            <label class="btn btn-primary" ng-class="{active:role._id===(manageUser._role._id||manageUser._role)}" ng-repeat="role in roles">
+                            <label class="btn btn-primary" ng-class="{active:role._id===user._role}"
+                                   ng-repeat="role in roles">
                                 <input type="checkbox"
                                        value="{{role.name}}"
-                                       ng-checked="role._id===manageUser._role"
+                                       ng-checked="role._id===user._role"
                                        ng-click="toggleRoleSelection(role._id)">{{role.name}}
                             </label>
                         </div>
                     </div>
-                </div>-->
-                <div class="form-group">
-                    <label class="control-label" for="role">Role</label>
-                    <div class="controls">
-                        <h-care-checkbtn-list id="role" source="roles" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="selected_roles"  current-tapped-item="selected_role">
-                        </h-care-checkbtn-list>
-                    </div>
                 </div>
+
 
                 <div class="form-group">
                     <input type="submit" class="btn btn-default">
