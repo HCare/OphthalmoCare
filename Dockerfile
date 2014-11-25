@@ -1,29 +1,25 @@
-FROM dockerfile/nodejs
+FROM dockerfile/nodejs-bower-grunt
 
-MAINTAINER Matthias Luebken, matthias@catalyst-zero.com
-
-WORKDIR /GitHub/ophthalmocare
-
-# Install Mean.JS Prerequisites
-RUN npm install -g grunt-cli
-RUN npm install -g bower
+MAINTAINER yass, yassmokh@ophthalmo.care
 
 # Install Mean.JS packages
-ADD package.json /GitHub/ophthalmocare/package.json
-RUN npm install
+ONBUILD ADD package.json /GitHub/ophthalmocare/
+ONBUILD RUN npm install
 
 # Manually trigger bower. Why doesnt this work via npm install?
-ADD .bowerrc /GitHub/ophthalmocare/.bowerrc
-ADD bower.json /GitHub/ophthalmocare/bower.json
-RUN bower install --allow-root
+ONBUILD ADD .bowerrc /GitHub/ophthalmocare/
+ONBUILD ADD bower.json /GitHub/ophthalmocare/
+ONBUILD RUN bower install --allow-root
+ONBUILD ADD . /GitHub/ophthalmocare
+ONBUILD RUN grunt build
 
-# Make everything available for start
-ADD . /GitHub/ophthalmocare
+WORKDIR /GitHub/ophthalmocare
 
 # currently only works for development
 ENV NODE_ENV development
 
+CMD ["npm", "grunt", "start"]
+
 # Port 3000 for server
 # Port 35729 for livereload
 EXPOSE 3000 35729
-CMD ["grunt"]
