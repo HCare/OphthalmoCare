@@ -18,7 +18,7 @@ WORKDIR /GitHub/ophthalmocare
 # currently only works for development
 ENV NODE_ENV development
 
-CMD ["grunt"]
+CMD ["npm", "start", "grunt"]
 
 # Port 3000 for server
 # Port 35729 for livereload
