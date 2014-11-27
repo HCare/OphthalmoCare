@@ -10,7 +10,7 @@ RUN \
   apt-get install -y mongodb-org && \
   rm -rf /var/lib/apt/lists/*
   
-RUN mkdir /data
+#RUN mkdir /data
 RUN mkdir /data/db
 RUN sudo service mongod start  
 
