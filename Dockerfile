@@ -31,8 +31,8 @@ run wget -O - http://debian.neo4j.org/neotechnology.gpg.key | apt-key add - && \
     echo 'deb http://debian.neo4j.org/repo stable/' > /etc/apt/sources.list.d/neo4j.list && \
     apt-get update ; apt-get install neo4j -y
 
-add launch.sh /
-run chmod +x /launch.sh && \
+#add launch.sh /
+run chmod +x /data/launch.sh && \
     apt-get clean && \
     sed -i "s|#node_auto_indexing|node_auto_indexing|g" /var/lib/neo4j/conf/neo4j.properties && \
     sed -i "s|#node_keys_indexable|node_keys_indexable|g" /var/lib/neo4j/conf/neo4j.properties && \ 
