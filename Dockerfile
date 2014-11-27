@@ -52,7 +52,7 @@ ONBUILD RUN bower install --allow-root
 ONBUILD ADD . /GitHub/ophthalmocare
 ONBUILD RUN grunt build
 
-WORKDIR /GitHub/ophthalmocare
+WORKDIR /
 
 # currently only works for development
 ENV NODE_ENV development
