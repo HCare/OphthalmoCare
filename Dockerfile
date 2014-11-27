@@ -31,7 +31,7 @@ run wget -O - http://debian.neo4j.org/neotechnology.gpg.key | apt-key add - && \
     echo 'deb http://debian.neo4j.org/repo stable/' > /etc/apt/sources.list.d/neo4j.list && \
     apt-get update ; apt-get install neo4j -y
 
-#add launch.sh /
+mkdir /data/launch.sh
 run chmod +x /data/launch.sh && \
     apt-get clean && \
     sed -i "s|#node_auto_indexing|node_auto_indexing|g" /var/lib/neo4j/conf/neo4j.properties && \
@@ -39,7 +39,7 @@ run chmod +x /data/launch.sh && \
     echo "remote_shell_host=0.0.0.0" >> /var/lib/neo4j/conf/neo4j.properties
     
     
-cmd ["/bin/bash", "-c", "/launch.sh"]
+cmd ["/bin/bash", "-c", "/data/launch.sh"]
 
 # Install Mean.JS packages
 ONBUILD ADD package.json /GitHub/ophthalmocare/
