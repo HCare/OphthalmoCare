@@ -2,7 +2,7 @@ FROM dockerfile/nodejs-bower-grunt
 
 MAINTAINER yass, yassmokh@ophthalmo.care
 
-RUN git pull https://github.com/HCare/OphthalmoCare.git
+RUN sudo git pull https://github.com/HCare/OphthalmoCare.git
 RUN mv OpthalmoCare ophthalmocare
 RUN cd ophthalmocare
 
