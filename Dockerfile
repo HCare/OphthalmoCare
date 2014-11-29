@@ -2,7 +2,7 @@ FROM dockerfile/nodejs-bower-grunt
 
 MAINTAINER yass, yassmokh@ophthalmo.care
 
-cd vagrant/GitHub/ophthalmocare
+cd /home/vagrant/GitHub/ophthalmocare
 # Install Mean.JS packages
 #ONBUILD ADD package.json /home/vagrant/GitHub/OphthalmoCare/
 RUN npm install
@@ -10,7 +10,7 @@ RUN npm install
 # Manually trigger bower. Why doesnt this work via npm install?
 
 
-WORKDIR /vagrant/GitHub/ophthalmocare
+WORKDIR /home/vagrant/GitHub/ophthalmocare
 
 # currently only works for development
 ENV NODE_ENV development
