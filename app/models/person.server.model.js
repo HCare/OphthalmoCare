@@ -26,7 +26,7 @@ var PersonSchema = {
         enum: ['male', 'female']
     },
     birthDate: {
-        type: String,
+        type: Number,
         required: 'Please fill Patient birth date'
     },
     tel: {
@@ -45,18 +45,17 @@ var PersonSchema = {
     notes: {
         type: String
     },
-    _createdUser:{
+    _createUser:{
         type: String
     },
-    _createdTime:{
-        type: String,
-        default: moment().toISOString()
+    _createTime:{
+        type: Number
     },
-    _updatedUser: {
+    _updateUser: {
         type: String
     },
-    _updatedDate:{
-        type: String
+    _updateTime:{
+        type: Number
     }
 };
 

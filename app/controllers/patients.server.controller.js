@@ -31,8 +31,10 @@ exports.renderPhoto=function(req, res){
  */
 exports.create = function(req, res, next) {
 	var patient = req.body;
-	patient._createdUser = req.user._id;
-    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();
+	patient._createUser = req.user._id;
+    patient._createTime = moment().valueOf();
+    //console.log('birth date: '+patient.birthDate);
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
@@ -73,14 +75,15 @@ exports.read = function(req, res) {
 exports.update = function(req, res, next) {
 	var patient = req.patient ;
     patient = _.extend(patient , req.body);
-    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').toISOString();
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
     patient._updateUser = req.user._id;
-    patient._updatedTime = moment().toISOString();
+    patient._updateTime = moment().valueOf();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
     }
-    //console.log(moment(patient.birthDate).format('YYYY/MM/DD'));
+    console.log('birth date: '+patient.birthDate);
+    //console.log(patient.birthDate).format('YYYY/MM/DD'));
 	Patient.save(patient, function(err) {
 		if (err) {
 			return res.status(400).send({
@@ -145,7 +148,12 @@ exports.patientByID = function(req, res, next, id) {
 		if (! patient) {
             return next(new Error('Failed to load Patient ' + id));
         }
-		req.patient = patient ;
+        /*delete patient._createUser;
+        delete patient._createTime;
+        delete patient._updateUser;
+        delete patient._updateTime;*/
+        patient.birthDate=moment(patient.birthDate).format('YYYY/MM/DD');
+            req.patient = patient ;
 		next();
 	});
 };

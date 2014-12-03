@@ -43,13 +43,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.ageChanged = function (newAge) {
             $scope.patient.birthDate = new Moment().subtract(newAge, 'years').format('YYYY/MM/DD');
-            console.log($scope.patient.birthDate);
         };
 
         $scope.birthDateChanged = function (birthDate) {
-            $scope.patient.birthDate=new Moment(birthDate, 'YYYY/MM/DD').format('YYYY/MM/DD');
-            $scope.age = new Moment().diff(new Moment(birthDate, 'YYYY/MM/DD'), 'years');
-            console.log($scope.patient.birthDate);
+            $scope.age = new Moment().diff(new Moment(birthDate), 'years');
         };
 
 
@@ -246,8 +243,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             var patient = Patients.get({
                 patientId: $stateParams.patientId
             }, function(){
+                console.log(patient);
                 $scope.patient=patient;
-                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate), 'years');
                 if($scope.patient.personalPhoto){
                     $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient.id;
                     //$scope.patient.personalPhoto=filePath;
