@@ -22,7 +22,7 @@ exports.renderPhoto=function(req, res){
     var photoPath =moment(time).year()+'/'+
         (moment(time).month()+1)+'/'+
         moment(time).date()+'/'+
-        patient.id+'/'+patient.personalPhoto;
+        patient._id+'/'+patient.personalPhoto;
         fileHandler.responseFile(photoPath, res);
 };
 
@@ -51,7 +51,7 @@ exports.create = function(req, res, next) {
                 var photoPath = moment(time).year()+'/'+
                           (moment(time).month()+1)+'/'+
                            moment(time).date()+'/'+
-                            newPatient.id+'/';
+                            newPatient._id+'/';
                 _.extend(req.body, {filePath : photoPath});
                 _.extend(req.body, newPatient);
                 next();
@@ -96,7 +96,7 @@ exports.update = function(req, res, next) {
                 var photoPath = moment(time).year()+'/'+
                     (moment(time).month()+1)+'/'+
                     moment(time).date()+'/'+
-                    patient.id+'/';
+                    patient._id+'/';
                 _.extend(req.body, {filePath : photoPath});
                 _.extend(req.body, patient);
                 next();
@@ -141,17 +141,21 @@ exports.list = function(req, res) { Patient.findAll(function(err, patients) {
  * Patient middleware
  */
 exports.patientByID = function(req, res, next, id) {
-    Patient.read(id, function(err, patient) {
+    Patient.where({_id:id}, function(err, patients) {
 		if (err) {
             return next(err);
         }
-		if (! patient) {
+		if (! patients) {
+            return next(new Error('Failed to load Patient ' + id));
+        }
+        if(patients.length!=1){
             return next(new Error('Failed to load Patient ' + id));
         }
         /*delete patient._createUser;
         delete patient._createTime;
         delete patient._updateUser;
         delete patient._updateTime;*/
+        var patient=patients[0];
         patient.birthDate=moment(patient.birthDate).format('YYYY/MM/DD');
             req.patient = patient ;
 		next();

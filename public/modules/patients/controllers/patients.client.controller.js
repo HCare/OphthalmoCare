@@ -136,7 +136,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response.id);
+                    $location.path('patients/' + response._id);
 
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
@@ -191,7 +191,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
             var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
             $upload.upload({
-                url: '/patients/'+patient.id, //upload.php script, node.js route, or servlet url
+                url: '/patients/'+patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
@@ -203,7 +203,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response.id);
+                    $location.path('patients/' + response._id);
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
                     }
@@ -247,7 +247,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 $scope.patient=patient;
                 $scope.age=new Moment().diff(new Moment($scope.patient.birthDate), 'years');
                 if($scope.patient.personalPhoto){
-                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient.id;
+                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
                     //$scope.patient.personalPhoto=filePath;
                 }
             });

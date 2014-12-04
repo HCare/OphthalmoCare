@@ -7,6 +7,8 @@ var config = require('../../config/config'),
     db = require('seraph')(config.graphDB),
     model = require('seraph-model'),
     personModel = model(db, 'Person'),
+    mongoose = require('mongoose'),
+    ObjectId = mongoose.Types.ObjectId,
     moment=require('moment');
 
 
@@ -14,6 +16,10 @@ var config = require('../../config/config'),
  * Person Schema
  */
 var PersonSchema = {
+    _id:{
+        type: String,
+        default:new ObjectId()
+    },
     fullName: {
         type: String,
         required: 'Please fill Patient name',
