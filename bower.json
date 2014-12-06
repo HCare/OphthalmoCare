@@ -22,6 +22,7 @@
     "angular-deckgrid": "~0.4.4",
     "ngImgCrop": "~0.2.0",
     "angular-moment": "~0.8.2",
-    "ng-file-upload": "~1.6.12"
+    "ng-file-upload": "~1.6.12",
+    "ng-tags-input": "~2.1.1"
   }
 }

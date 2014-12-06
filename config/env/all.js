@@ -17,7 +17,9 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
                 'public/lib/angular-loading-bar/build/loading-bar.css',
                 'public/lib/angularjs-toaster/toaster.css',
-                'public/lib/ngImgCrop/compile/minified/ng-img-crop.css'
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.css',
+                'public/lib/ng-tags-input/ng-tags-input.css',
+                'public/lib/ng-tags-input/ng-tags-input.bootstrap.css'
 			],
 			js: [
                 'public/lib/ng-file-upload/angular-file-upload-shim.min.js',
@@ -38,7 +40,8 @@ module.exports = {
                 'public/lib/angular-moment/angular-moment.js',
                 'public/lib/webcam-directive/app/scripts/webcam.js',
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
-                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
+                'public/lib/ng-tags-input/ng-tags-input.js'
 			]
 		},
 		css: [

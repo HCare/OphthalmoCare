@@ -1,9 +1,27 @@
 'use strict';
 
 // Examinations controller
-angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations',
-	function($scope, $stateParams, $location, Authentication, Examinations ) {
+angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q',
+	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q ) {
 		$scope.authentication = Authentication;
+        $scope.availableColors = [{text:'Red'},{text:'Green'},{text:'Blue'},{text:'Yellow'},{text:'Magenta'},{text:'Maroon'},{text:'Umbra'},{text:'Turquoise'}];
+
+        $scope.colors = null;
+        //$scope.multipleDemo.colors = null;//['Blue','Red'];
+        $scope.loadColors=function(query){
+            var deferred = $q.defer();
+           // console.log(query);
+            /*var result=lodash.filter($scope.availableColors, function(_color){
+                var regEx=new RegExp(query, "i");
+                var found=regEx.test(_color.text);
+                return  found;
+            });            */
+            deferred.resolve($scope.availableColors);
+            return deferred.promise;
+            /*lodash.filter(availableColors, function(_color){
+                return _color==query;
+            });*/
+        };
 
 		// Create new Examination
 		$scope.create = function() {

@@ -11,7 +11,9 @@
                     </div>
                     <label class="control-label col-md-2" for="name">Name</label>
                     <div class="controls col-md-5">
-                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                        <tags-input ng-model="colors" placeHolder="Color" replaceSpacesWithDashes="false" minLength="5" >
+                            <auto-complete source="loadColors($query)" minLength="5"></auto-complete>
+                        </tags-input>
                     </div>
                 </div>
                 <div class="form-group">
