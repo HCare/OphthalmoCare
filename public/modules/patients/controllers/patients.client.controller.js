@@ -43,13 +43,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.ageChanged = function (newAge) {
             $scope.patient.birthDate = new Moment().subtract(newAge, 'years').format('YYYY/MM/DD');
-            console.log($scope.patient.birthDate);
         };
 
         $scope.birthDateChanged = function (birthDate) {
-            $scope.patient.birthDate=new Moment(birthDate, 'YYYY/MM/DD').format('YYYY/MM/DD');
-            $scope.age = new Moment().diff(new Moment(birthDate, 'YYYY/MM/DD'), 'years');
-            console.log($scope.patient.birthDate);
+            $scope.age = new Moment().diff(new Moment(birthDate), 'years');
         };
 
 
@@ -139,7 +136,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response.id);
+                    $location.path('patients/' + response._id);
 
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
@@ -194,7 +191,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
             var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
             $upload.upload({
-                url: '/patients/'+patient.id, //upload.php script, node.js route, or servlet url
+                url: '/patients/'+patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
@@ -206,7 +203,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response.id);
+                    $location.path('patients/' + response._id);
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
                     }
@@ -246,10 +243,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             var patient = Patients.get({
                 patientId: $stateParams.patientId
             }, function(){
+                console.log(patient);
                 $scope.patient=patient;
-                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate), 'years');
                 if($scope.patient.personalPhoto){
-                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient.id;
+                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
                     //$scope.patient.personalPhoto=filePath;
                 }
             });

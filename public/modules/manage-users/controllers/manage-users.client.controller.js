@@ -10,6 +10,8 @@ angular.module('manage-users')
         $scope._ = lodash;
         $scope.roles = Roles.query();
 
+        $scope.selected_role = $scope.selected_role || null;
+        $scope.selected_roles = $scope.selected_roles || [];
 
         //endregion Init variables
 
@@ -33,9 +35,7 @@ angular.module('manage-users')
 
         //select Role
         $scope.toggleRoleSelection = function (role_id) {
-            //console.log(role_id);
             $scope.manageUser._role = role_id;
-            //console.log($scope.manageUser._role);
         };
 
         // Init New Managed User
@@ -116,12 +116,41 @@ angular.module('manage-users')
 
         // Find existing Manage user
         $scope.findOne = function () {
-            $scope.manageUser = ManageUsers.get({
+             ManageUsers.get({
                 manageUserId: $stateParams.manageUserId
-            });
+            }, function(_user){
+                 $scope.manageUser=_user;
+                 if(_user._role){
+                 $scope.selected_roles.push(_user._role);
+                 }
+             });
         };
 
+        // Search existing Users
+        $scope.search = function () {
+            if((!$scope.manageUser.fullName || $scope.manageUser.fullName == '' || $scope.manageUser.fullName == undefined) && (!$scope.manageUser.displayName || $scope.manageUser.displayName == '' || $scope.manageUser.displayName == undefined) && (!$scope.manageUser.email || $scope.manageUser.email == '' || $scope.manageUser.email == undefined) && (!$scope.manageUser._role || $scope.manageUser._role == '' || $scope.manageUser._role == undefined))
+            {
+                Logger.error("Please Enter Search Criteria", true);
+                $scope.manageUsers = [];
+            }
+            else
+            {
+                ManageUsers.query($scope.manageUser, function(_users){
+                    $scope.manageUsers =_users;
+                });
+            }
+        };
 
         //endregion CRUD functions
+
+        $scope.$watch('selected_role', function (value) {
+            if (value) {
+                $scope.manageUser._role = value._id;
+            }
+            else{
+                $scope.manageUser._role = value; // null
+            }
+        },true);
+
     }
     ]);

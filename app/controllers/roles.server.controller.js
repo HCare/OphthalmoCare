@@ -104,25 +104,21 @@ exports.search = function (req, res) {
  */
 exports.list = function (req, res) {
     if (req.query && Object.keys(req.query).length > 0) {
-
-        var name;
+        //name
         if (req.query.hasOwnProperty('name') && req.query.name && req.query.name.length > 0 && req.query.name != 'SysAdmin') {
             req.query.name = {$regex: '.*' + req.query.name + '.*', $options: 'i'};;
         }
         else if (req.query.name == 'SysAdmin') {
-            console.log('name2');
             res.jsonp([]);
             return;
         }
         else {
-            req.query.name = {'$ne': 'SysAdmin'};
+            req.query.name = {'$ne': 'SysAdmin'}; // didn't search by name
         }
-
+        //_actions
         if (req.query.hasOwnProperty('_actions') && req.query._actions && req.query._actions.length > 0) {
-            console.log('_actions1');
             var actionsArray = [];
             var actions = [];
-
             if(Array.isArray(req.query._actions))  // Array
             {
                 for(var i=0; i<req.query._actions.length; i++)
@@ -135,24 +131,19 @@ exports.list = function (req, res) {
                 }
             }
             else{
-                var v = JSON.parse(req.query._actions, function (name, value) {
-                    console.log('reviver');
+                //reviver
+                JSON.parse(req.query._actions, function (name, value) {
                     if (name == '_id') {
                         actionsArray.push(value);
                     }
                 });
             }
-
-            console.log('actionsArray  : '+actionsArray);
             req.query._actions = {$all: actionsArray};
         }
         else {
-            console.log('_actions2');
+            // didn't search by _actions
             delete req.query._actions;
         }
-
-
-        console.log('find req.query :::: ' + JSON.stringify(req.query));
         Role.find(req.query).where('name').ne('SysAdmin').sort('name').exec(function (err, roles) {
             if (err) {
 
@@ -160,8 +151,6 @@ exports.list = function (req, res) {
                     message: errorHandler.getErrorMessage(err)
                 });
             } else {
-
-
                 res.jsonp(roles);
             }
         });

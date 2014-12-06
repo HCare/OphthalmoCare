@@ -16,7 +16,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             $scope.all_actions = _all_actions;
         });
         $scope.selected_module = $scope.selected_module || null;
-        $scope.selected_action = $scope.selected_module || null;
+        $scope.selected_action = $scope.selected_action || null;
         $scope.actions = $scope.actions || [];
         /*$scope.role_actions = $scope.role_actions || [];*/
         $scope.role_actions = [];

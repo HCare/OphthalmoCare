@@ -157,7 +157,7 @@ var Role=mongoose.model('Role');
 ///SysAdmin Role..
 Role.findOneAndUpdate({name:'SysAdmin'},
                       {name: 'SysAdmin', _actions:['create_role', 'edit_role', 'delete_role', 'list_roles', 'view_role', 'search_roles',
-                                                   'create_user', 'edit_user', 'delete_user', 'list_users', 'view_user',
+                                                   'create_user', 'edit_user', 'delete_user', 'list_users', 'view_user','search_users',
                                                    'create_patient', 'edit_patient', 'delete_patient', 'list_patients', 'view_patient',
                                                    'create_examination', 'edit_examination', 'delete_examination', 'list_examinations', 'view_examination']},
                        {upsert:true}, function(err, role){
