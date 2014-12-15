@@ -18,7 +18,7 @@ var config = require('../../config/config'),
 var PersonSchema = {
     _id:{
         type: String,
-        default:new ObjectId()
+        default:'xxxxxxxxxxxxxxxxxxxxxxxx'
     },
     fullName: {
         type: String,
@@ -66,7 +66,11 @@ var PersonSchema = {
 };
 
 personModel.schema = PersonSchema;
-
+personModel.on('beforeSave', function(obj) {
+    console.log(obj);
+    obj._id=new ObjectId();
+})
+personModel.setUniqueKey('_id');
 
 exports.db = db;
 exports.Person = personModel;
