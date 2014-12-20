@@ -3,7 +3,7 @@
         <h1>New Examination</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+        <!--<form class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
                 <div class="form-group">
                     <div class="controls col-md-5">
@@ -11,8 +11,38 @@
                     </div>
                     <label class="control-label col-md-2" for="name">Name</label>
                     <div class="controls col-md-5">
-                        <tags-input ng-model="colors" placeHolder="Color" replaceSpacesWithDashes="false" minLength="5" >
-                            <auto-complete source="loadColors($query)" minLength="5"></auto-complete>
+                        <ui-select multiple tagging tagging-label="(custom)" ng-model="examination.colors">
+                            <ui-select-match placeholder="Select colors...">{{$item}}</ui-select-match>
+                            <ui-select-choices repeat="color in availableColors | filter:$select.search">
+                                {{color}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
+                </div>
+                <div data-ng-show="error" class="text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+        </form>-->
+        <form name="examinationForm"
+              sf-schema="schema"
+              sf-form="form"
+              sf-model="examination"
+              data-ng-submit="onSubmit(examinationForm)">
+        </form>
+        <!--<form class="form-horizontal" data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <div class="controls col-md-5">
+                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <label class="control-label col-md-2" for="name">Name</label>
+                    <div class="controls col-md-5">
+                        <tags-input ng-model="colors" placeHolder="Color" replaceSpacesWithDashes="false" minLength="1" >
+                            <auto-complete source="loadColors($query)" minLength="1"></auto-complete>
                         </tags-input>
                     </div>
                 </div>
@@ -23,6 +53,6 @@
 					<strong data-ng-bind="error"></strong>
 				</div>
             </fieldset>
-        </form>
+        </form>-->
     </div>
 </section>

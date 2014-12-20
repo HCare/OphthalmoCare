@@ -18,8 +18,7 @@ module.exports = {
                 'public/lib/angular-loading-bar/build/loading-bar.css',
                 'public/lib/angularjs-toaster/toaster.css',
                 'public/lib/ngImgCrop/compile/minified/ng-img-crop.css',
-                'public/lib/ng-tags-input/ng-tags-input.css',
-                'public/lib/ng-tags-input/ng-tags-input.bootstrap.css'
+                'public/lib/angular-ui-select/dist/select.css'
 			],
 			js: [
                 'public/lib/ng-file-upload/angular-file-upload-shim.min.js',
@@ -29,7 +28,12 @@ module.exports = {
 				'public/lib/angular-cookies/angular-cookies.js', 
 				'public/lib/angular-animate/angular-animate.js', 
 				'public/lib/angular-touch/angular-touch.js', 
-				'public/lib/angular-sanitize/angular-sanitize.js', 
+				'public/lib/angular-sanitize/angular-sanitize.js',
+                'public/lib/tv4/tv4.js',
+                'public/lib/objectpath/lib/ObjectPath.js',
+                'public/lib/angular-schema-form/dist/schema-form.js',
+                'public/lib/angular-schema-form/dist/bootstrap-decorator.min.js',
+                'public/lib/angular-schema-form-tagsinput/src/bootstrap-tagsinput.js',
 				'public/lib/angular-ui-router/release/angular-ui-router.js',
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -41,7 +45,7 @@ module.exports = {
                 'public/lib/webcam-directive/app/scripts/webcam.js',
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
                 'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
-                'public/lib/ng-tags-input/ng-tags-input.js'
+                'public/lib/angular-ui-select/dist/select.js'
 			]
 		},
 		css: [
