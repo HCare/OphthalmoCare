@@ -15,6 +15,11 @@ angular.module('patients').config(['$stateProvider',
                 templateUrl: 'modules/patients/views/create-patient.client.view.html',
                 action: 'create_patient'
             }).
+            state('searchPatients', {
+                url: '/patients/search',
+                templateUrl: 'modules/patients/views/search-patients.client.view.html',
+                action: 'search_patients'
+            }).
             state('viewPatient', {
                 url: '/patients/:patientId',
                 templateUrl: 'modules/patients/views/view-patient.client.view.html',

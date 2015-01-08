@@ -13,6 +13,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         ];
         $scope.photo = null;
         $scope.age=null;
+        $scope.patient_genders = [];
+        //$scope.selected_gender = null;
         //$scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
 
         //region Date functions
@@ -47,9 +49,14 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         $scope.birthDateChanged = function (birthDate) {
-            $scope.patient.birthDate=new Moment(birthDate, 'YYYY/MM/DD').format('YYYY/MM/DD');
-            $scope.age = new Moment().diff(new Moment(birthDate, 'YYYY/MM/DD'), 'years');
-            console.log($scope.patient.birthDate);
+            if(birthDate) {
+                $scope.patient.birthDate = new Moment(birthDate).format('YYYY/MM/DD');
+                $scope.age = new Moment().diff(new Moment(birthDate), 'years');
+            }
+            else
+            {
+                $scope.age = '';
+            }
         };
 
 
@@ -102,9 +109,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         //select Gender
         $scope.toggleGenderSelection = function (gender_id) {
-            //console.log(role_id);
             $scope.patient.gender = gender_id;
-            //console.log($scope.manageUser._role);
         };
 
 
@@ -240,6 +245,37 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.find = function () {
             $scope.patients = Patients.query();
         };
+
+        // Search a list of Patients
+        $scope.search = function () {
+            if((!$scope.patient.fullName || $scope.patient.fullName == '' || $scope.patient.fullName == undefined) && (!$scope.patient.gender || $scope.patient.gender == '' || $scope.patient.gender == undefined) && (!$scope.patient.birthDate || $scope.patient.birthDate == '' || $scope.patient.birthDate == undefined) && (!$scope.patient.tel || $scope.patient.tel == '' || $scope.patient.tel == undefined) && (!$scope.patient.address || $scope.patient.address == '' || $scope.patient.address == undefined) && (!$scope.patient.email || $scope.patient.email == '' || $scope.patient.email == undefined) && (!$scope.patient.notes || $scope.patient.notes == '' || $scope.patient.notes == undefined))
+            {
+                Logger.error("Please Enter Search Criteria", true);
+                $scope.patients = [];
+            }
+            else
+            {
+                //console.log('$scope.patient ::: '+ JSON.stringify($scope.patient));
+                if($scope.patient.gender && $scope.patient.gender.hasOwnProperty('_id')){
+                    $scope.patient.gender = $scope.patient.gender._id;
+                }
+                console.log('$scope.patient ::: '+ JSON.stringify($scope.patient));
+                Patients.query($scope.patient, function(_patients){
+                    $scope.patients = _patients;
+                });
+            }
+        };
+
+
+
+        /*$scope.$watch('selected_gender', function (value) {
+            if (value) {
+                $scope.patient.gender = value._id;
+            }
+            else{
+                $scope.patient.gender = value; // null
+            }
+        },true);*/
 
         // Find existing Patient
         $scope.findOne = function () {
