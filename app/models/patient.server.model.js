@@ -6,19 +6,19 @@
 var config = require('../../config/config'),
     db = require('seraph')(config.graphDB),
     model = require('seraph-model'),
-    personModel = model(db, 'Person'),
+    patientModel = model(db, 'Patient'),
     mongoose = require('mongoose'),
     ObjectId = mongoose.Types.ObjectId,
-    moment=require('moment');
+    moment = require('moment');
 
 
 /**
- * Person Schema
+ * Patient Schema
  */
-var PersonSchema = {
-    _id:{
+var PatientSchema = {
+    _id: {
         type: String,
-        default:'xxxxxxxxxxxxxxxxxxxxxxxx'
+        default: 'xxxxxxxxxxxxxxxxxxxxxxxx'
     },
     fullName: {
         type: String,
@@ -51,33 +51,37 @@ var PersonSchema = {
     notes: {
         type: String
     },
-    _createUser:{
+    _createUser: {
         type: String
     },
-    _createTime:{
+    _createTime: {
         type: Number
     },
     _updateUser: {
         type: String
     },
-    _updateTime:{
+    _updateTime: {
         type: Number
     }
 };
 
-personModel.schema = PersonSchema;
-personModel.setUniqueKey('_id');
-personModel.on('beforeSave', function(obj) {
-    if(obj._id==='xxxxxxxxxxxxxxxxxxxxxxxx')
-    {
-        obj._id=new ObjectId();
+patientModel.schema = PatientSchema;
+patientModel.setUniqueKey('_id');
+patientModel.on('beforeSave', function (obj) {
+    if (obj._id === 'xxxxxxxxxxxxxxxxxxxxxxxx') {
+        obj._id = new ObjectId();
         obj._createTime = moment().valueOf();
     }
-    else
-    {
+    else {
         obj._updateTime = moment().valueOf();
+    }
+});
+patientModel.on('afterSave', function (obj) {
+    if (!obj._updateTime) {
+        db.label(obj, ['Person'], function (err) {
+        });
     }
 });
 
 exports.db = db;
-exports.Person = personModel;
+exports.Patient = patientModel;

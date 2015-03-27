@@ -6,10 +6,10 @@
 var config = require('../../config/config'),
     moment=require('moment'),
 	errorHandler = require('./errors'),
-    model = require('../../app/models/person'),
+    model = require('../../app/models/patient'),
     fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
     db=model.db,
-    Patient=model.Person,
+    Patient=model.Patient,
 	_ = require('lodash'),
     moment=require('moment');
 
@@ -32,7 +32,7 @@ exports.renderPhoto=function(req, res){
 exports.create = function(req, res, next) {
 	var patient = req.body;
 	patient._createUser = req.user._id;
-    patient._createTime = moment().valueOf();
+    //patient._createTime = moment().valueOf();
     //console.log('birth date: '+patient.birthDate);
     patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
     var hasPhoto=patient.personalPhoto;
@@ -77,12 +77,12 @@ exports.update = function(req, res, next) {
     patient = _.extend(patient , req.body);
     patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
     patient._updateUser = req.user._id;
-    patient._updateTime = moment().valueOf();
+    //patient._updateTime = moment().valueOf();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
     }
-    console.log('birth date: '+patient.birthDate);
+    //console.log('birth date: '+patient.birthDate);
     //console.log(patient.birthDate).format('YYYY/MM/DD'));
 	Patient.save(patient, function(err) {
 		if (err) {
