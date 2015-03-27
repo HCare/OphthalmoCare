@@ -66,7 +66,7 @@ var PatientSchema = {
 };
 
 patientModel.schema = PatientSchema;
-patientModel.setUniqueKey('_id');
+//patientModel.setUniqueKey('_id');
 patientModel.on('beforeSave', function (obj) {
     if (obj._id === 'xxxxxxxxxxxxxxxxxxxxxxxx') {
         obj._id = new ObjectId();

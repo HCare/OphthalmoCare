@@ -66,7 +66,7 @@ var PersonSchema = {
 };
 
 personModel.schema = PersonSchema;
-personModel.setUniqueKey('_id');
+//personModel.setUniqueKey('_id');
 personModel.on('beforeSave', function(obj) {
     if(obj._id==='xxxxxxxxxxxxxxxxxxxxxxxx')
     {
