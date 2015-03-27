@@ -13,6 +13,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         ];
         $scope.photo = null;
         $scope.age=null;
+        $scope.patient_genders = [];
+        //$scope.selected_gender = null;
         //$scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
 
         //region Date functions
@@ -136,7 +138,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response._id);
+                    $location.path('patients/' + response.id);
 
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
@@ -191,7 +193,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
             var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
             $upload.upload({
-                url: '/patients/'+patient._id, //upload.php script, node.js route, or servlet url
+                url: '/patients/'+patient.id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
@@ -203,7 +205,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
                 //formDataAppender: function(formData, key, val){}
             }).success(function (response, status) {
-                    $location.path('patients/' + response._id);
+                    $location.path('patients/' + response.id);
                     if (response.warn) {
                         Logger.warn(response.error.message, true);
                     }
@@ -243,11 +245,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             var patient = Patients.get({
                 patientId: $stateParams.patientId
             }, function(){
-                console.log(patient);
                 $scope.patient=patient;
-                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate), 'years');
+                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if($scope.patient.personalPhoto){
-                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
+                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient.id;
                     //$scope.patient.personalPhoto=filePath;
                 }
             });
