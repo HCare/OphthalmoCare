@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports=function(labels){
-    console.log('here in the model');
     /**
      * Module dependencies.
      */
@@ -85,6 +84,7 @@ module.exports=function(labels){
             });
         }
     });
+    personModel.delete=db.delete;
     return  personModel;
 }
 //exports.db = db;

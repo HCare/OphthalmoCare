@@ -116,7 +116,7 @@ exports.update = function(req, res, next) {
 exports.delete = function(req, res) {
 	var patient = req.patient ;
     var patientModel=new Patient(['Patient']);
-    patientModel.db.delete(patient, function(err) {
+    patientModel.delete(patient, function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
