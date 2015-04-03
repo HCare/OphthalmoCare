@@ -6,10 +6,10 @@
 var config = require('../../config/config'),
     moment=require('moment'),
 	errorHandler = require('./errors'),
-    model = require('../../app/models/patient'),
+    Patient = require('../../app/models/person'),
     fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
-    db=model.db,
-    Patient=model.Patient,
+    //db=model.db,
+    //Patient=model.Patient,
 	_ = require('lodash'),
     moment=require('moment');
 
@@ -39,7 +39,9 @@ exports.create = function(req, res, next) {
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
     }
-    Patient.save(patient, function(err, newPatient) {
+    console.log('request b4 model');
+    var patientModel=new Patient(['Patient']);
+    patientModel.save(patient, function(err, newPatient) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -84,7 +86,8 @@ exports.update = function(req, res, next) {
     }
     //console.log('birth date: '+patient.birthDate);
     //console.log(patient.birthDate).format('YYYY/MM/DD'));
-	Patient.save(patient, function(err) {
+    var patientModel=new Patient(['Patient']);
+    patientModel.save(patient, function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -112,7 +115,8 @@ exports.update = function(req, res, next) {
  */
 exports.delete = function(req, res) {
 	var patient = req.patient ;
-	db.delete(patient, function(err) {
+    var patientModel=new Patient(['Patient']);
+    patientModel.db.delete(patient, function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -127,8 +131,8 @@ exports.delete = function(req, res) {
  * List of Patients
  */
 exports.list = function(req, res) {
-    console.log('server');
-
+    //console.log('server');
+    var patientModel=new Patient(['Patient']);
     if (req.query && Object.keys(req.query).length > 0) {
         //fullName
         if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
@@ -185,7 +189,7 @@ exports.list = function(req, res) {
         console.log('db.find');
         //console.log(Patient);
         var predicate = {fullName:"safaa"};
-        Patient.where(req.query,function (err, patients) {
+        patientModel.where(req.query,function (err, patients) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -198,7 +202,7 @@ exports.list = function(req, res) {
 
     }
     else {
-        Patient.findAll(function (err, patients) {
+        patientModel.findAll(function (err, patients) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -214,7 +218,8 @@ exports.list = function(req, res) {
  * Patient middleware
  */
 exports.patientByID = function(req, res, next, id) {
-    Patient.where({_id:id}, function(err, patients) {
+    var patientModel=new Patient(['Patient']);
+    patientModel.where({_id:id}, function(err, patients) {
 		if (err) {
             return next(err);
         }

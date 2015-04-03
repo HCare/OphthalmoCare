@@ -76,12 +76,7 @@ patientModel.on('beforeSave', function (obj) {
         obj._updateTime = moment().valueOf();
     }
 });
-patientModel.on('afterSave', function (obj) {
-    if (!obj._updateTime) {
-        db.label(obj, ['Person'], function (err) {
-        });
-    }
-});
+
 
 exports.db = db;
 exports.Patient = patientModel;
