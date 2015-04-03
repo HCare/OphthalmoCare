@@ -28,13 +28,13 @@ module.exports=function(labels){
         },
         gender: {
             type: String,
-            required: 'Please fill Patient gender',
+            //required: 'Please fill Patient gender',
             trim: true,
             enum: ['male', 'female']
         },
         birthDate: {
             type: Number,
-            required: 'Please fill Patient birth date'
+            //required: 'Please fill Patient birth date'
         },
         tel: {
             type: String,

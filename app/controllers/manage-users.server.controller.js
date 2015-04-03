@@ -6,8 +6,9 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
     ManageUser = mongoose.model('User'),
-    _ = require('lodash');
-
+    Role = mongoose.model('Role'),
+    _ = require('lodash'),
+    Person = require('../../app/models/person');
 /**
  * Create a Manage user
  */
@@ -22,7 +23,36 @@ exports.create = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(manageUser);
+            //console.log(manageUser);
+            var userRole=Role.findById(manageUser._role, function (err, role) {
+                if (err) {
+                    manageUser.remove();
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else{
+
+                    var person={_id:manageUser.id, fullName:manageUser.fullName, email:manageUser.email};
+                    var personModel=new Person([role.name]);
+                    personModel.save(person, function(err, newPerson) {
+                        if (err) {
+                            manageUser.remove();
+                            return res.status(400).send({
+                                message: errorHandler.getErrorMessage(err)
+                            });
+                        }
+                        else {
+                            res.jsonp(newPerson);
+                        }
+                    });
+
+                }
+
+
+                });
+
+
 		}
 	});
 };
