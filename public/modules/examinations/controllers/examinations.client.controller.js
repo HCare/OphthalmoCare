@@ -4,12 +4,12 @@
 angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q',
 	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q ) {
 		//$scope.authentication = Authentication;
-        $scope.examination={};
+        //$scope.examination={};
         /*$scope.examination.colors=null;
         $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
 
        //region schema form
-        $scope.schema = {
+        /*$scope.schema = {
             type: "object",
             required:["name"],
             properties: {
@@ -31,9 +31,77 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 title: "Save",
                 style: 'btn-default'
             }
-        ];
+        ];*/
+        $scope.form=[
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {key:"lName", notitle: true}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Name</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {key:"rName", notitle: true}
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "comment",
+                "type": "textarea",
+                "placeholder": "Make a comment"
+            },
+            {
+                "type": "submit",
+                "style": "btn-default",
+                "title": "OK"
+            }
+        ]
+        $scope.schema={
+            "type": "object",
+            "title": "Comment",
+            "properties": {
+                "lName": {
+                    "title": "Name",
+                    "type": "array",
+                    format: 'uiselect',
+                    items: [
+                        { value: '1', label: 'Person 1' },
+                        { value: '2', label: 'Person 2' }
+                    ]
+                },
+                "rName": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "comment": {
+                    "title": "Comment",
+                    "type": "string",
+                    "maxLength": 20,
+                    "validationMessage": "Don't be greedy!"
+                }
+            },
+            "required": [
+                "name",
+                "email",
+                "comment"
+            ]
+        }
 
-        $scope.examination = {};
+
+
 
         $scope.onSubmit = function(form) {
             // First we broadcast an event so all fields validate themselves

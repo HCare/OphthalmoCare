@@ -29,11 +29,13 @@ module.exports = {
 				'public/lib/angular-animate/angular-animate.js', 
 				'public/lib/angular-touch/angular-touch.js', 
 				'public/lib/angular-sanitize/angular-sanitize.js',
+                'public/lib/angular-translate/angular-translate.js',
+                'public/lib/angular-ui-select/dist/select.js',
                 'public/lib/tv4/tv4.js',
                 'public/lib/objectpath/lib/ObjectPath.js',
                 'public/lib/angular-schema-form/dist/schema-form.js',
                 'public/lib/angular-schema-form/dist/bootstrap-decorator.min.js',
-                'public/lib/angular-schema-form-tagsinput/src/bootstrap-tagsinput.js',
+                'public/lib/angular-schema-form-ui-select/bootstrap-ui-select.js',
 				'public/lib/angular-ui-router/release/angular-ui-router.js',
 				'public/lib/angular-ui-utils/ui-utils.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
@@ -44,8 +46,7 @@ module.exports = {
                 'public/lib/angular-moment/angular-moment.js',
                 'public/lib/webcam-directive/app/scripts/webcam.js',
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
-                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
-                'public/lib/angular-ui-select/dist/select.js'
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
 			]
 		},
 		css: [

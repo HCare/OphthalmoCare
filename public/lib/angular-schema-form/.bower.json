@@ -1,13 +1,16 @@
 {
   "name": "angular-schema-form",
   "main": [
-    "dist/schema-form.min.js",
-    "dist/bootstrap-decorator.min.js"
+    "dist/schema-form.js",
+    "dist/bootstrap-decorator.js"
   ],
-  "version": "0.7.6",
+  "version": "0.8.0",
   "authors": [
     "Textalk",
-    "David Jensen <david.lgj@gmail.com>"
+    "David Jensen <david.lgj@gmail.com>",
+    "Cameron Edwards",
+    "Mike Marcacci",
+    "Denis Dervisevic <denis@dervisevic.se>"
   ],
   "moduleType": [
     "globals"
@@ -23,16 +26,24 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "*.json",
     "node_modules",
     "bower_components",
     "test",
-    "coverage"
+    "coverage",
+    "docs",
+    "examples",
+    "gulp",
+    "CHANGELOG",
+    "LICENSE",
+    "gulpfile.js",
+    "karma.conf.js"
   ],
   "dependencies": {
     "angular": ">= 1.2",
     "tv4": "~1.0.15",
     "angular-sanitize": ">= 1.2",
-    "objectpath": "~1.0.4"
+    "objectpath": "~1.1.0"
   },
   "devDependencies": {
     "angular-ui-ace": "bower",
@@ -45,14 +56,14 @@
     "bootstrap-vertical-tabs": "~1.2.0"
   },
   "homepage": "https://github.com/Textalk/angular-schema-form",
-  "_release": "0.7.6",
+  "_release": "0.8.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.7.6",
-    "commit": "ad13dabd0908a9e072f876a2d1486cb0d75a330b"
+    "tag": "0.8.0",
+    "commit": "d22464f0be4f8170307e7e84a83cd8808d414a76"
   },
   "_source": "git://github.com/Textalk/angular-schema-form.git",
-  "_target": "~0.7.6",
+  "_target": "~0.8.0",
   "_originalSource": "angular-schema-form",
   "_direct": true
 }

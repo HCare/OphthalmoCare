@@ -67,3 +67,9 @@ img {
     width: 128px;
     height: 128px;
 }
+
+.col-centered{
+    /*float: none;*/
+    /*margin: 0 auto;*/
+    text-align: center;
+}
