@@ -7,7 +7,13 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         //$scope.examination={};
         /*$scope.examination.colors=null;
         $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
-
+        $scope.tagTransform = function (newTag) {
+            var item = {
+                label: newTag,
+                value:'unknown'
+            };
+            return item;
+        };
        //region schema form
         /*$scope.schema = {
             type: "object",
@@ -41,7 +47,16 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {key:"lName", notitle: true}
+                            {key:"lName",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                tagging: $scope.tagTransform ,
+                                taggingLabel: '(new)',
+                                taggingTokens: 'ENTER'
+                            }}
+
+
                         ]
                     },
                     {
@@ -68,7 +83,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 "style": "btn-default",
                 "title": "OK"
             }
-        ]
+        ];
+
         $scope.schema={
             "type": "object",
             "title": "Comment",
@@ -76,7 +92,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 "lName": {
                     "title": "Name",
                     "type": "array",
-                    format: 'uiselect',
+                    format: "uiselect",
+                    placeholder:"Name",
                     items: [
                         { value: '1', label: 'Person 1' },
                         { value: '2', label: 'Person 2' }
@@ -98,7 +115,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 "email",
                 "comment"
             ]
-        }
+        };
 
 
 

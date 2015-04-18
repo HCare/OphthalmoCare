@@ -540,7 +540,10 @@ uis.controller('uiSelectCtrl',
   ctrl.clear = function($event) {
     ctrl.select(undefined);
     $event.stopPropagation();
-    ctrl.focusser[0].focus();
+    //ctrl.focusser[0].focus();
+      $timeout(function() {
+          ctrl.focusser[0].focus();
+          }, 0, false);
   };
 
   // Toggle dropdown
@@ -632,6 +635,10 @@ uis.controller('uiSelectCtrl',
 
     var key = e.which;
 
+      if (~[KEY.ENTER,KEY.ESC].indexOf(key)){
+                e.preventDefault();
+                e.stopPropagation();
+              }
     // if(~[KEY.ESC,KEY.TAB].indexOf(key)){
     //   //TODO: SEGURO?
     //   ctrl.close();
@@ -835,12 +842,15 @@ uis.directive('uiSelect',
             {
               $select.taggingLabel = attrs.taggingLabel !== undefined ? attrs.taggingLabel : '(new)';
             }
+
           }
         });
 
         attrs.$observe('taggingTokens', function() {
           if (attrs.tagging !== undefined) {
-            var tokens = attrs.taggingTokens !== undefined ? attrs.taggingTokens.split('|') : [',','ENTER'];
+            //var tokens = attrs.taggingTokens !== undefined ? attrs.taggingTokens.split('|') : [',','ENTER'];
+            var tokens = ['ENTER'];
+            console.log(tokens);
             $select.taggingTokens = {isActivated: true, tokens: tokens };
           }
         });
