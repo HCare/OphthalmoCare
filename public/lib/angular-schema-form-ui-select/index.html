@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang='en' ng-app='lightApp'>
+  <head>
+    <meta charset='utf-8'>
+    <meta content='IE=edge' http-equiv='X-UA-Compatible'>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" media="all" rel="stylesheet" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="screen" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <link href="bower_components/angular-ui-select/dist/select.css" media="screen" rel="stylesheet" />
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="bower_components/angular-translate/angular-translate.min.js"></script>
+    <script src='bower_components/angular-ui-select/dist/select.js'></script>
+    <script src="bower_components/tv4/tv4.js"></script>
+    <script src="bower_components/objectpath/lib/ObjectPath.js"></script>
+    <script src="bower_components/angular-schema-form/dist/schema-form.min.js"></script>
+    <script src="bower_components/angular-schema-form/dist/bootstrap-decorator.min.js"></script>
+    <script src="angular-underscore.js"></script>
+    <script src="ui-sortable.js"></script>
+    <script src="bootstrap-ui-select.js"></script>
+    <script src="app.js"></script>
+    <base href='/'>
+    <style type="text/css" rel="stylesheet">
+      .short {
+        width: 200px;
+      }
+      .ui-select-bootstrap > .ui-select-match > .caret {
+        display: none;
+      }
+      .ui-state-highlight {
+        display: inline-block;
+        width: 50px;
+        min-height: 100%;
+      }
+    </style>
+  </head>
+  <body ng-controller='SelectController'>
+    <div class="box box-primary ng-cloak">
+      <div class="box-header">
+        <h3 class="box-title">{{$root.$state.current.data.label}} - {{model.name}}</h3>
+      </div>
+      <form name="roleForm" ng-submit="submitted(roleForm)">
+        <div class="box-body">
+          <div sf-schema="schema" sf-form="form" sf-model="model"></div>
+        </div>
+        <div class="box-footer">
+          <button type="submit" class="btn btn-primary btn-flat">{{ 'buttons.save' | translate }}</button>
+          <a ui-sref="roles" class="btn btn-warning btn-flat pull-right">{{ 'buttons.cancel' | translate }}</a>
+        </div>
+        </form>
+      </div>
+    </div>
+    
+  </body>
+</html>

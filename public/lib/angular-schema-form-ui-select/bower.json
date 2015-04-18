@@ -1,0 +1,44 @@
+{
+  "name": "angular-schema-form-ui-select",
+  "main": [
+    "ui-sortable.js",
+    "angular-underscore.js",
+    "bootstrap-ui-select.min.js"
+  ],
+  "version": "0.1.0",
+  "authors": [
+    "Cheng Zhu<cheng@aqmin.com>",
+    "Steve Hu <stevehu@gmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "angular-schema-form",
+    "schema-form",
+    "form",
+    "json",
+    "json-schema",
+    "schema",
+    "ui-select",
+    "angular-ui-select",
+    "angular-schmea-form-ui-select"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "coverage"
+  ],
+  "dependencies": {
+    "angular-ui-select": ">= 0.7.0",
+    "angular-translate": ">= 2.4.0",
+    "underscore": ">= 1.7.0"
+  },
+  "devDependencies": {
+    "angular-schema-form": ">= 0.7",
+    "angular-mocks": ">= 1.2"
+  }
+}
