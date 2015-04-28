@@ -32,14 +32,11 @@ exports.renderPhoto=function(req, res){
 exports.create = function(req, res, next) {
 	var patient = req.body;
 	patient._createUser = req.user._id;
-    //patient._createTime = moment().valueOf();
-    //console.log('birth date: '+patient.birthDate);
     patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
     }
-    console.log('request b4 model');
     var patientModel=new Patient(['Patient']);
     patientModel.save(patient, function(err, newPatient) {
 		if (err) {
@@ -84,8 +81,6 @@ exports.update = function(req, res, next) {
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;
     }
-    //console.log('birth date: '+patient.birthDate);
-    //console.log(patient.birthDate).format('YYYY/MM/DD'));
     var patientModel=new Patient(['Patient']);
     patientModel.save(patient, function(err) {
 		if (err) {
@@ -131,7 +126,6 @@ exports.delete = function(req, res) {
  * List of Patients
  */
 exports.list = function(req, res) {
-    //console.log('server');
     var patientModel=new Patient(['Patient']);
     if (req.query && Object.keys(req.query).length > 0) {
         //fullName
@@ -185,9 +179,7 @@ exports.list = function(req, res) {
         else {
             delete req.query.notes; // didn't search by notes
         }
-        console.log('req:::::::::::::: '+ JSON.stringify(req.query));
-        console.log('db.find');
-        //console.log(Patient);
+
         var predicate = {fullName:"safaa"};
         patientModel.where(req.query,function (err, patients) {
             if (err) {
@@ -196,7 +188,6 @@ exports.list = function(req, res) {
                 });
             } else {
                 res.jsonp(patients);
-                console.log(patients);
             }
         });
 

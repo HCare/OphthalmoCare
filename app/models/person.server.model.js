@@ -18,7 +18,6 @@ module.exports=function(labels){
     var PersonSchema = {
         _id:{
             type: String,
-            required: true,
             default:new ObjectId()
         },
         fullName: {
@@ -87,5 +86,3 @@ module.exports=function(labels){
     personModel.delete=db.delete;
     return  personModel;
 }
-//exports.db = db;
-//exports.Person = personModel;

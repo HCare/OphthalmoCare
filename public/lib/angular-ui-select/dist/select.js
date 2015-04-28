@@ -850,7 +850,7 @@ uis.directive('uiSelect',
           if (attrs.tagging !== undefined) {
             //var tokens = attrs.taggingTokens !== undefined ? attrs.taggingTokens.split('|') : [',','ENTER'];
             var tokens = ['ENTER'];
-            console.log(tokens);
+            //console.log(tokens);
             $select.taggingTokens = {isActivated: true, tokens: tokens };
           }
         });

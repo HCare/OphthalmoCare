@@ -10,34 +10,12 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.tagTransform = function (newTag) {
             var item = {
                 label: newTag,
-                value:'unknown'
+                value:newTag.toLowerCase()
             };
             return item;
         };
+
        //region schema form
-        /*$scope.schema = {
-            type: "object",
-            required:["name"],
-            properties: {
-                name: { type: "string", minLength: 2, title: "Name", description: "Name or alias" },
-                title: {
-                    type: "string",
-                    enum: ['dr','jr','sir','mrs','mr','NaN','dj']
-                }
-                , eyelid:{title:"eye lid", type:"tagsinput", placeholder:'eye lid', tags:['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']}
-
-            }
-        };
-
-        $scope.form = [
-            "*",
-            {key:'eyelid', type:'tagsinput', title:'eye lid', placeholder:'eye lid', tags:['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']},
-            {
-                type: "submit",
-                title: "Save",
-                style: 'btn-default'
-            }
-        ];*/
         $scope.form=[
             {
                 "type": "section",
@@ -47,7 +25,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {key:"lName",
+                            {   key:"appearanceOD",
                                 feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options : {
@@ -55,20 +33,617 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                                 taggingLabel: '(new)',
                                 taggingTokens: 'ENTER'
                             }}
-
-
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Name</label>",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Appearance</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {key:"rName", notitle: true}
+                            {   key:"appearanceOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"eyeLidOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Eye Lid</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"eyeLidOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"lacrimalSystemOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Lacrimal System</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"lacrimalSystemOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"conjunctivaOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Conjunctiva</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"conjunctivaOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"scleraOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Sclera</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"scleraOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"corneaOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Cornea</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"corneaOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"anteriorChamberOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Anterior Chamber</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"anteriorChamberOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"irisOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Iris</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"irisOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"pupilOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Pupil</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"pupilOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"lensOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Lens</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"lensOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"fundusOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Fundus</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"fundusOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"opticNerveOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">Optic Nerve</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"opticNerveOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"eomOD",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">EOM</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"eomOS",
+                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options : {
+                                    tagging: $scope.tagTransform ,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"vaOD",
+                                type:"text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">V/A</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"vaOS",
+                                notitle: true,
+                                type:"text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"bcvaOD",
+                                type:"text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">BCVA</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"bcvaOS",
+                                notitle: true,
+                                type:"text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"bcvaWithOD",
+                                type:"text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">BCVA With</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"bcvaWithOS",
+                                notitle: true,
+                                type:"text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"iopOD",
+                                type:"text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue":"<label class=\"control-label ng-binding\">IOP</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key:"iopOS",
+                                notitle: true,
+                                type:"text"
+                            }
                         ]
                     }
                 ]
@@ -87,21 +662,403 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         $scope.schema={
             "type": "object",
-            "title": "Comment",
+            "title": "Examination",
             "properties": {
-                "lName": {
-                    "title": "Name",
+                "appearanceOD": {
+                    "title": "Appearance",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Name",
+                    placeholder:"Normal"
+                    /*,
                     items: [
-                        { value: '1', label: 'Person 1' },
-                        { value: '2', label: 'Person 2' }
+                        { value: '1', label: 'Normal' }
+                    ]*/
+                },
+                "appearanceOS": {
+                    "title": "Appearance",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal"
+                    /*,
+                    items: [
+                        { value: '1', label: 'Normal' }
+                    ]*/
+                },
+                "eyeLidOD": {
+                    "title": "Eye Lid",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"No Abnormality Detected",
+                    items: [
+                        { value: 'rl', label: 'RL' },
+                        { value: 'entropion', label: 'Entropion' },
+                        { value: 'ectropion', label: 'Ectropion' },
+                        { value: 'eistichiasis', label: 'Distichiasis' },
+                        { value: 'ptosis', label: 'Ptosis' },
+                        { value: 'chalazion', label: 'Chalazion' },
+                        { value: 'stye', label: 'Stye' },
+                        { value: 'blepharitis', label: 'Blepharitis' },
+                        { value: 'mass', label: 'Mass' },
+                        { value: 'madarosis', label: 'Madarosis' },
+                        { value: 'epicanthaus', label: 'Epicanthaus' },
+                        { value: 'blepharochalasis', label: 'Blepharochalasis' },
+                        { value: 'dermatochalasis', label: 'Dermatochalasis' },
+                        { value: 'oedema', label: 'Oedema' }
                     ]
                 },
-                "rName": {
-                    "title": "Name",
-                    "type": "string"
+                "eyeLidOS": {
+                    "title": "Eye Lid",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"No Abnormality Detected",
+                    items: [
+                        { value: 'rl', label: 'RL' },
+                        { value: 'entropion', label: 'Entropion' },
+                        { value: 'ectropion', label: 'Ectropion' },
+                        { value: 'eistichiasis', label: 'Distichiasis' },
+                        { value: 'ptosis', label: 'Ptosis' },
+                        { value: 'chalazion', label: 'Chalazion' },
+                        { value: 'stye', label: 'Stye' },
+                        { value: 'blepharitis', label: 'Blepharitis' },
+                        { value: 'mass', label: 'Mass' },
+                        { value: 'madarosis', label: 'Madarosis' },
+                        { value: 'epicanthaus', label: 'Epicanthaus' },
+                        { value: 'blepharochalasis', label: 'Blepharochalasis' },
+                        { value: 'dermatochalasis', label: 'Dermatochalasis' },
+                        { value: 'oedema', label: 'Oedema' }
+                    ]
+                },
+                "lacrimalSystemOD": {
+                    "title": "Lacrimal System",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "lacrimalSystemOS": {
+                    "title": "Lacrimal System",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "conjunctivaOD": {
+                    "title": "Conjunctiva",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'active-trachoma', label: 'Active trachoma' },
+                        { value: 't-iii', label: 'T III' },
+                        { value: 'mpc', label: 'MPC' },
+                        { value: 'pc', label: 'PC' },
+                        { value: 'allergy', label: 'Allergy' },
+                        { value: 'vernal-keratoconjunctivitis', label: 'Vernal keratoconjunctivitis' },
+                        { value: 'ptrygeum', label: 'Ptrygeum' },
+                        { value: 'ptds', label: 'PTDs' }
+                    ]
+                },
+                "conjunctivaOS": {
+                    "title": "Conjunctiva",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'active-trachoma', label: 'Active trachoma' },
+                        { value: 't-iii', label: 'T III' },
+                        { value: 'mpc', label: 'MPC' },
+                        { value: 'pc', label: 'PC' },
+                        { value: 'allergy', label: 'Allergy' },
+                        { value: 'vernal-keratoconjunctivitis', label: 'Vernal keratoconjunctivitis' },
+                        { value: 'ptrygeum', label: 'Ptrygeum' },
+                        { value: 'ptds', label: 'PTDs' }
+                    ]
+                },
+                "scleraOD": {
+                    "title": "Sclera",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
+                        { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
+                        { value: 'scleritis', label: 'Scleritis' }
+                    ]
+                },
+                "scleraOS": {
+                    "title": "Sclera",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
+                        { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
+                        { value: 'scleritis', label: 'Scleritis' }
+                    ]
+                },
+                "corneaOD": {
+                    "title": "Cornea",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Ps, Clear Centre",
+                    items: [
+                        { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
+                        { value: 'ps', label: 'Ps' },
+                        { value: 'nebula', label: 'Nebula' },
+                        { value: 'corneal-ulcer', label: 'Corneal Ulcer' },
+                        { value: 'leukoma-adherent', label: 'Leukoma adherent' },
+                        { value: 'leukoma-non-adherent', label: 'Leukoma non-adherent' },
+                        { value: 'keratitis', label: 'Keratitis' },
+                        { value: 'keratoconus', label: 'Keratoconus' },
+                        { value: 'arcus-senilis', label: 'Arcus senilis' },
+                        { value: 'degeneration', label: 'Degeneration' },
+                        { value: 'stromal-dystophy', label: 'Stromal Dystophy' },
+                        { value: 'endothelial-dystophy', label: 'Endothelial Dystophy' },
+                        { value: 'epithelial-oedema', label: 'Epithelial Oedema' },
+                        { value: 'stromal oedema', label: 'Stromal Oedema' },
+                        { value: 'striated-keratopathy', label: 'Striated Keratopathy' }
+                    ]
+                },
+                "corneaOS": {
+                    "title": "Cornea",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Ps, Clear Centre",
+                    items: [
+                        { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
+                        { value: 'ps', label: 'Ps' },
+                        { value: 'nebula', label: 'Nebula' },
+                        { value: 'corneal-ulcer', label: 'Corneal Ulcer' },
+                        { value: 'leukoma-adherent', label: 'Leukoma adherent' },
+                        { value: 'leukoma-non-adherent', label: 'Leukoma non-adherent' },
+                        { value: 'keratitis', label: 'Keratitis' },
+                        { value: 'keratoconus', label: 'Keratoconus' },
+                        { value: 'arcus-senilis', label: 'Arcus senilis' },
+                        { value: 'degeneration', label: 'Degeneration' },
+                        { value: 'stromal-dystophy', label: 'Stromal Dystophy' },
+                        { value: 'endothelial-dystophy', label: 'Endothelial Dystophy' },
+                        { value: 'epithelial-oedema', label: 'Epithelial Oedema' },
+                        { value: 'stromal oedema', label: 'Stromal Oedema' },
+                        { value: 'striated-keratopathy', label: 'Striated Keratopathy' }
+                    ]
+                },
+                "anteriorChamberOD": {
+                    "title": "Anterior Chamber",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal Depth No Abnormal Content",
+                    items: [
+                        { value: 'cells', label: 'Cells' },
+                        { value: 'flare', label: 'Flare' },
+                        { value: 'level-hyphema', label: 'level Hyphema' },
+                        { value: 'diffuse-hyphema', label: 'Diffuse Hyphema' },
+                        { value: 'inflammatory-membrane', label: 'Inflammatory membrane' },
+                        { value: 'hypopion', label: 'Hypopion' }
+                    ]
+                },
+                "anteriorChamberOS": {
+                    "title": "Anterior Chamber",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal Depth No Abnormal Content",
+                    items: [
+                        { value: 'cells', label: 'Cells' },
+                        { value: 'flare', label: 'Flare' },
+                        { value: 'level-hyphema', label: 'level Hyphema' },
+                        { value: 'diffuse-hyphema', label: 'Diffuse Hyphema' },
+                        { value: 'inflammatory-membrane', label: 'Inflammatory membrane' },
+                        { value: 'hypopion', label: 'Hypopion' }
+                    ]
+                },
+                "irisOD": {
+                    "title": "Iris",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal Color And Pattern"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "irisOS": {
+                    "title": "Iris",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal Color And Pattern"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "pupilOD": {
+                    "title": "Pupil",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"R R R Direct and Cons."
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "pupilOS": {
+                    "title": "Pupil",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"R R R Direct and Cons."
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "lensOD": {
+                    "title": "Lens",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Clear In Place",
+                    items: [
+                        { value: 'imsc', label: 'IMSC' },
+                        { value: 'nuclear-cataract', label: 'Nuclear cataract' },
+                        { value: 'complicated-cataract', label: 'Complicated cataract' },
+                        { value: 'subluxated', label: 'Subluxated' },
+                        { value: 'pseudoexfoliation', label: 'Pseudoexfoliation' },
+                        { value: 'microspherophakia', label: 'Microspherophakia' }
+                    ]
+                },
+                "lensOS": {
+                    "title": "Lens",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Clear In Place",
+                    items: [
+                        { value: 'imsc', label: 'IMSC' },
+                        { value: 'nuclear-cataract', label: 'Nuclear cataract' },
+                        { value: 'complicated-cataract', label: 'Complicated cataract' },
+                        { value: 'subluxated', label: 'Subluxated' },
+                        { value: 'pseudoexfoliation', label: 'Pseudoexfoliation' },
+                        { value: 'microspherophakia', label: 'Microspherophakia' }
+                    ]
+                },
+                "fundusOD": {
+                    "title": "Fundus",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'tessellated', label: 'Tessellated' },
+                        { value: 'myopic', label: 'Myopic' },
+                        { value: 'mild-npdr', label: 'Mild NPDR' },
+                        { value: 'sever npdr', label: 'Sever NPDR' },
+                        { value: 'pdr', label: 'PDR' },
+                        { value: 'macular-oedema', label: 'Macular Oedema' },
+                        { value: 'drusen', label: 'Drusen' },
+                        { value: 'amd', label: 'AMD' },
+                        { value: 'vein-occlusion', label: 'Vein occlusion' },
+                        { value: 'artery-occlusion', label: 'Artery occlusion' }
+                    ]
+                },
+                "fundusOS": {
+                    "title": "Fundus",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'tessellated', label: 'Tessellated' },
+                        { value: 'myopic', label: 'Myopic' },
+                        { value: 'mild-npdr', label: 'Mild NPDR' },
+                        { value: 'sever npdr', label: 'Sever NPDR' },
+                        { value: 'pdr', label: 'PDR' },
+                        { value: 'macular-oedema', label: 'Macular Oedema' },
+                        { value: 'drusen', label: 'Drusen' },
+                        { value: 'amd', label: 'AMD' },
+                        { value: 'vein-occlusion', label: 'Vein occlusion' },
+                        { value: 'artery-occlusion', label: 'Artery occlusion' }
+                    ]
+                },
+                "opticNerveOD": {
+                    "title": "Optic Nerve",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'pale', label: 'Pale' },
+                        { value: 'atrophy', label: 'Atrophy' },
+                        { value: 'increased-cd-ratio', label: 'Increased C/D ratio' },
+                        { value: 'cupping', label: 'Cupping' },
+                        { value: 'papilloedema', label: 'Papilloedema' },
+                        { value: 'tilted', label: 'Tilted' }
+                    ]
+                },
+                "opticNerveOS": {
+                    "title": "Optic Nerve",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Normal",
+                    items: [
+                        { value: 'pale', label: 'Pale' },
+                        { value: 'atrophy', label: 'Atrophy' },
+                        { value: 'increased-cd-ratio', label: 'Increased C/D ratio' },
+                        { value: 'cupping', label: 'Cupping' },
+                        { value: 'papilloedema', label: 'Papilloedema' },
+                        { value: 'tilted', label: 'Tilted' }
+                    ]
+                },
+                "eomOD": {
+                    "title": "EOM",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "eomOS": {
+                    "title": "EOM",
+                    "type": "array",
+                    format: "uiselect",
+                    placeholder:"Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                    /*,
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
+                },
+                "vaOD":{
+                    "title":"V/A",
+                    "type":"string"
+                },
+                "vaOS":{
+                    "title":"V/A",
+                    "type":"string"
+                },
+                "bcvaOD":{
+                    "title":"BCVA",
+                    "type":"string"
+                },
+                "bcvaOS":{
+                    "title":"BCVA",
+                    "type":"string"
+                },
+                "bcvaWithOD":{
+                    "title":"BCVA With",
+                    "type":"string"
+                },
+                "bcvaWithOS":{
+                    "title":"BCVA With",
+                    "type":"string"
+                },
+                "iopOD":{
+                    "title":"IOP",
+                    "type":"string"
+                },
+                "iopOS":{
+                    "title":"IOP",
+                    "type":"string"
                 },
                 "comment": {
                     "title": "Comment",
@@ -132,27 +1089,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         }
         //endregion schema form
 
-       //region tagsInput
-        /*$scope.availableColors = [{text:'Red'},{text:'Green'},{text:'Blue'},{text:'Yellow'},{text:'Magenta'},{text:'Maroon'},{text:'Umbra'},{text:'Turquoise'}];
-        //$scope.colors = null;
-        //$scope.multipleDemo.colors = null;//['Blue','Red'];
-        $scope.loadColors=function(query){
-            var deferred = $q.defer();
-           // console.log(query);
-            var result=lodash.filter($scope.availableColors, function(_color){
-                var regEx=new RegExp(query, "i");
-                var found=regEx.test(_color.text);
-                return  found;
-            });
-            deferred.resolve($scope.availableColors);
-            return deferred.promise;
-            lodash.filter(availableColors, function(_color){
-                return _color==query;
-            });
-        };*/
-        //endregion tagsInput
-
-		// Create new Examination
+      		// Create new Examination
 		$scope.create = function() {
 			// Create new Examination object
 			var examination = new Examinations ({
