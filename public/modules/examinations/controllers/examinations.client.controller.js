@@ -3,10 +3,6 @@
 // Examinations controller
 angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','Core',
 	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, Core) {
-        var patient=Patient.getCurrentPatient();
-        if(patient){
-            Core.setPageSubTitle(patient.fullName);
-        }
 		$scope.authentication = Authentication;
         //$scope.examination={};
         /*$scope.examination.colors=null;
@@ -1079,8 +1075,6 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         };
 
 
-
-
         $scope.onSubmit = function(form) {
             // First we broadcast an event so all fields validate themselves
             $scope.$broadcast('schemaFormValidate');
@@ -1149,5 +1143,13 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 				examinationId: $stateParams.examinationId
 			});
 		};
+
+        $scope.initOne=function(){
+            var patient=Patient.getCurrentPatient();
+            if(patient){
+                Core.setPageSubTitle(patient.fullName);
+            }
+            $scope.examination = new Examinations({});
+        }
 	}
 ]);
