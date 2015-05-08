@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload',
-    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload', '$rootScope',
+    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload, $rootScope) {
         $scope.authentication = Authentication;
         $scope._ = lodash;
         $scope.Moment = Moment;
@@ -184,6 +184,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 });
             }
         };
+        //redirect to examination
+        $scope.examine = function (){
+           $rootScope.patient=$scope.patient;
+            $location.path('examinations/create');
+
+        }
 
         // Update existing Patient
         $scope.update = function () {

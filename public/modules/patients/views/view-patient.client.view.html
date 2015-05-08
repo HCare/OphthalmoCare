@@ -3,12 +3,9 @@
 		<h1 data-ng-bind="patient.fullName"></h1>
 	</div>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="/#!/patients/{{patient._id}}/edit">
-			<i class="glyphicon glyphicon-edit"></i>
-		</a>
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="glyphicon glyphicon-trash"></i>
-		</a>
+        <h-care-examine-button hcare-examine-click="examine()" action="create_examination"></h-care-examine-button>
+        <h-care-edit-button href="/#!/patients/{{patient._id}}/edit" action="edit_patient"></h-care-edit-button>
+        <h-care-del-button del-message='Are you sure to delete patient "{{patient.fullName}}"?' hcare-del-click="remove()" action="delete_role"></h-care-del-button>
 	</div>
     <p class="list-group-item-text">
         <em class="text-muted">

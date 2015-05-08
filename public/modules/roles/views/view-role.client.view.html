@@ -5,7 +5,6 @@
 	<div class="pull-right" >
 
         <h-care-edit-button href="/#!/roles/{{role._id}}/edit" action="edit_role"></h-care-edit-button>
-
         <h-care-del-button del-message="Are you sure to delete {{role.name}} Role?" hcare-del-click="remove()" action="delete_role"></h-care-del-button>
 	</div>
     <p data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
