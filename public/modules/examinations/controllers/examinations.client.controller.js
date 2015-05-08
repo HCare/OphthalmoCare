@@ -1,9 +1,13 @@
 'use strict';
 
 // Examinations controller
-angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q',
-	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q ) {
-		//$scope.authentication = Authentication;
+angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','Core',
+	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, Core) {
+        var patient=Patient.getCurrentPatient();
+        if(patient){
+            Core.setPageSubTitle(patient.fullName);
+        }
+		$scope.authentication = Authentication;
         //$scope.examination={};
         /*$scope.examination.colors=null;
         $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/

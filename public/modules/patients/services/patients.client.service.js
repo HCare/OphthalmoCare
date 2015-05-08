@@ -11,3 +11,20 @@ angular.module('patients').factory('Patients', ['$resource',
 		});
 	}
 ]);
+
+angular.module('patients').factory('Patient',function(){
+    var currentPatient = null;
+
+    var setCurrentPatient = function(patient) {
+        currentPatient=patient;
+    };
+
+    var getCurrentPatient = function(){
+        return currentPatient;
+    };
+
+    return {
+        setCurrentPatient: setCurrentPatient,
+        getCurrentPatient: getCurrentPatient
+    };
+});
