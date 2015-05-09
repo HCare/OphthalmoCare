@@ -1,8 +1,8 @@
 'use strict';
 
 // Examinations controller
-angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','Core',
-	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, Core) {
+angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','CoreProperties','ActionsHandler',
+	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, CoreProperties, ActionsHandler) {
 		$scope.authentication = Authentication;
         //$scope.examination={};
         /*$scope.examination.colors=null;
@@ -1147,9 +1147,14 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.initOne=function(){
             var patient=Patient.getCurrentPatient();
             if(patient){
-                Core.setPageSubTitle(patient.fullName);
+                CoreProperties.setPageSubTitle(patient.fullName);
             }
             $scope.examination = new Examinations({});
         }
+
+        ActionsHandler.onActionFired('fire', $scope, function(action, args) {
+            console.log('event received');
+            //console.log(action.name);
+        });
 	}
 ]);

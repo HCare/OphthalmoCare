@@ -1,14 +1,14 @@
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus', '$state','Core',
-    function ($scope, Authentication, Menus, $state, Core) {
+angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus', '$state','CoreProperties','ActionsHandler',
+    function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler) {
         $scope.authentication = Authentication;
         $scope.isCollapsed = false;
         $scope.menu = Menus.getMenu('topbar');
         $scope.pageTitle=$state.current.title||null;
         $scope.showToolBar = ($state.current.url != "/"&& $state.current.url!='/signin');
         $scope.pageSubTitle=function(){
-            return Core.getPageSubTitle();
+            return CoreProperties.getPageSubTitle();
         }
 
         $scope.toggleCollapsibleMenu = function () {
@@ -23,5 +23,9 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
             $scope.showToolBar = (toState.url != "/"&& toState.url!='/signin');
             $scope.isCollapsed = false;
         });
+
+        $scope.fire=function(){
+            ActionsHandler.fireAction('fire', null);
+        }
     }
 ]);
