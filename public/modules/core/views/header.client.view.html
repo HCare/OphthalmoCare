@@ -71,12 +71,15 @@
                 <span class="page-title">{{pageTitle}}</span>
                 <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
             </div>
-            <form class="navbar-right toolbar" role="search">
+        <div class="navbar-right toolbar" >
+            <button data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" data-ng-click="fireCommand(item.command)" data-ng-bind="item.title" ></button>
+        </div>
+            <!--<form class="navbar-right toolbar" role="search">
             <button class="btn btn-success" ng-click="fire()" >Button</button>
             <button class="btn btn-default">Button</button>
             <button class="btn btn-default">Button</button>
             <button class="btn btn-default">Button</button>
-             </form>
+             </form>-->
     </div>
 </div>
 </div>

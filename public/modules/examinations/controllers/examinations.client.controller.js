@@ -1,8 +1,8 @@
 'use strict';
 
 // Examinations controller
-angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','CoreProperties','ActionsHandler',
-	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, CoreProperties, ActionsHandler) {
+angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','CoreProperties','ActionsHandler','Toolbar',
+	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, CoreProperties, ActionsHandler, Toolbar) {
 		$scope.authentication = Authentication;
         //$scope.examination={};
         /*$scope.examination.colors=null;
@@ -1148,6 +1148,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             var patient=Patient.getCurrentPatient();
             if(patient){
                 CoreProperties.setPageSubTitle(patient.fullName);
+                Toolbar.addToolbarCommand('clearExamination', null, 'Clear', 'clear', 0);
+                Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'save', 1);
+
             }
             $scope.examination = new Examinations({});
         }
