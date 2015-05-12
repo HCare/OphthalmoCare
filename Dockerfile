@@ -1,7 +1,9 @@
-FROM dockerfile/nodejs-bower-grunt
+FROM yassmokh/node-mongo-neo
 
 MAINTAINER yass, yassmokh@ophthalmo.care
 
+cd /etc/init.d
+RUN sh neo4j-service start
 cd /home/vagrant/GitHub/ophthalmocare
 # Install Mean.JS packages
 #ONBUILD ADD package.json /home/vagrant/GitHub/OphthalmoCare/
