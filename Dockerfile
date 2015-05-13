@@ -2,22 +2,28 @@ FROM yassmokh/node-mongo-neo
 
 MAINTAINER yass, yassmokh@ophthalmo.care
 
-cd /etc/init.d
+RUN cd /etc/init.d
 RUN sh neo4j-service start
-cd /home/vagrant/GitHub/ophthalmocare
+RUN cd /
+RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
+RUN cd /data/db
+RUN mongod
+RUN cd /
+#RUN cd /home/vagrant/GitHub/ophthalmocare
+
 # Install Mean.JS packages
 #ONBUILD ADD package.json /home/vagrant/GitHub/OphthalmoCare/
-RUN npm install
+#RUN npm install
 
 # Manually trigger bower. Why doesnt this work via npm install?
 
 
-WORKDIR /home/vagrant/GitHub/ophthalmocare
+#WORKDIR /home/vagrant/GitHub/ophthalmocare
 
 # currently only works for development
 ENV NODE_ENV development
 
-CMD ["grunt"]
+#CMD ["grunt"]
 
 # Port 3000 for server
 # Port 35729 for livereload
