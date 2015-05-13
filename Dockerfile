@@ -2,13 +2,13 @@ FROM yassmokh/node-mongo-neo
 
 MAINTAINER yass, yassmokh@ophthalmo.care
 
-RUN cd /etc/init.d
+WORKDIR /etc/init.d
 RUN sh neo4j-service start
-RUN cd /
+WORKDIR /
 RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
-RUN cd /data/db
+WORKDIR /data/db
 RUN mongod
-RUN cd /
+WORKDIR /
 #RUN cd /home/vagrant/GitHub/ophthalmocare
 
 # Install Mean.JS packages
