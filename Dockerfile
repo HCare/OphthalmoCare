@@ -9,6 +9,10 @@ RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
 WORKDIR /data/db
 RUN service mongod start
 WORKDIR /
+RUN mkdir -p /home/ophthalmocare
+WORKDIR /home/ophthalmocare
+ADD package.json /home/ophthalmocare/package.json
+RUN npm install
 #RUN cd /home/vagrant/GitHub/ophthalmocare
 
 # Install Mean.JS packages
