@@ -8,6 +8,7 @@ angular.module('directives')
             link :function(scope, el, atts){
 
                 if(lodash.contains(Authentication.user._role._actions, atts.action)){
+
                     var buttonText = "<a class='btn btn-primary' ><i class='glyphicon glyphicon-trash'></i></a>";
                     el.html(buttonText);
                     el.on("click", function(){
@@ -21,6 +22,7 @@ angular.module('directives')
 
                         }
                     });
+
                 }
 
             }
