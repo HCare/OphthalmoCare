@@ -18,7 +18,7 @@ RUN npm install
 
 ADD .bowerrc /home/ophthalmocare/.bowerrc
 ADD bower.json /home/ophthalmocare/bower.json
-RUN bower install --config.interactive=false --allow-root
+RUN bower install
 
 ADD . /ophthalmocare/mean
 
