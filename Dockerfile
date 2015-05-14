@@ -16,9 +16,9 @@ WORKDIR /home/ophthalmocare
 ADD package.json /home/ophthalmocare/package.json
 RUN npm install
 
-ADD .bowerrc /home/ophthalmocare/.bowerrc
-ADD bower.json /home/ophthalmocare/bower.json
-RUN bower install
+#ADD .bowerrc /home/ophthalmocare/.bowerrc
+#ADD bower.json /home/ophthalmocare/bower.json
+#RUN bower install
 
 ADD . /ophthalmocare/mean
 
