@@ -7,8 +7,8 @@ RUN sh neo4j-service start
 
 WORKDIR /
 RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
-WORKDIR /data/db
-RUN sudo service mongod start
+#WORKDIR /data/db
+#RUN sudo service mongod start
 
 WORKDIR /
 RUN mkdir -p /home/ophthalmocare
@@ -26,7 +26,7 @@ ENV NODE_ENV development
 
 EXPOSE 3000 35729
 
-CMD ["grunt"]
+CMD ["mongod", "grunt"]
 #RUN cd /home/vagrant/GitHub/ophthalmocare
 
 # Install Mean.JS packages
