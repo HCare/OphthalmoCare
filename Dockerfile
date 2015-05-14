@@ -20,7 +20,7 @@ RUN npm install
 #ADD bower.json /home/ophthalmocare/bower.json
 #RUN bower install
 
-ADD . /ophthalmocare/mean
+ADD . /home/ophthalmocare
 
 ENV NODE_ENV development
 
