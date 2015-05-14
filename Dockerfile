@@ -8,7 +8,7 @@ RUN sh neo4j-service start
 WORKDIR /
 RUN mkdir -p /data/db && chown -R mongodb:mongodb /data/db
 WORKDIR /data/db
-RUN mongod
+RUN sudo service mongod start
 
 WORKDIR /
 RUN mkdir -p /home/ophthalmocare
