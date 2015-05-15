@@ -2,7 +2,7 @@
 
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI ||'mongodb://localhost/ophthalmocare-dev',
-    graphDB: process.env.NEO4JGRAPHENE_URL || {server:"http://localhost:7474/", user:"neo4j", pass:"hardrock"}',
+    graphDB: process.env.NEO4JGRAPHENE_URL || 'http://localhost:7474/',
     fileHandler:(process.env.CLOUDINARY_URL)?'cloudinary':'local',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
