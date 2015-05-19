@@ -1,12 +1,13 @@
 'use strict';
 
 // Configuring the Articles module
-angular.module('security').run(['$rootScope', 'Authentication', '$location', 'lodash','CoreProperties',
-	function($rootScope, Authentication, $location, lodash, CoreProperties) {
+angular.module('security').run(['$rootScope', 'Authentication', '$location', 'lodash','CoreProperties','Toolbar',
+	function($rootScope, Authentication, $location, lodash, CoreProperties, Toolbar) {
 
         //console.log($rootScope.authentication.user);
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             CoreProperties.setPageSubTitle(null);
+            Toolbar.clearToolbarCommands();
             if(toState.requiresLogin){
                 if(!Authentication.user){
                     $location.path('/signin');

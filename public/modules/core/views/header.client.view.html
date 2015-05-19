@@ -72,7 +72,8 @@
                 <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
             </div>
         <div class="navbar-right toolbar" >
-            <button data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" data-ng-click="fireCommand(item.command)" data-ng-bind="item.title" ></button>
+            <h-care-action-btn data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" icon="{{item.icon}}" click-event="fireCommand({{item.command}})" action="{{item.action}}"></h-care-action-btn>
+            <!--<button data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" data-ng-click="fireCommand(item.command)" data-ng-bind="item.title" ></button>-->
         </div>
             <!--<form class="navbar-right toolbar" role="search">
             <button class="btn btn-success" ng-click="fire()" >Button</button>

@@ -1148,8 +1148,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             var patient=Patient.getCurrentPatient();
             if(patient){
                 CoreProperties.setPageSubTitle(patient.fullName);
-                Toolbar.addToolbarCommand('clearExamination', null, 'Clear', 'clear', 0);
-                Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'save', 1);
+                Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'asterisk', 0);
+                Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
 
             }
             $scope.examination = new Examinations({});
@@ -1157,7 +1157,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         ActionsHandler.onActionFired('fire', $scope, function(action, args) {
             console.log('event received');
-            //console.log(action.name);
+            console.log(action.name);
         });
 	}
 ]);

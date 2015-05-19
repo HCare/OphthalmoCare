@@ -28,7 +28,8 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
         });
 
         $scope.fireCommand=function(command){
-            console.log(command)
+            console.log('fire')
+            console.log(command);
             ActionsHandler.fireAction(command, null);
         }
     }
