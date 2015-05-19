@@ -100,3 +100,6 @@ img {
 .toolbar{
     padding: 8px 0px;
 }
+.toolbar-btn{
+    margin-left: 5px;
+}

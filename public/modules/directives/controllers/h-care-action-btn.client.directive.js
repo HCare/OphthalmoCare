@@ -10,7 +10,7 @@ angular.module('directives')
 
                     if(atts.redirectUrl != null && atts.redirectUrl != undefined){
                         atts.$observe('redirectUrl', function(redirectUrl){
-                            var buttonText = '<a class="btn btn-primary" href='+ redirectUrl +'>' +
+                            var buttonText = '<a class="btn btn-default" href='+ redirectUrl +'>' +
                                 '<i class="glyphicon glyphicon-' +  atts.icon + '"></i>' +
                                 '</a>';
                             element.html(buttonText);
@@ -18,7 +18,7 @@ angular.module('directives')
                     }
 
                     if(atts.clickEvent != null && atts.clickEvent != undefined) {
-                        var buttonText = "<a class='btn btn-primary' >" +
+                        var buttonText = "<a class='btn btn-default' >" +
                             "<i class='glyphicon glyphicon-"+ atts.icon +"'></i>" +
                             "</a>";
                         element.html(buttonText);
