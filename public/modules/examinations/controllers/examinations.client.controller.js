@@ -652,11 +652,6 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 "key": "comment",
                 "type": "textarea",
                 "placeholder": "Make a comment"
-            },
-            {
-                "type": "submit",
-                "style": "btn-default",
-                "title": "OK"
             }
         ];
 
@@ -1062,16 +1057,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 },
                 "comment": {
                     "title": "Comment",
-                    "type": "string",
-                    "maxLength": 20,
-                    "validationMessage": "Don't be greedy!"
+                    "type": "string"
                 }
-            },
-            "required": [
-                "name",
-                "email",
-                "comment"
-            ]
+            }
         };
 
 
@@ -1080,8 +1068,10 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             $scope.$broadcast('schemaFormValidate');
 
             // Then we check if the form is valid
-            if (form.$valid) {
-                console.log($scope.examination.eyelid);
+            console.log($scope.examination);
+            console.log($scope.form.$valid);
+            if ($scope.form.$valid) {
+                console.log($scope.examination);
                 //$scope.create();
             }
         }
@@ -1155,9 +1145,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             $scope.examination = new Examinations({});
         }
 
-        ActionsHandler.onActionFired('fire', $scope, function(action, args) {
-            console.log('event received');
-            console.log(action.name);
+        ActionsHandler.onActionFired('saveExamination', $scope, function(action, args) {
+                $scope.onSubmit($scope.examination);
         });
 	}
 ]);
