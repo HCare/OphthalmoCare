@@ -7,18 +7,15 @@ module.exports=function(labels){
     var config = require('../../config/config'),
         db = require('seraph')(config.graphDB),
         model = require('seraph-model'),
-        examinationModel = model(db, 'Examination'),
-        mongoose = require('mongoose'),
-        ObjectId = mongoose.Types.ObjectId,
+        examinationItemModel = model(db, 'ExaminationItem'),
         moment=require('moment');
 
     /**
-     * Examination Schema
+     * ExaminationItem Schema
      */
-    var ExaminationSchema = {
+    var ExaminationItemSchema = {
         _id:{
-            type: String,
-            default:new ObjectId()
+            type: String
         },
         _createUser:{
             type: String
@@ -34,9 +31,9 @@ module.exports=function(labels){
         }
     };
 
-    examinationModel.schema = ExaminationSchema;
-    examinationModel.setUniqueKey('_id');
-    examinationModel.on('beforeSave', function(obj) {
+    examinationItemModel.schema = ExaminationItemSchema;
+    examinationItemModel.setUniqueKey('_id');
+    examinationItemModel.on('beforeSave', function(obj) {
         if(!obj._createTime)
         {
             obj._createTime = moment().valueOf();
@@ -46,12 +43,12 @@ module.exports=function(labels){
             obj._updateTime = moment().valueOf();
         }
     });
-    examinationModel.on('afterSave', function (obj) {
+    examinationItemModel.on('afterSave', function (obj) {
         if (!obj._updateTime) {
             db.label(obj, labels, function (err) {
             });
         }
     });
-    examinationModel.delete=db.delete;
-    return  examinationModel;
+    examinationItemModel.delete=db.delete;
+    return  examinationItemModel;
 }

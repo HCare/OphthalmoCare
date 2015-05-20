@@ -1,22 +1,24 @@
 'use strict';
 
 // Examinations controller
-angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q','Patient','CoreProperties','ActionsHandler','Toolbar',
-	function($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patient, CoreProperties, ActionsHandler, Toolbar) {
-		$scope.authentication = Authentication;
+angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q', 'Patients', 'CoreProperties', 'ActionsHandler', 'Toolbar', 'Logger',
+    function ($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patients, CoreProperties, ActionsHandler, Toolbar, Logger) {
+        $scope.authentication = Authentication;
         //$scope.examination={};
         /*$scope.examination.colors=null;
-        $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
+         $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
         $scope.tagTransform = function (newTag) {
             var item = {
                 label: newTag,
-                value:newTag.toLowerCase()
+                value: newTag.toLowerCase()
             };
             return item;
         };
+        $scope.forms = {};
+        // $scope.dummy.examinationForm="examinationForm";
 
-       //region schema form
-        $scope.form=[
+        //region schema form
+        $scope.form = [
             {
                 "type": "section",
                 "htmlClass": "row",
@@ -25,30 +27,30 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"appearanceOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "appearanceOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                tagging: $scope.tagTransform ,
-                                taggingLabel: '(new)',
-                                taggingTokens: 'ENTER'
-                            }}
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Appearance</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Appearance</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"appearanceOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "appearanceOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -64,11 +66,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"eyeLidOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "eyeLidOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -76,18 +78,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Eye Lid</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Eye Lid</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"eyeLidOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "eyeLidOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -103,11 +105,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"lacrimalSystemOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "lacrimalSystemOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -115,18 +117,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Lacrimal System</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Lacrimal System</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"lacrimalSystemOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "lacrimalSystemOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -142,11 +144,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"conjunctivaOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "conjunctivaOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -154,18 +156,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Conjunctiva</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Conjunctiva</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"conjunctivaOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "conjunctivaOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -181,11 +183,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"scleraOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "scleraOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -193,18 +195,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Sclera</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Sclera</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"scleraOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "scleraOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -220,11 +222,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"corneaOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "corneaOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -232,18 +234,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Cornea</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Cornea</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"corneaOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "corneaOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -259,11 +261,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"anteriorChamberOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "anteriorChamberOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -271,18 +273,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Anterior Chamber</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Anterior Chamber</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"anteriorChamberOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "anteriorChamberOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -298,11 +300,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"irisOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "irisOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -310,18 +312,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Iris</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Iris</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"irisOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "irisOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -337,11 +339,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"pupilOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "pupilOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -349,18 +351,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Pupil</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Pupil</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"pupilOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "pupilOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -376,11 +378,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"lensOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "lensOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -388,18 +390,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Lens</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Lens</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"lensOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "lensOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -415,11 +417,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"fundusOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "fundusOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -427,18 +429,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Fundus</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Fundus</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"fundusOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "fundusOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -454,11 +456,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"opticNerveOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "opticNerveOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -466,18 +468,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">Optic Nerve</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Optic Nerve</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"opticNerveOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "opticNerveOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -493,11 +495,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"eomOD",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "eomOD",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -505,18 +507,18 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">EOM</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">EOM</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"eomOS",
-                                feedback:"{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                            {   key: "eomOS",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
-                                options : {
-                                    tagging: $scope.tagTransform ,
+                                options: {
+                                    tagging: $scope.tagTransform,
                                     taggingLabel: '(new)',
                                     taggingTokens: 'ENTER'
                                 }}
@@ -532,24 +534,24 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"vaOD",
-                                type:"text",
+                            {   key: "vaOD",
+                                type: "text",
                                 notitle: true
                             }
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">V/A</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">V/A</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"vaOS",
+                            {   key: "vaOS",
                                 notitle: true,
-                                type:"text"
+                                type: "text"
                             }
                         ]
                     }
@@ -563,24 +565,24 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"bcvaOD",
-                                type:"text",
+                            {   key: "bcvaOD",
+                                type: "text",
                                 notitle: true
                             }
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">BCVA</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">BCVA</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"bcvaOS",
+                            {   key: "bcvaOS",
                                 notitle: true,
-                                type:"text"
+                                type: "text"
                             }
                         ]
                     }
@@ -594,24 +596,24 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"bcvaWithOD",
-                                type:"text",
+                            {   key: "bcvaWithOD",
+                                type: "text",
                                 notitle: true
                             }
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">BCVA With</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">BCVA With</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"bcvaWithOS",
+                            {   key: "bcvaWithOS",
                                 notitle: true,
-                                type:"text"
+                                type: "text"
                             }
                         ]
                     }
@@ -625,24 +627,24 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"iopOD",
-                                type:"text",
+                            {   key: "iopOD",
+                                type: "text",
                                 notitle: true
                             }
                         ]
                     },
                     {
                         "type": "help",
-                        "helpvalue":"<label class=\"control-label ng-binding\">IOP</label>",
+                        "helpvalue": "<label class=\"control-label ng-binding\">IOP</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key:"iopOS",
+                            {   key: "iopOS",
                                 notitle: true,
-                                type:"text"
+                                type: "text"
                             }
                         ]
                     }
@@ -655,7 +657,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             }
         ];
 
-        $scope.schema={
+        $scope.schema = {
             "type": "object",
             "title": "Examination",
             "properties": {
@@ -663,27 +665,27 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Appearance",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal"
+                    placeholder: "Normal"
                     /*,
-                    items: [
-                        { value: '1', label: 'Normal' }
-                    ]*/
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
                 },
                 "appearanceOS": {
                     "title": "Appearance",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal"
+                    placeholder: "Normal"
                     /*,
-                    items: [
-                        { value: '1', label: 'Normal' }
-                    ]*/
+                     items: [
+                     { value: '1', label: 'Normal' }
+                     ]*/
                 },
                 "eyeLidOD": {
                     "title": "Eye Lid",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"No Abnormality Detected",
+                    placeholder: "No Abnormality Detected",
                     items: [
                         { value: 'rl', label: 'RL' },
                         { value: 'entropion', label: 'Entropion' },
@@ -705,7 +707,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Eye Lid",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"No Abnormality Detected",
+                    placeholder: "No Abnormality Detected",
                     items: [
                         { value: 'rl', label: 'RL' },
                         { value: 'entropion', label: 'Entropion' },
@@ -727,7 +729,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Lacrimal System",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal"
+                    placeholder: "Normal"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -737,7 +739,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Lacrimal System",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal"
+                    placeholder: "Normal"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -747,7 +749,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Conjunctiva",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'active-trachoma', label: 'Active trachoma' },
                         { value: 't-iii', label: 'T III' },
@@ -763,7 +765,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Conjunctiva",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'active-trachoma', label: 'Active trachoma' },
                         { value: 't-iii', label: 'T III' },
@@ -779,7 +781,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Sclera",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
                         { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
@@ -790,7 +792,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Sclera",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
                         { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
@@ -801,7 +803,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Cornea",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Ps, Clear Centre",
+                    placeholder: "Ps, Clear Centre",
                     items: [
                         { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
                         { value: 'ps', label: 'Ps' },
@@ -824,7 +826,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Cornea",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Ps, Clear Centre",
+                    placeholder: "Ps, Clear Centre",
                     items: [
                         { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
                         { value: 'ps', label: 'Ps' },
@@ -847,7 +849,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Anterior Chamber",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal Depth No Abnormal Content",
+                    placeholder: "Normal Depth No Abnormal Content",
                     items: [
                         { value: 'cells', label: 'Cells' },
                         { value: 'flare', label: 'Flare' },
@@ -861,7 +863,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Anterior Chamber",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal Depth No Abnormal Content",
+                    placeholder: "Normal Depth No Abnormal Content",
                     items: [
                         { value: 'cells', label: 'Cells' },
                         { value: 'flare', label: 'Flare' },
@@ -875,7 +877,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Iris",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal Color And Pattern"
+                    placeholder: "Normal Color And Pattern"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -885,7 +887,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Iris",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal Color And Pattern"
+                    placeholder: "Normal Color And Pattern"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -895,7 +897,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Pupil",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"R R R Direct and Cons."
+                    placeholder: "R R R Direct and Cons."
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -905,7 +907,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Pupil",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"R R R Direct and Cons."
+                    placeholder: "R R R Direct and Cons."
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -915,7 +917,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Lens",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Clear In Place",
+                    placeholder: "Clear In Place",
                     items: [
                         { value: 'imsc', label: 'IMSC' },
                         { value: 'nuclear-cataract', label: 'Nuclear cataract' },
@@ -929,7 +931,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Lens",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Clear In Place",
+                    placeholder: "Clear In Place",
                     items: [
                         { value: 'imsc', label: 'IMSC' },
                         { value: 'nuclear-cataract', label: 'Nuclear cataract' },
@@ -943,7 +945,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Fundus",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'tessellated', label: 'Tessellated' },
                         { value: 'myopic', label: 'Myopic' },
@@ -961,7 +963,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Fundus",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'tessellated', label: 'Tessellated' },
                         { value: 'myopic', label: 'Myopic' },
@@ -979,7 +981,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Optic Nerve",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'pale', label: 'Pale' },
                         { value: 'atrophy', label: 'Atrophy' },
@@ -993,7 +995,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "Optic Nerve",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Normal",
+                    placeholder: "Normal",
                     items: [
                         { value: 'pale', label: 'Pale' },
                         { value: 'atrophy', label: 'Atrophy' },
@@ -1007,7 +1009,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "EOM",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                    placeholder: "Free Balanced Ocular Motility In The Sex Cardinal Directions"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
@@ -1017,43 +1019,43 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "title": "EOM",
                     "type": "array",
                     format: "uiselect",
-                    placeholder:"Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                    placeholder: "Free Balanced Ocular Motility In The Sex Cardinal Directions"
                     /*,
                      items: [
                      { value: '1', label: 'Normal' }
                      ]*/
                 },
-                "vaOD":{
-                    "title":"V/A",
-                    "type":"string"
+                "vaOD": {
+                    "title": "V/A",
+                    "type": "string"
                 },
-                "vaOS":{
-                    "title":"V/A",
-                    "type":"string"
+                "vaOS": {
+                    "title": "V/A",
+                    "type": "string"
                 },
-                "bcvaOD":{
-                    "title":"BCVA",
-                    "type":"string"
+                "bcvaOD": {
+                    "title": "BCVA",
+                    "type": "string"
                 },
-                "bcvaOS":{
-                    "title":"BCVA",
-                    "type":"string"
+                "bcvaOS": {
+                    "title": "BCVA",
+                    "type": "string"
                 },
-                "bcvaWithOD":{
-                    "title":"BCVA With",
-                    "type":"string"
+                "bcvaWithOD": {
+                    "title": "BCVA With",
+                    "type": "string"
                 },
-                "bcvaWithOS":{
-                    "title":"BCVA With",
-                    "type":"string"
+                "bcvaWithOS": {
+                    "title": "BCVA With",
+                    "type": "string"
                 },
-                "iopOD":{
-                    "title":"IOP",
-                    "type":"string"
+                "iopOD": {
+                    "title": "IOP",
+                    "type": "string"
                 },
-                "iopOS":{
-                    "title":"IOP",
-                    "type":"string"
+                "iopOS": {
+                    "title": "IOP",
+                    "type": "string"
                 },
                 "comment": {
                     "title": "Comment",
@@ -1063,90 +1065,89 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         };
 
 
-        $scope.onSubmit = function(form) {
+        $scope.onSubmit = function (form) {
             // First we broadcast an event so all fields validate themselves
             $scope.$broadcast('schemaFormValidate');
-
             // Then we check if the form is valid
-            console.log($scope.examination);
-            console.log($scope.form.$valid);
-            if ($scope.form.$valid) {
-                console.log($scope.examination);
-                //$scope.create();
+            if (form.$valid) {
+                $scope.create();
             }
         }
         //endregion schema form
 
-      		// Create new Examination
-		$scope.create = function() {
-			// Create new Examination object
-			var examination = new Examinations ({
-				name: this.name
-			});
+        // Create new Examination
+        $scope.create = function () {
+            // Create new Examination object
+            var examination = new Examinations($scope.examination);
 
-			// Redirect after save
-			examination.$save(function(response) {
-				$location.path('examinations/' + response._id);
+            // Redirect after save
+            examination.$save(function (response) {
+                $location.path('examinations/' + response._id);
+                Logger.success('Examination created successfully', true);
+                // Clear form fields
+                $scope.examination = {};
+            }, function (errorResponse) {
+                Logger.error(errorResponse.data.message, true);
+                //$scope.error = errorResponse.data.message;
+            });
+        };
 
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+        // Remove existing Examination
+        $scope.remove = function (examination) {
+            if (examination) {
+                examination.$remove();
 
-		// Remove existing Examination
-		$scope.remove = function( examination ) {
-			if ( examination ) { examination.$remove();
-
-				for (var i in $scope.examinations ) {
-					if ($scope.examinations [i] === examination ) {
-						$scope.examinations.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.examination.$remove(function() {
-					$location.path('examinations');
-				});
-			}
-		};
-
-		// Update existing Examination
-		$scope.update = function() {
-			var examination = $scope.examination ;
-
-			examination.$update(function() {
-				$location.path('examinations/' + examination._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Find a list of Examinations
-		$scope.find = function() {
-			$scope.examinations = Examinations.query();
-		};
-
-		// Find existing Examination
-		$scope.findOne = function() {
-			$scope.examination = Examinations.get({ 
-				examinationId: $stateParams.examinationId
-			});
-		};
-
-        $scope.initOne=function(){
-            var patient=Patient.getCurrentPatient();
-            if(patient){
-                CoreProperties.setPageSubTitle(patient.fullName);
-                Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'asterisk', 0);
-                Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
-
+                for (var i in $scope.examinations) {
+                    if ($scope.examinations [i] === examination) {
+                        $scope.examinations.splice(i, 1);
+                    }
+                }
+            } else {
+                $scope.examination.$remove(function () {
+                    $location.path('examinations');
+                });
             }
-            $scope.examination = new Examinations({});
-        }
+        };
 
-        ActionsHandler.onActionFired('saveExamination', $scope, function(action, args) {
-                $scope.onSubmit($scope.examination);
+        // Update existing Examination
+        $scope.update = function () {
+            var examination = $scope.examination;
+
+            examination.$update(function () {
+                $location.path('examinations/' + examination._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
+        // Find a list of Examinations
+        $scope.find = function () {
+            $scope.examinations = Examinations.query();
+        };
+
+        // Find existing Examination
+        $scope.findOne = function () {
+            $scope.examination = Examinations.get({
+                examinationId: $stateParams.examinationId
+            });
+        };
+
+        $scope.initOne = function () {
+            $scope.examination = new Examinations({});
+            Patients.get({
+                patientId: $stateParams.patientId
+            }, function (patient) {
+                if (patient) {
+                    $scope.examination.patientId = patient._id;
+                    CoreProperties.setPageSubTitle(patient.fullName);
+                    Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'asterisk', 0);
+                    Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
+                }
+            });
+        };
+
+        ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
+            $scope.onSubmit($scope.forms.examinationForm);
         });
-	}
+    }
 ]);

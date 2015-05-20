@@ -12,6 +12,7 @@ angular.module('patients').factory('Patients', ['$resource',
 	}
 ]);
 
+/*
 angular.module('patients').factory('Patient',function(){
     var currentPatient = null;
 
@@ -27,4 +28,4 @@ angular.module('patients').factory('Patient',function(){
         setCurrentPatient: setCurrentPatient,
         getCurrentPatient: getCurrentPatient
     };
-});
+});*/

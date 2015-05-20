@@ -3,15 +3,17 @@
 /**
  * Module dependencies.
  */
-var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Examination = mongoose.model('Examination'),
+var config = require('../../config/config'),
+    moment=require('moment'),
+    errorHandler = require('./errors'),
+    Examination = require('../../app/models/examination'),
 	_ = require('lodash');
 
 /**
  * Create a Examination
  */
 exports.create = function(req, res) {
+    console.log(req.body);
 	var examination = new Examination(req.body);
 	examination.user = req.user;
 

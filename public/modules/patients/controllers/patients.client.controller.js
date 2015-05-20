@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'Patient',
-    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload, Patient) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload',
+    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload) {
         $scope.authentication = Authentication;
         $scope._ = lodash;
         $scope.Moment = Moment;
@@ -187,8 +187,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         //redirect to examination
         $scope.examine = function (){
             var patient = angular.fromJson(angular.toJson($scope.patient));
-            Patient.setCurrentPatient(patient);
-            $location.path('examinations/create');
+            //Patient.setCurrentPatient(patient);
+            $location.path('examinations/create/'+patient._id);
         }
 
         // Update existing Patient

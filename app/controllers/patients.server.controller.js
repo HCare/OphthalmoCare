@@ -10,8 +10,7 @@ var config = require('../../config/config'),
     fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
     //db=model.db,
     //Patient=model.Patient,
-	_ = require('lodash'),
-    moment=require('moment');
+	_ = require('lodash');
 
 /**
  * render patient photo

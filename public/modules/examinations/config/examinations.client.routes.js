@@ -12,7 +12,7 @@ angular.module('examinations').config(['$stateProvider',
             title:'List Examinations'
 		}).
 		state('createExamination', {
-			url: '/examinations/create',
+			url: '/examinations/create/:patientId',
 			templateUrl: 'modules/examinations/views/create-examination.client.view.html',
             action: 'create_examination',
             title:'Create Examination'
