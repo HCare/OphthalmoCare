@@ -22,6 +22,8 @@ RUN npm install
 
 ADD . /home/ophthalmocare
 
+VOLUME /data/db
+
 ENV NODE_ENV development
 
 EXPOSE 3000 35729
