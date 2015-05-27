@@ -696,10 +696,6 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                             "type": "array",
                             format: "uiselect",
                             placeholder: "Normal"
-                            /*,
-                             items: [
-                             { value: '1', label: 'Normal' }
-                             ]*/
                         },
                         "conjunctiva": {
                             "title": "Conjunctiva",
@@ -1055,7 +1051,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             // Then we check if the form is valid
             if (form.$valid) {
                 console.log($scope.examination);
-                //$scope.create();
+                $scope.create();
             }
         }
         //endregion schema form
@@ -1067,7 +1063,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
             // Redirect after save
             examination.$save(function (response) {
-                $location.path('examinations/' + response._id);
+                //$location.path('examinations/' + response._id);
                 Logger.success('Examination created successfully', true);
                 // Clear form fields
                 $scope.examination = {};

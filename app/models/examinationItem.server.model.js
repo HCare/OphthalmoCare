@@ -1,54 +1,59 @@
 'use strict';
 
-module.exports=function(labels){
+module.exports = function (labels, generateId) {
     /**
      * Module dependencies.
      */
     var config = require('../../config/config'),
         db = require('seraph')(config.graphDB),
         model = require('seraph-model'),
-        examinationItemModel = model(db, 'ExaminationItem'),
-        moment=require('moment');
+        examinationItemModel = model(db, labels[0]),
+        mongoose = require('mongoose'),
+        ObjectId = mongoose.Types.ObjectId,
+        moment = require('moment');
 
     /**
-     * ExaminationItem Schema
+     * examinationItem Schema
      */
-    var ExaminationItemSchema = {
-        _id:{
+    var examinationItemSchema = {
+        _id: {
             type: String
         },
-        _createUser:{
+        _createUser: {
             type: String
         },
-        _createTime:{
+        _createTime: {
             type: Number
         },
         _updateUser: {
             type: String
         },
-        _updateTime:{
+        _updateTime: {
             type: Number
         }
     };
 
-    examinationItemModel.schema = ExaminationItemSchema;
+    examinationItemModel.schema = examinationItemSchema;
     examinationItemModel.setUniqueKey('_id');
-    examinationItemModel.on('beforeSave', function(obj) {
-        if(!obj._createTime)
-        {
+    examinationItemModel.on('beforeSave', function (obj) {
+        if (!obj._createTime) {
             obj._createTime = moment().valueOf();
+            if (generateId) {
+                obj._id = new ObjectId();
+            }
         }
-        else
-        {
+        else {
             obj._updateTime = moment().valueOf();
         }
     });
     examinationItemModel.on('afterSave', function (obj) {
         if (!obj._updateTime) {
-            db.label(obj, labels, function (err) {
-            });
+            if (labels.length > 1) {
+                db.label(obj, labels.slice(1), function (err) {
+                });
+            }
         }
     });
-    examinationItemModel.delete=db.delete;
+    examinationItemModel.delete = db.delete;
     return  examinationItemModel;
 }

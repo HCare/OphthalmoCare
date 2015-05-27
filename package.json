@@ -43,8 +43,8 @@
     "passport-linkedin": "~0.1.3",
     "passport-local": "~1.0.0",
     "passport-twitter": "~1.0.2",
-    "seraph": "^0.9.10",
-    "seraph-model": "^0.6.18",
+    "seraph": "^0.11.2",
+    "seraph-model": "^0.7.2",
     "swig": "~1.4.1"
   },
   "devDependencies": {
