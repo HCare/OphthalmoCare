@@ -24,6 +24,8 @@ ADD . /home/ophthalmocare
 
 ENV NODE_ENV development
 
+VOLUME /data/db
+
 EXPOSE 3000 35729
 
 CMD ["mongod", "grunt"]
