@@ -63,23 +63,28 @@ exports.create = function (req, res) {
                     callback(obj);
                 });
             }
-            function traverse(obj){
+            function traverse(obj, depth){
+
                 for(var i in obj){
                     if(obj[i]!=null){
                         if(typeof(obj[i])=="object")
                         {
                             if(Array.isArray(obj[i])){
                                 for(var n in obj[i]){
+                                    console.log(depth);
                                     console.log(i);
                                     console.log(obj[i][n])
                                 }
                             }
                             else{
-                                traverse(obj[i]);
+                                console.log(depth);
+                                console.log(i);
+                                traverse(obj[i], depth+1);
                             }
                         }
                         else
                         {
+                            console.log(depth);
                             console.log(i);
                             console.log(obj[i]);
                         }
@@ -87,7 +92,7 @@ exports.create = function (req, res) {
                     }
                 }
             }
-            traverse(examination);
+            traverse(examination, 0);
 
             res.jsonp(newExamination);
 
