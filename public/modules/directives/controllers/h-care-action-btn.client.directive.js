@@ -8,7 +8,7 @@ angular.module('directives')
             link :function(scope, element, atts){
                 if(lodash.contains(Authentication.user._role._actions, atts.action)){
 
-                    if(atts.redirectUrl != null && atts.redirectUrl != undefined){
+                    if(atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != ''){
                         atts.$observe('redirectUrl', function(redirectUrl){
                             var buttonText = '<a class="btn btn-default" href='+ redirectUrl +'>' +
                                 '<i class="glyphicon glyphicon-' +  atts.icon + '"></i>' +
@@ -17,20 +17,20 @@ angular.module('directives')
                         });
                     }
 
-                    if(atts.clickEvent != null && atts.clickEvent != undefined) {
+                    if(atts.clickEvent != null && atts.clickEvent != undefined && atts.clickEvent !='') {
                         var buttonText = "<a class='btn btn-default' >" +
                             "<i class='glyphicon glyphicon-"+ atts.icon +"'></i>" +
                             "</a>";
                         element.html(buttonText);
                         element.on("click", function () {
-                            if(atts.responseMessage != null && atts.responseMessage != undefined) {
+                            if(atts.responseMessage != null && atts.responseMessage != undefined && atts.responseMessage !='') {
                                 if (confirm(atts.responseMessage)) {
                                     //apply only
                                     scope.$apply(atts.clickEvent);
 
                                 }
                             }
-                            else if(atts.clickEvent != null && atts.clickEvent != undefined) {
+                            else {
                                 scope.$apply(atts.clickEvent);
                             }
                         });

@@ -73,7 +73,7 @@ exports.update = function(req, res, next) {
 	var patient = req.patient;
 	patient = _.extend(patient , req.body);
     patient.updated._user=req.user;
-    patient.updated.time=Date.now;
+    patient.updated.time=Date.now();
     var hasPhoto=patient.personalPhoto;
     if(hasPhoto==='true'){
         patient.personalPhoto=config.patientPhotoFileName;

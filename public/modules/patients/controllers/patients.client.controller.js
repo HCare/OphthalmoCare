@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload',
-    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
         $scope.authentication = Authentication;
         $scope._ = lodash;
         $scope.Moment = Moment;
@@ -151,7 +151,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                     $scope.initOne();
                 }
             ).error(function (err) {
-                    Logger.error(err, true);
+                    Logger.error(err.message, true);
                     //$scope.error = errorResponse.data.message;
                 }
             );
@@ -204,12 +204,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
                 data: patient,
-                file: blob, // or list of files ($files) for html5 only
-                //fileName: 'personal-photo' // to modify the name of the file(s)
-                // customize file formData name ('Content-Disposition'), server side file variable name.
-                //fileFormDataName: myFile, //or a list of names for multiple files (html5). Default is 'file'
-                // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
-                //formDataAppender: function(formData, key, val){}
+                file: blob
             }).success(function (response, status) {
                     $location.path('patients/' + response._id);
                     if (response.warn) {
@@ -223,22 +218,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                     $scope.initOne();
                 }
             ).error(function (err) {
-                    Logger.error(err, true);
+                    Logger.error(err.message, true);
                     //$scope.error = errorResponse.data.message;
                 }
             );
-/*
-            patient.$update(function () {
-                $location.path('patients/' + patient.id);
-                ///log success message
-                Logger.success('Patient updated successfully', true);
 
-            }, function (errorResponse) {
-                ///log error message
-                Logger.error(errorResponse.data.message, true);
-
-                //$scope.error = errorResponse.data.message;
-            });*/
         };
 
         // Find a list of Patients
@@ -247,7 +231,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         // Find existing Patient
-        $scope.findOne = function () {
+        $scope.findOne = function (callback) {
             var patient = Patients.get({
                 patientId: $stateParams.patientId
             }, function(){
@@ -257,6 +241,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                     $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
                     //$scope.patient.personalPhoto=filePath;
                 }
+                if(callback){
+                    callback();
+                }
             });
         };
 
@@ -264,7 +251,41 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.initOne = function () {
             $scope.patient = new Patients({});
         };
+
+        $scope.initCreate=function(){
+            $scope.initOne();
+            Toolbar.addToolbarCommand('savePatient', 'create_patient', 'Save', 'floppy-save', 0);
+        };
+        $scope.initEdit=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('updatePatient', 'edit_patient', 'Save', 'floppy-save', 0);
+            });
+        };
+        $scope.initView=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
+                Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 1);
+                Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 2, null, 'Are you sure to delete patient "'+$scope.patient.fullName+'"?');
+            });
+        };
+
+        ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
+            $scope.create();
+        });
+        ActionsHandler.onActionFired('updatePatient', $scope, function (action, args) {
+            $scope.update();
+        });
+        ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
+            $scope.examine();
+        });
+        ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
+            $location.path('patients/'+$scope.patient._id+'/edit');
+        });
+        ActionsHandler.onActionFired('deletePatient', $scope, function (action, args) {
+            $scope.remove();
+        });
     }
+
 ]);
 
 angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $modalInstance, items, Logger) {

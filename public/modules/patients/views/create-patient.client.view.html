@@ -1,4 +1,4 @@
-<section data-ng-controller="PatientsController" data-ng-init="initOne()">
+<section data-ng-controller="PatientsController" data-ng-init="initCreate()">
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body">
             <tabset justified="true">
@@ -22,32 +22,12 @@
                         </div>
                     </div>
                 </tab>
-                <!--<tab heading="Browse" active="tabs[1].active" disabled="tabs[1].disabled">
-                        <div class="form-group">
-                            <label class="control-label" for="name">Choose a pic</label>
-
-                            <div class="controls">
-                                <input type="file" id="fileInput" onchange="angular.element(this).scope().inputPhoto(this.files)"/>
-                            </div>
-                            <a href="" class="thumbnail" ng-click="selectInputPhoto()">
-                            <img data-ng-show="inputImage" id="inputImage" src="" data-ng-src="{{inputImage}}"/>
-                                </a>
-
-                        </div>
-                </tab>-->
                 <tab heading="Crop" active="tabs[2].active" disabled="tabs[2].disabled">
-                    <!--<img src="" data-ng-src="{{selectedPhoto}}"/>-->
                     <div class="cropArea" ng-style="{'width': photoWidth, 'height': photoHeight }">
                         <img-crop area-min-size="128" result-image-size="128" image="selectedPhoto" result-image="finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
                     </div>
-                    <!--<img src="" data-ng-src="{{finalPhoto}}"/>-->
                 </tab>
             </tabset>
-            <!--<div class="modal-header">
-            <h3 class="modal-title">I'm a modal!</h3>
-        </div>-->
-
-
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary"  ng-click="ok()">OK</button>
@@ -58,7 +38,7 @@
         <h1>New Patient</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+        <form class="form-horizontal" novalidate>
             <fieldset>
                 <div class="form-group">
                     <div class="circular" back-img="{{photo||'modules/core/img/userpic.png'}}">
@@ -148,9 +128,9 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!--<div class="form-group">
                     <input type="submit" class="btn btn-default">
-                </div>
+                </div>-->
                 <div data-ng-show="error" class="text-danger">
                     <strong data-ng-bind="error"></strong>
                 </div>

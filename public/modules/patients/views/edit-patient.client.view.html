@@ -1,4 +1,4 @@
-<section data-ng-controller="PatientsController" data-ng-init="findOne()">
+<section data-ng-controller="PatientsController" data-ng-init="initEdit()">
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body">
             <tabset justified="true">
@@ -58,7 +58,7 @@
         <h1>Edit Patient</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate>
+        <form class="form-horizontal" novalidate>
             <fieldset>
                 <div class="form-group">
                     <div class="circular" back-img="{{photo||personalPhotoPath||'modules/core/img/userpic.png'}}">
@@ -144,9 +144,9 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!--<div class="form-group">
                     <input type="submit" class="btn btn-default">
-                </div>
+                </div>-->
                 <div data-ng-show="error" class="text-danger">
                     <strong data-ng-bind="error"></strong>
                 </div>

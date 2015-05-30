@@ -6,14 +6,16 @@ angular.module('core').service('Toolbar',
         this.commands = [];
 
         // Add toolbar item
-        this.addToolbarCommand = function (commandName, commandAction, CommandTitle, commandIcon, position) {
+        this.addToolbarCommand = function (commandName, commandAction, CommandTitle, commandIcon, position, redirectUrl, confirmMessage) {
             // Push new menu item
             this.commands.push({
                 command:commandName,
                 action: commandAction,
                 title: CommandTitle,
                 icon: commandIcon,
-                position: position || 0
+                position: position || 0,
+                redirect:redirectUrl||null,
+                confirmMsg:confirmMessage||null
             });
             return this.commands;
         };
