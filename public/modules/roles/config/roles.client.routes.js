@@ -55,14 +55,14 @@ angular.module('roles').config(['$stateProvider',
                 templateUrl: 'modules/roles/views/list-roles.client.view.html',
                 requiresLogin: true,
                 action: 'list_roles',
-                title:'List Roles'
+                title:'Roles'
             }).
             state('createRole', {
                 url: '/roles/create',
                 templateUrl: 'modules/roles/views/create-role.client.view.html',
                 requiresLogin: true,
                 action: 'create_role',
-                title:'Create Role'
+                title:'New Role'
             }).
             state('searchRoles', {
                 url: '/roles/search',

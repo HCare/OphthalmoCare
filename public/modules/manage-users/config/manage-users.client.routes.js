@@ -9,13 +9,13 @@ angular.module('manage-users').config(['$stateProvider',
 			url: '/manage-users',
 			templateUrl: 'modules/manage-users/views/list-manage-users.client.view.html',
             action:'list_users',
-            title:'List Users'
+            title:'Users'
 		}).
 		state('createManageUser', {
 			url: '/manage-users/create',
 			templateUrl: 'modules/manage-users/views/create-manage-user.client.view.html',
             action:'create_user',
-            title:'Create User'
+            title:'New user'
 		}).
          state('searchManageUser', {
                 url: '/manage-users/search',

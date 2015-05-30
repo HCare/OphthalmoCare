@@ -6,9 +6,7 @@
 var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
     ManageUser = mongoose.model('User'),
-    Role = mongoose.model('Role'),
-    _ = require('lodash'),
-    Person = require('../../app/models/person');
+    _ = require('lodash');
 /**
  * Create a Manage user
  */
@@ -21,38 +19,9 @@ exports.create = function(req, res) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
-		} else {
-            //console.log(manageUser);
-            var userRole=Role.findById(manageUser._role, function (err, role) {
-                if (err) {
-                    manageUser.remove();
-                    return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
-                    });
-                }
-                else{
-
-                    var person={_id:manageUser.id, fullName:manageUser.fullName, email:manageUser.email};
-                    var personModel=new Person([role.name]);
-                    personModel.save(person, function(err, newPerson) {
-                        if (err) {
-                            manageUser.remove();
-                            return res.status(400).send({
-                                message: errorHandler.getErrorMessage(err)
-                            });
-                        }
-                        else {
-                            res.jsonp(newPerson);
-                        }
-                    });
-
-                }
-
-
-                });
-
 
 		}
+        res.jsonp(manageUser);
 	});
 };
 
@@ -119,7 +88,6 @@ exports.delete = function(req, res) {
  * List of Manage users
  */
 exports.list = function(req, res) {
-
     if (req.query && Object.keys(req.query).length > 0) {
         //password
         delete req.query.password; // didn't search by password

@@ -9,13 +9,13 @@ angular.module('examinations').config(['$stateProvider',
 			url: '/examinations',
 			templateUrl: 'modules/examinations/views/list-examinations.client.view.html',
             action: 'list_examinations',
-            title:'List Examinations'
+            title:'Examinations'
 		}).
 		state('createExamination', {
 			url: '/examinations/create/:patientId',
 			templateUrl: 'modules/examinations/views/create-examination.client.view.html',
             action: 'create_examination',
-            title:'Create Examination'
+            title:'New Examination'
 		}).
 		state('viewExamination', {
 			url: '/examinations/:examinationId',

@@ -9,13 +9,13 @@ angular.module('patients').config(['$stateProvider',
                 url: '/patients',
                 templateUrl: 'modules/patients/views/list-patients.client.view.html',
                 action: 'list_patients',
-                title:'List Patients'
+                title:'Patients'
             }).
             state('createPatient', {
                 url: '/patients/create',
                 templateUrl: 'modules/patients/views/create-patient.client.view.html',
                 action: 'create_patient',
-                title:'Create Patient'
+                title:'New Patient'
             }).
             state('searchPatients', {
                 url: '/patients/search',
