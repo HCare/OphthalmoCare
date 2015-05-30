@@ -6,9 +6,9 @@
         <a data-ng-repeat="examination in examinations" data-ng-href="#!/examinations/{{examination._id}}" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on
-				<span data-ng-bind="examination.created | date:'medium'"></span>
+				<span data-ng-bind="examination.created.time | date:'medium'"></span>
 				by
-				<span data-ng-bind="examination.user.displayName"></span>
+				<span data-ng-bind="examination.created._user.displayName"></span>
 			</small>
 			<h4 class="list-group-item-heading" data-ng-bind="examination.name"></h4>
         </a>
