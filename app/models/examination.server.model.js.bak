@@ -1,0 +1,57 @@
+'use strict';
+
+module.exports=function(labels){
+    /**
+     * Module dependencies.
+     */
+    var config = require('../../config/config'),
+        db = require('seraph')(config.graphDB),
+        model = require('seraph-model'),
+        examinationModel = model(db, 'Examination'),
+        mongoose = require('mongoose'),
+        ObjectId = mongoose.Types.ObjectId,
+        moment=require('moment');
+
+    /**
+     * Examination Schema
+     */
+    var ExaminationSchema = {
+        _id:{
+            type: String,
+            default:new ObjectId()
+        },
+        _createUser:{
+            type: String
+        },
+        _createTime:{
+            type: Number
+        },
+        _updateUser: {
+            type: String
+        },
+        _updateTime:{
+            type: Number
+        }
+    };
+
+    examinationModel.schema = ExaminationSchema;
+    examinationModel.setUniqueKey('_id');
+    examinationModel.on('beforeSave', function(obj) {
+        if(!obj._createTime)
+        {
+            obj._createTime = moment().valueOf();
+        }
+        else
+        {
+            obj._updateTime = moment().valueOf();
+        }
+    });
+    examinationModel.on('afterSave', function (obj) {
+        if (!obj._updateTime) {
+            db.label(obj, labels, function (err) {
+            });
+        }
+    });
+    examinationModel.delete=db.delete;
+    return  examinationModel;
+}

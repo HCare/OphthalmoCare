@@ -14,7 +14,6 @@ var mongoose = require('mongoose'),
  */
 exports.create = function(req, res) {
 	var manageUser = new ManageUser(req.body);
-	manageUser.user = req.user;
     manageUser.created._user=req.user;
 
 	manageUser.save(function(err) {

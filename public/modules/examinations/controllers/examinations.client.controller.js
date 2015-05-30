@@ -27,7 +27,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.appearance",
+                            {   key: "oculusDexter.appearance",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -46,7 +46,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.appearance",
+                            {   key: "oculusSinister.appearance",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -66,7 +66,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.eyeLid",
+                            {   key: "oculusDexter.eyeLid",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -85,7 +85,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.eyeLid",
+                            {   key: "oculusSinister.eyeLid",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -105,7 +105,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.lacrimalSystem",
+                            {   key: "oculusDexter.lacrimalSystem",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -124,7 +124,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.lacrimalSystem",
+                            {   key: "oculusSinister.lacrimalSystem",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -144,7 +144,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.conjunctiva",
+                            {   key: "oculusDexter.conjunctiva",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -163,7 +163,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.conjunctiva",
+                            {   key: "oculusSinister.conjunctiva",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -183,7 +183,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.sclera",
+                            {   key: "oculusDexter.sclera",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -202,7 +202,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.sclera",
+                            {   key: "oculusSinister.sclera",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -222,7 +222,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.cornea",
+                            {   key: "oculusDexter.cornea",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -241,7 +241,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.cornea",
+                            {   key: "oculusSinister.cornea",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -261,7 +261,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.anteriorChamber",
+                            {   key: "oculusDexter.anteriorChamber",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -280,7 +280,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.anteriorChamber",
+                            {   key: "oculusSinister.anteriorChamber",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -300,7 +300,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.iris",
+                            {   key: "oculusDexter.iris",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -319,7 +319,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.iris",
+                            {   key: "oculusSinister.iris",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -339,7 +339,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.pupil",
+                            {   key: "oculusDexter.pupil",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -358,7 +358,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.pupil",
+                            {   key: "oculusSinister.pupil",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -378,7 +378,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.lens",
+                            {   key: "oculusDexter.lens",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -397,7 +397,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.lens",
+                            {   key: "oculusSinister.lens",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -417,7 +417,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.fundus",
+                            {   key: "oculusDexter.fundus",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -436,7 +436,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.fundus",
+                            {   key: "oculusSinister.fundus",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -456,7 +456,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.opticNerve",
+                            {   key: "oculusDexter.opticNerve",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -475,7 +475,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.opticNerve",
+                            {   key: "oculusSinister.opticNerve",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -495,7 +495,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.eom",
+                            {   key: "oculusDexter.eom",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -514,7 +514,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.eom",
+                            {   key: "oculusSinister.eom",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
                                 notitle: true,
                                 options: {
@@ -534,7 +534,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.va",
+                            {   key: "oculusDexter.va",
                                 type: "text",
                                 notitle: true
                             }
@@ -549,7 +549,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.va",
+                            {   key: "oculusSinister.va",
                                 notitle: true,
                                 type: "text"
                             }
@@ -565,7 +565,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.bcva",
+                            {   key: "oculusDexter.bcva",
                                 type: "text",
                                 notitle: true
                             }
@@ -580,7 +580,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.bcva",
+                            {   key: "oculusSinister.bcva",
                                 notitle: true,
                                 type: "text"
                             }
@@ -596,7 +596,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.bcvaWith",
+                            {   key: "oculusDexter.bcvaWith",
                                 type: "text",
                                 notitle: true
                             }
@@ -611,7 +611,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.bcvaWith",
+                            {   key: "oculusSinister.bcvaWith",
                                 notitle: true,
                                 type: "text"
                             }
@@ -627,7 +627,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OD.iop",
+                            {   key: "oculusDexter.iop",
                                 type: "text",
                                 notitle: true
                             }
@@ -642,7 +642,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         "type": "section",
                         "htmlClass": "col-xs-5",
                         "items": [
-                            {   key: "OS.iop",
+                            {   key: "oculusSinister.iop",
                                 notitle: true,
                                 type: "text"
                             }
@@ -661,7 +661,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             "type": "object",
             "title": "Examination",
             "properties": {
-                "OD":{"type": "object",
+                "oculusDexter":{"type": "object",
                     "properties": {
                         "appearance": {
                             "title": "Appearance",
@@ -855,7 +855,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                         }
                     }
                 },
-                "OS":{"type": "object",
+                "oculusSinister":{"type": "object",
                     "properties":{
                         "appearance": {
                             "title": "Appearance",
@@ -1119,7 +1119,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 patientId: $stateParams.patientId
             }, function (patient) {
                 if (patient) {
-                    $scope.examination.patientId = patient._id;
+                    $scope.examination._patient = patient._id;
                     CoreProperties.setPageSubTitle(patient.fullName);
                     Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'asterisk', 0);
                     Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);

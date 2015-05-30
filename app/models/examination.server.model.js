@@ -1,57 +1,78 @@
 'use strict';
 
-module.exports=function(labels){
-    /**
-     * Module dependencies.
-     */
-    var config = require('../../config/config'),
-        db = require('seraph')(config.graphDB),
-        model = require('seraph-model'),
-        examinationModel = model(db, 'Examination'),
-        mongoose = require('mongoose'),
-        ObjectId = mongoose.Types.ObjectId,
-        moment=require('moment');
+/**
+ * Module dependencies.
+ */
+var mongoose = require('mongoose'),
+	Schema = mongoose.Schema;
 
-    /**
-     * Examination Schema
-     */
-    var ExaminationSchema = {
-        _id:{
-            type: String,
-            default:new ObjectId()
-        },
-        _createUser:{
-            type: String
-        },
-        _createTime:{
-            type: Number
-        },
-        _updateUser: {
-            type: String
-        },
-        _updateTime:{
-            type: Number
-        }
-    };
 
-    examinationModel.schema = ExaminationSchema;
-    examinationModel.setUniqueKey('_id');
-    examinationModel.on('beforeSave', function(obj) {
-        if(!obj._createTime)
-        {
-            obj._createTime = moment().valueOf();
+/**
+ * Examination Schema
+ */
+var ExaminationSchema = new Schema({
+    oculusDexter:{
+            appearance: Array,
+            eyeLid: Array,
+            lacrimalSystem:Array,
+            conjunctiva: Array,
+            sclera: Array,
+            cornea: Array,
+            anteriorChamber: Array,
+            iris: Array,
+            pupil: Array,
+            lens: Array,
+            fundus: Array,
+            opticNerve: Array,
+            va: String,
+            eom: Array,
+            bcva:String,
+            bcvaWith: String,
+            iop: String
+        },
+    oculusSinister:{
+            appearance: Array,
+            eyeLid: Array,
+            lacrimalSystem: Array,
+            conjunctiva: Array,
+            sclera: Array,
+            cornea: Array,
+            anteriorChamber: Array,
+            iris: Array,
+            pupil: Array,
+            lens: Array,
+            fundus: Array,
+            opticNerve: Array,
+            va: String,
+            eom: Array,
+            bcva:String,
+            bcvaWith: String,
+            iop: String
+        },
+    comment: {
+        type: String
+    },
+	created: {
+        time: {
+		type: Date,
+		default: Date.now
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
         }
-        else
-        {
-            obj._updateTime = moment().valueOf();
+	},
+	updated: {
+        time: {
+            type: Date
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
         }
-    });
-    examinationModel.on('afterSave', function (obj) {
-        if (!obj._updateTime) {
-            db.label(obj, labels, function (err) {
-            });
-        }
-    });
-    examinationModel.delete=db.delete;
-    return  examinationModel;
-}
+	},
+    _patient:{type: Schema.ObjectId,
+        ref: 'Patient'}
+});
+
+mongoose.model('Examination', ExaminationSchema);
