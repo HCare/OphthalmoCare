@@ -76,7 +76,7 @@ exports.delete = function(req, res) {
 /**
  * List of Examinations
  */
-exports.list = function(req, res) { Examination.find().sort('-created').populate('user', 'displayName').exec(function(err, examinations) {
+exports.list = function(req, res) { Examination.find().sort('-created').populate('created._user', 'displayName').populate('_patient', 'fullName').exec(function(err, examinations) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
