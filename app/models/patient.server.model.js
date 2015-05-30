@@ -3,28 +3,19 @@
 /**
  * Module dependencies.
  */
-var config = require('../../config/config'),
-    db = require('seraph')(config.graphDB),
-    model = require('seraph-model'),
-    patientModel = model(db, 'Patient'),
-    mongoose = require('mongoose'),
-    ObjectId = mongoose.Types.ObjectId,
-    moment = require('moment');
-
+var mongoose = require('mongoose'),
+	Schema = mongoose.Schema;
 
 /**
  * Patient Schema
  */
-var PatientSchema = {
-    _id: {
-        type: String,
-        default: 'xxxxxxxxxxxxxxxxxxxxxxxx'
-    },
-    fullName: {
-        type: String,
-        required: 'Please fill Patient name',
-        trim: true
-    },
+var PatientSchema = new Schema({
+	fullName: {
+		type: String,
+		default: '',
+		required: 'Please fill Patient name',
+		trim: true
+	},
     gender: {
         type: String,
         required: 'Please fill Patient gender',
@@ -32,7 +23,7 @@ var PatientSchema = {
         enum: ['male', 'female']
     },
     birthDate: {
-        type: Number,
+        type: Date,
         required: 'Please fill Patient birth date'
     },
     tel: {
@@ -51,32 +42,29 @@ var PatientSchema = {
     notes: {
         type: String
     },
-    _createUser: {
-        type: String
+    personalPhoto:{
+        type: String,
+        trim: true
     },
-    _createTime: {
-        type: Number
+    created: {
+        time: {
+            type: Date,
+            default: Date.now
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        }
     },
-    _updateUser: {
-        type: String
-    },
-    _updateTime: {
-        type: Number
-    }
-};
-
-patientModel.schema = PatientSchema;
-//patientModel.setUniqueKey('_id');
-patientModel.on('beforeSave', function (obj) {
-    if (obj._id === 'xxxxxxxxxxxxxxxxxxxxxxxx') {
-        obj._id = new ObjectId();
-        obj._createTime = moment().valueOf();
-    }
-    else {
-        obj._updateTime = moment().valueOf();
+    updated: {
+        time: {
+            type: Date
+        },
+        _user: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        }
     }
 });
 
-
-exports.db = db;
-exports.Patient = patientModel;
+mongoose.model('Patient', PatientSchema);

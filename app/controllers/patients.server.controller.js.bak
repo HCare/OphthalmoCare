@@ -1,0 +1,231 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+var config = require('../../config/config'),
+    moment=require('moment'),
+	errorHandler = require('./errors'),
+    Patient = require('../../app/models/person'),
+    fileHandler =require('../../app/controllers/'+config.fileHandler+'-file-handle'),
+    //db=model.db,
+    //Patient=model.Patient,
+	_ = require('lodash');
+
+/**
+ * render patient photo
+ */
+exports.renderPhoto=function(req, res){
+    var patient=req.patient;
+    var time = patient._createdTime;
+    var photoPath =moment(time).year()+'/'+
+        (moment(time).month()+1)+'/'+
+        moment(time).date()+'/'+
+        patient._id+'/'+patient.personalPhoto;
+        fileHandler.responseFile(photoPath, res);
+};
+
+/**
+ * Create a Patient
+ */
+exports.create = function(req, res, next) {
+	var patient = req.body;
+	patient._createUser = req.user._id;
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
+    var hasPhoto=patient.personalPhoto;
+    if(hasPhoto==='true'){
+        patient.personalPhoto=config.patientPhotoFileName;
+    }
+    var patientModel=new Patient(['Patient']);
+    patientModel.save(patient, function(err, newPatient) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+            if(hasPhoto==='true')
+            {
+                var time = newPatient._createdTime;
+                var photoPath = moment(time).year()+'/'+
+                          (moment(time).month()+1)+'/'+
+                           moment(time).date()+'/'+
+                            newPatient._id+'/';
+                _.extend(req.body, {filePath : photoPath});
+                _.extend(req.body, newPatient);
+                next();
+                return;
+            }
+			res.jsonp(newPatient);
+		}
+	});
+};
+
+/**
+ * Show the current Patient
+ */
+exports.read = function(req, res) {
+	res.jsonp(req.patient);
+};
+
+/**
+ * Update a Patient
+ */
+exports.update = function(req, res, next) {
+	var patient = req.patient ;
+    patient = _.extend(patient , req.body);
+    patient.birthDate=moment(patient.birthDate, 'YYYY/MM/DD').valueOf();
+    patient._updateUser = req.user._id;
+    //patient._updateTime = moment().valueOf();
+    var hasPhoto=patient.personalPhoto;
+    if(hasPhoto==='true'){
+        patient.personalPhoto=config.patientPhotoFileName;
+    }
+    var patientModel=new Patient(['Patient']);
+    patientModel.save(patient, function(err) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+            if(hasPhoto==='true')
+            {
+                var time = patient._createdTime;
+                var photoPath = moment(time).year()+'/'+
+                    (moment(time).month()+1)+'/'+
+                    moment(time).date()+'/'+
+                    patient._id+'/';
+                _.extend(req.body, {filePath : photoPath});
+                _.extend(req.body, patient);
+                next();
+                return;
+            }
+			res.jsonp(patient);
+		}
+	});
+};
+
+/**
+ * Delete an Patient
+ */
+exports.delete = function(req, res) {
+	var patient = req.patient ;
+    var patientModel=new Patient(['Patient']);
+    patientModel.delete(patient, function(err) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(patient);
+		}
+	});
+};
+
+/**
+ * List of Patients
+ */
+exports.list = function(req, res) {
+    var patientModel=new Patient(['Patient']);
+    if (req.query && Object.keys(req.query).length > 0) {
+        //fullName
+        if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
+            req.query.fullName = new RegExp('.*' + req.query.fullName + '.*', 'i');
+        }
+        else {
+            delete req.query.fullName; // didn't search by fullName
+        }
+        //gender
+        if (req.query.hasOwnProperty('gender') && req.query.gender && req.query.gender.length > 0) {
+        }
+        else {
+            delete req.query.gender; // didn't search by gender
+        }
+        //birthDate
+        if (req.query.hasOwnProperty('birthDate') && req.query.birthDate && req.query.birthDate.length > 0) {
+        }
+        else {
+            delete req.query.birthDate; // didn't search by birthDate
+        }
+        //tel
+        if (req.query.hasOwnProperty('tel') && req.query.tel && req.query.tel.length > 0) {
+            //req.query.tel = {$regex: '.*' + req.query.tel + '.*', $options: 'i'};
+            req.query.tel = new RegExp('.*' + req.query.tel + '.*', 'i');
+        }
+        else {
+            delete req.query.tel; // didn't search by tel
+        }
+        //address
+        if (req.query.hasOwnProperty('address') && req.query.address && req.query.address.length > 0) {
+            //req.query.address = {$regex: '.*' + req.query.address + '.*', $options: 'i'};
+            req.query.address = new RegExp('.*' + req.query.address + '.*', 'i');
+        }
+        else {
+            delete req.query.address; // didn't search by address
+        }
+        //email
+        if (req.query.hasOwnProperty('email') && req.query.email && req.query.email.length > 0) {
+            //req.query.email = {$regex: '.*' + req.query.email + '.*', $options: 'i'};
+            req.query.email = new RegExp('.*' + req.query.email + '.*', 'i');
+        }
+        else {
+            delete req.query.email; // didn't search by email
+        }
+        //notes
+        if (req.query.hasOwnProperty('notes') && req.query.notes && req.query.notes.length > 0) {
+            //req.query.notes = {$regex: '.*' + req.query.notes + '.*', $options: 'i'};
+            req.query.notes = new RegExp('.*' + req.query.notes + '.*', 'i');
+        }
+        else {
+            delete req.query.notes; // didn't search by notes
+        }
+
+        var predicate = {fullName:"safaa"};
+        patientModel.where(req.query,function (err, patients) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(patients);
+            }
+        });
+
+    }
+    else {
+        patientModel.findAll(function (err, patients) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.jsonp(patients);
+            }
+        });
+    }
+};
+
+/**
+ * Patient middleware
+ */
+exports.patientByID = function(req, res, next, id) {
+    var patientModel=new Patient(['Patient']);
+    patientModel.where({_id:id}, function(err, patients) {
+		if (err) {
+            return next(err);
+        }
+		if (! patients) {
+            return next(new Error('Failed to load Patient ' + id));
+        }
+        if(patients.length!=1){
+            return next(new Error('Failed to load Patient ' + id));
+        }
+        /*delete patient._createUser;
+        delete patient._createTime;
+        delete patient._updateUser;
+        delete patient._updateTime;*/
+        var patient=patients[0];
+        patient.birthDate=moment(patient.birthDate).format('YYYY/MM/DD');
+            req.patient = patient ;
+		next();
+	});
+};
