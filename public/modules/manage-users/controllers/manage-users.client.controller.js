@@ -176,6 +176,11 @@ angular.module('manage-users')
                 });
             };
 
+            $scope.initSearch = function () {
+                $scope.initOne();
+                Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+            };
+
 
             ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
                 $scope.create();
@@ -191,6 +196,10 @@ angular.module('manage-users')
 
             ActionsHandler.onActionFired('deleteUser', $scope, function (action, args) {
                 $scope.remove();
+            });
+
+            ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
+                $scope.search();
             });
 
         }

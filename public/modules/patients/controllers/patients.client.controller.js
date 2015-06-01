@@ -269,6 +269,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             });
         };
 
+        $scope.initSearch=function(){
+            $scope.initOne();
+            Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+        };
+
         ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
             $scope.create();
         });
@@ -283,6 +288,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
         ActionsHandler.onActionFired('deletePatient', $scope, function (action, args) {
             $scope.remove();
+        });
+
+        ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+            $scope.search();
         });
     }
 

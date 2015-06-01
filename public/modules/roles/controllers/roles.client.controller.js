@@ -220,6 +220,10 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             });
         };
 
+        $scope.initSearch = function () {
+            Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+        };
+
         ActionsHandler.onActionFired('saveRole', $scope, function (action, args) {
             $scope.create();
         });
@@ -234,6 +238,10 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
 
         ActionsHandler.onActionFired('deleteRole', $scope, function (action, args) {
             $scope.remove();
+        });
+
+        ActionsHandler.onActionFired('searchRole', $scope, function (action, args) {
+            $scope.search();
         });
     }
 ]);
