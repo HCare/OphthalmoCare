@@ -127,7 +127,6 @@ exports.list = function(req, res) {
          }
          else {
              res.jsonp(manageUsers);
-             console.log('manageUsers : '+manageUsers);
          }
          });
 

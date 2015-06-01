@@ -247,6 +247,13 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             });
         };
 
+        // Search existing patients
+        $scope.search = function () {
+                Patients.query($scope.patient, function (_patients) {
+                    $scope.patients = _patients;
+                });
+        };
+
         // Find existing Patient
         $scope.initOne = function () {
             $scope.patient = new Patients({});
