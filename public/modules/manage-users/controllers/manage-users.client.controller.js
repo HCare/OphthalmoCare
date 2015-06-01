@@ -2,8 +2,8 @@
 
 // Manage users controller
 angular.module('manage-users')
-    .controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'ManageUsers', 'Roles', 'lodash', 'Logger',
-    function ($scope, $stateParams, $location, Authentication, ManageUsers, Roles, lodash, Logger) {
+    .controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'ManageUsers', 'Roles', 'lodash', 'Logger','ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Authentication, ManageUsers, Roles, lodash, Logger, ActionsHandler, Toolbar) {
         //region Init variables
 
         $scope.authentication = Authentication;
@@ -115,13 +115,16 @@ angular.module('manage-users')
         };
 
         // Find existing Manage user
-        $scope.findOne = function () {
+        $scope.findOne = function (callback) {
              ManageUsers.get({
                 manageUserId: $stateParams.manageUserId
             }, function(_user){
                  $scope.manageUser=_user;
                  if(_user._role){
                  $scope.selected_roles.push(_user._role);
+                 }
+                 if(callback){
+                     callback();
                  }
              });
         };
@@ -151,6 +154,41 @@ angular.module('manage-users')
                 $scope.manageUser._role = value; // null
             }
         },true);
+
+        $scope.initCreate=function(){
+            $scope.initOne();
+            Toolbar.addToolbarCommand('saveUser', 'create_user', 'Save', 'floppy-save', 0);
+        };
+
+        $scope.initEdit=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('updateUser', 'edit_user', 'Save', 'floppy-save', 0);
+            });
+        };
+
+        $scope.initView=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('editUser', 'edit_user', 'Edit', 'edit', 1);
+                Toolbar.addToolbarCommand('deleteUser', 'delete_user', 'Delete', 'trash', 2, null, 'Are you sure to delete user "'+$scope.manageUser.email+'"?');
+            });
+        };
+
+
+        ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
+            $scope.create();
+        });
+
+        ActionsHandler.onActionFired('updateUser', $scope, function (action, args) {
+            $scope.update();
+        });
+
+        ActionsHandler.onActionFired('editUser', $scope, function (action, args) {
+            $location.path('manage-users/'+$scope.manageUser._id+'/edit');
+        });
+
+        ActionsHandler.onActionFired('deleteUser', $scope, function (action, args) {
+            $scope.remove();
+        });
 
     }
     ]);

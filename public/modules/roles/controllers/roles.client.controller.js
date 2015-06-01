@@ -229,7 +229,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
         });
 
         ActionsHandler.onActionFired('editRole', $scope, function (action, args) {
-            $location.path('patients/'+$scope.role._id+'/edit');
+            $location.path('roles/'+$scope.role._id+'/edit');
         });
 
         ActionsHandler.onActionFired('deleteRole', $scope, function (action, args) {
