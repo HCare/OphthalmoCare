@@ -1,8 +1,8 @@
 'use strict';
 
 // Roles controller
-angular.module('roles').controller('RolesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Roles', 'Module', 'Action', 'lodash', 'Logger',
-    function ($scope, $stateParams, $location, Authentication, Roles, Module, Action, lodash, Logger) {
+angular.module('roles').controller('RolesController', ['$scope', '$stateParams', '$location', 'Authentication', 'Roles', 'Module', 'Action', 'lodash', 'Logger','ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Authentication, Roles, Module, Action, lodash, Logger, ActionsHandler, Toolbar) {
         /**
          * Init variables
          */
@@ -182,7 +182,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
         };
 
         // Find existing Role
-        $scope.findOne = function () {
+        $scope.findOne = function (callback) {
 
             var role = Roles.get({
                 roleId: $stateParams.roleId
@@ -197,9 +197,43 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
                         break;
                     }
                 }
-
-
+                if(callback){
+                    callback();
+                }
             });
         };
+
+        $scope.initCreate=function(){
+            Toolbar.addToolbarCommand('saveRole', 'create_role', 'Save', 'floppy-save', 0);
+        };
+
+        $scope.initEdit=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('updateRole', 'edit_role', 'Save', 'floppy-save', 0);
+            });
+        };
+
+        $scope.initView=function(){
+            $scope.findOne(function(){
+                Toolbar.addToolbarCommand('editRole', 'edit_role', 'Edit', 'edit', 1);
+                Toolbar.addToolbarCommand('deleteRole', 'delete_role', 'Delete', 'trash', 2, null, 'Are you sure to delete role "'+$scope.role.name+'"?');
+            });
+        };
+
+        ActionsHandler.onActionFired('saveRole', $scope, function (action, args) {
+            $scope.create();
+        });
+
+        ActionsHandler.onActionFired('updateRole', $scope, function (action, args) {
+            $scope.update();
+        });
+
+        ActionsHandler.onActionFired('editRole', $scope, function (action, args) {
+            $location.path('patients/'+$scope.role._id+'/edit');
+        });
+
+        ActionsHandler.onActionFired('deleteRole', $scope, function (action, args) {
+            $scope.remove();
+        });
     }
 ]);
