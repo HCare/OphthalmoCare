@@ -58,7 +58,7 @@
         <h1>Edit Patient</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" novalidate>
+        <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
                     <div class="circular" back-img="{{photo||personalPhotoPath||'modules/core/img/userpic.png'}}">
