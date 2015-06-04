@@ -11,6 +11,12 @@ angular.module('examinations').config(['$stateProvider',
             action: 'list_examinations',
             title:'Examinations'
 		}).
+		state('searchExaminations', {
+			url: '/examinations',
+			templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
+			action: 'search_examinations',
+			title:'Search Examinations'
+		}).
 		state('createExamination', {
 			url: '/examinations/create/:patientId',
 			templateUrl: 'modules/examinations/views/create-examination.client.view.html',
