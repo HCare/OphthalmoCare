@@ -202,9 +202,11 @@ angular.module('manage-users')
             });
 
             ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
+                console.log('search fired');
                 $scope.search(function(){
                     $scope.showResults=true;
                     $scope.showTerms=false;
+                    console.log('set active');
                 });
             });
 
