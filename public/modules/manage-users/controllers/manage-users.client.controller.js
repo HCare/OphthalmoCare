@@ -131,7 +131,7 @@ angular.module('manage-users')
             };
 
             // Search existing Users
-            $scope.search = function () {
+            $scope.search = function (callback) {
                 if ((!$scope.manageUser.fullName || $scope.manageUser.fullName == '' || $scope.manageUser.fullName == undefined) && (!$scope.manageUser.displayName || $scope.manageUser.displayName == '' || $scope.manageUser.displayName == undefined) && (!$scope.manageUser.email || $scope.manageUser.email == '' || $scope.manageUser.email == undefined) && (!$scope.manageUser._role || $scope.manageUser._role == '' || $scope.manageUser._role == undefined)) {
                     Logger.error("Please Enter Search Criteria", true);
                     $scope.manageUsers = [];
@@ -139,6 +139,9 @@ angular.module('manage-users')
                 else {
                     ManageUsers.query($scope.manageUser, function (_users) {
                         $scope.manageUsers = _users;
+                        if(callback){
+                            callback();
+                        }
                     });
                 }
             };
@@ -199,7 +202,12 @@ angular.module('manage-users')
             });
 
             ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
-                $scope.search();
+                console.log('search fired');
+                $scope.search(function(){
+                    $scope.showResults=true;
+                    $scope.showTerms=false;
+                    console.log('set active');
+                });
             });
 
         }
