@@ -7,15 +7,14 @@ angular.module('manage-users')
 
             $scope.initRoles=function(callback){
                 $scope.rolesObj={};
+                $scope.rolesObj.selected_role = null;
+                $scope.rolesObj.selected_roles = [];
                 Roles.query(function(_roles){
                     $scope.rolesObj.roles =_roles;
                     if(callback){
                         callback();
                     }
                 });
-                $scope.rolesObj.selected_role = null;
-                $scope.rolesObj.selected_roles = [];
-
             };
 
             //select Role
