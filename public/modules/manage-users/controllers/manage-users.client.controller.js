@@ -2,36 +2,21 @@
 
 // Manage users controller
 angular.module('manage-users')
-    .controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'ManageUsers', 'Roles', 'lodash', 'Logger', 'ActionsHandler', 'Toolbar',
-        function ($scope, $stateParams, $location, Authentication, ManageUsers, Roles, lodash, Logger, ActionsHandler, Toolbar) {
-            //region Init variables
+    .controller('ManageUsersController', ['$scope', '$stateParams', '$location', 'ManageUsers', 'Roles', 'Logger', 'ActionsHandler', 'Toolbar',
+        function ($scope, $stateParams, $location, ManageUsers, Roles, Logger, ActionsHandler, Toolbar) {
 
-            $scope.authentication = Authentication;
-            $scope._ = lodash;
-            $scope.roles = Roles.query();
+            $scope.initRoles=function(callback){
+                $scope.rolesObj={};
+                Roles.query(function(_roles){
+                    $scope.rolesObj.roles =_roles;
+                    if(callback){
+                        callback();
+                    }
+                });
+                $scope.rolesObj.selected_role = null;
+                $scope.rolesObj.selected_roles = [];
 
-            $scope.selected_role = $scope.selected_role || null;
-            $scope.selected_roles = $scope.selected_roles || [];
-
-            //endregion Init variables
-
-            //region Helper functions
-
-            lodash.mixin({
-                'findByValues': function (collection, property, values) {
-                    return lodash.filter(collection, function (item) {
-                        return lodash.contains(values, item[property]);
-                    });
-                }
-            });
-
-            lodash.mixin({
-                'findByValuesInPath': function (collection, property, values, path) {
-                    return lodash.filter(collection, function (item) {
-                        return lodash.contains(lodash.map(values, path), item[property]);
-                    });
-                }
-            });
+            };
 
             //select Role
             $scope.toggleRoleSelection = function (role_id) {
@@ -40,12 +25,10 @@ angular.module('manage-users')
 
             // Init New Managed User
             $scope.initOne = function () {
-                $scope.manageUser = new ManageUsers({password: Math.random().toString(36).slice(-8)});
+                $scope.initRoles(function(){
+                    $scope.manageUser = new ManageUsers({password: Math.random().toString(36).slice(-8)});
+                });
             };
-
-            //endregion Helper functions
-
-            //region CRUD functions
 
             // Create new Managed User
             $scope.create = function () {
@@ -60,7 +43,6 @@ angular.module('manage-users')
                     // Clear form fields
                     $scope.initOne();
                 }, function (errorResponse) {
-                    //console.log(errorResponse);
                     ///log error message
                     Logger.error(errorResponse.data.message, true);
                     //$scope.error = errorResponse.data.message;
@@ -116,17 +98,18 @@ angular.module('manage-users')
 
             // Find existing Manage user
             $scope.findOne = function (callback) {
-                ManageUsers.get({
-                    manageUserId: $stateParams.manageUserId
-                }, function (_user) {
-                    $scope.manageUser = _user;
-                    if (_user._role) {
-                        $scope.selected_roles.push(_user._role);
-                    }
-
-                    if (callback) {
-                        callback();
-                    }
+                $scope.initRoles(function(){
+                    ManageUsers.get({
+                        manageUserId: $stateParams.manageUserId
+                    }, function (_user) {
+                        $scope.manageUser = _user;
+                        if (_user._role) {
+                            $scope.rolesObj.selected_roles.push(_user._role);
+                        }
+                        if (callback) {
+                            callback();
+                        }
+                    });
                 });
             };
 
@@ -146,9 +129,7 @@ angular.module('manage-users')
                 }
             };
 
-            //endregion CRUD functions
-
-            $scope.$watch('selected_role', function (value) {
+            $scope.$watch('rolesObj.selected_role', function (value) {
                 if ($scope.manageUser) {
                     if (value) {
 
@@ -167,8 +148,10 @@ angular.module('manage-users')
             };
 
             $scope.initEdit = function () {
-                $scope.findOne(function () {
-                    Toolbar.addToolbarCommand('updateUser', 'edit_user', 'Save', 'floppy-save', 0);
+                $scope.initRoles(function(){
+                    $scope.findOne(function () {
+                        Toolbar.addToolbarCommand('updateUser', 'edit_user', 'Save', 'floppy-save', 0);
+                    });
                 });
             };
 
@@ -183,7 +166,6 @@ angular.module('manage-users')
                 $scope.initOne();
                 Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
             };
-
 
             ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
                 $scope.create();
@@ -202,11 +184,9 @@ angular.module('manage-users')
             });
 
             ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
-                console.log('search fired');
                 $scope.search(function(){
                     $scope.showResults=true;
                     $scope.showTerms=false;
-                    console.log('set active');
                 });
             });
 

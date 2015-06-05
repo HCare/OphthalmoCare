@@ -25,23 +25,10 @@
                         <input type="text" data-ng-model="manageUser.password" id="password" class="form-control" placeholder="Password" required>
                     </div>
                 </div>
-               <!-- <div class="form-group">
-                    <label class="control-label" for="role">Role</label>
-                    <div class="controls">
-                        <div class="btn-group" data-toggle="buttons" id="role">
-                            <label class="btn btn-primary" ng-class="{active:role._id===manageUser._role}" ng-repeat="role in roles">
-                                <input type="checkbox"
-                                       value="{{role.name}}"
-                                       ng-checked="role._id===manageUser._role"
-                                       ng-click="toggleRoleSelection(role._id)">{{role.name}}
-                            </label>
-                        </div>
-                    </div>
-                </div>-->
                 <div class="form-group">
                     <label class="control-label" for="role">Role</label>
                     <div class="controls">
-                        <h-care-checkbtn-list id="role" source="roles" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="selected_roles"  current-tapped-item="selected_role">
+                        <h-care-checkbtn-list id="role" source="rolesObj.roles" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="rolesObj.selected_roles"  current-tapped-item="rolesObj.selected_role">
                         </h-care-checkbtn-list>
                     </div>
                 </div>
