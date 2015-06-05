@@ -164,6 +164,8 @@ angular.module('manage-users')
 
             $scope.initSearch = function () {
                 $scope.initOne();
+                $scope.tabsConfig={};
+                $scope.tabsConfig.showResuls=false;
                 Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
             };
 
@@ -185,8 +187,7 @@ angular.module('manage-users')
 
             ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
                 $scope.search(function(){
-                    $scope.showResults=true;
-                    $scope.showTerms=false;
+                    $scope.tabsConfig.showResults=true;
                 });
             });
 
