@@ -168,12 +168,14 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
 
         // Search existing Roles
         $scope.search = function (callback) {
-            if ((!$scope.role.name || $scope.role.name == '' || $scope.role.name == undefined) && (!$scope.role._actions || $scope.role._actions.length == 0)) {
+            var role=$scope.role;
+            role._actions = $scope.actionsObj.role_actions;
+            if ((!role.name || role.name == '' || role.name == undefined) && (!role._actions || role._actions.length == 0)) {
                 Logger.error("Please Enter Search Criteria", true);
             }
             else {
                 //var searchCriteria = {name:$scope.name,_actions:$scope.role._actions};
-                Roles.query($scope.role, function (_roles) {
+                Roles.query(role, function (_roles) {
                     $scope.roles = _roles;
                     callback();
                 });
