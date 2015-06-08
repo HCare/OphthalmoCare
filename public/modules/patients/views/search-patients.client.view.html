@@ -3,6 +3,8 @@
     <div class="page-header">
         <h1>Search Patient</h1>
     </div>
+    <tabset>
+        <tab heading="Search Terms" >
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="search()" novalidate>
             <fieldset>
@@ -17,7 +19,7 @@
                 <div class="form-group">
                     <label class="control-label" for="gender">Gender</label>
                     <div class="controls">
-                        <h-care-checkbtn-list id="gender" source="genders" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="patient_genders"  current-tapped-item="patient.gender">
+                        <h-care-checkbtn-list id="gender" source="configObj.genders" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="configObj.patient_genders"  current-tapped-item="patient.gender">
                         </h-care-checkbtn-list>
                     </div>
                 </div>
@@ -29,13 +31,13 @@
                             <input type="text" id="birthDate"
                                    placeholder="Birth Date"
                                    class="form-control"
-                                   datepicker-popup="{{format}}"
+                                   datepicker-popup="{{configObj.format}}"
                                    ng-change="birthDateChanged(patient.birthDate)"
                                    ng-model="patient.birthDate"
-                                   is-open="opened"
-                                   min-date="minDate"
-                                   max-date="maxDate"
-                                   datepicker-options="dateOptions"
+                                   is-open="configObj.opened"
+                                   min-date="configObj.minDate"
+                                   max-date="configObj.maxDate"
+                                   datepicker-options="configObj.dateOptions"
                                    show-button-bar="false"
                                    close-text="Close"/>
                         <span class="input-group-btn">
@@ -48,8 +50,8 @@
                 <div class="form-group">
                     <label class="control-label" for="age">Age</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="age" id="age" class="form-control"
-                               placeholder="Age" ng-change="ageChanged(age)"/>
+                        <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
+                               placeholder="Age" ng-change="ageChanged(configObj.age)"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -87,14 +89,18 @@
                     <strong data-ng-bind="error"></strong>
                 </div>
             </fieldset>
+        </form>
+    </div>
+            </tab>
+        <tab heading="Search Results" active="tabsConfig.showResults">
             <div class="list-group">
-                <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient.id}}" class="list-group-item">
+                <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient._id}}" class="list-group-item">
                     <h4 class="list-group-item-heading" data-ng-bind="patient.fullName"></h4>
                 </a>
             </div>
             <div class="alert alert-warning text-center" data-ng-hide="!patients.$resolved || patients.length">
                 No Patients Results
             </div>
-        </form>
-    </div>
+            </tab>
+        </tabset>
 </section>

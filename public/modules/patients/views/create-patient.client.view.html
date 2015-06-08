@@ -2,18 +2,18 @@
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body">
             <tabset justified="true">
-                <tab heading="Take a Photo" active="tabs[0].active" disabled="tabs[0].disabled">
+                <tab heading="Take a Photo" active="modalConfig.tabs[0].active" disabled="modalConfig.tabs[0].disabled">
                     <div class="controls">
-                        <div ng-hide="webcamError">
+                        <div ng-hide="modalConfig.webcamError">
                             <webcam on-error="onCamError(err)" on-streaming="onSuccess(video)">
                             </webcam>
                         </div>
-                        <div class="alert alert-danger" ng-show="webcamError">
+                        <div class="alert alert-danger" ng-show="modalConfig.webcamError">
                             <span>Webcam could not be started. Did you give access to it?</span>
                         </div>
                         <button type="button" class="btn btn-default" ng-click="makeSnapshot()">
                             <i class="glyphicon glyphicon-camera"></i></button>
-                        <div deckgrid class="deckgrid" source="photos">
+                        <div deckgrid class="deckgrid" source="modalConfig.photos">
                             <div>
                                 <a href="" class="thumbnail" ng-click="mother.selectPhoto(card.src)">
                                     <img src="" data-ng-src="{{card.src}}">
@@ -22,9 +22,9 @@
                         </div>
                     </div>
                 </tab>
-                <tab heading="Crop" active="tabs[2].active" disabled="tabs[2].disabled">
-                    <div class="cropArea" ng-style="{'width': photoWidth, 'height': photoHeight }">
-                        <img-crop area-min-size="128" result-image-size="128" image="selectedPhoto" result-image="finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
+                <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">
+                    <div class="cropArea" ng-style="{'width': modalConfig.photoWidth, 'height': modalConfig.photoHeight }">
+                        <img-crop area-min-size="128" result-image-size="128" image="modalConfig.selectedPhoto" result-image="modalConfig.finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
                     </div>
                 </tab>
             </tabset>
@@ -41,8 +41,8 @@
         <form class="form-horizontal" data-ng-submit="create()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <div class="circular" back-img="{{photo||'modules/core/img/userpic.png'}}">
-                        <a href="" ng-click="openModal()"><img src="modules/core/img/userpic.png" data-ng-src="{{photo}}" alt="Patient Photo" /></a>
+                    <div class="circular" back-img="{{configObj.photo||'modules/core/img/userpic.png'}}">
+                        <a href="" ng-click="openModal()"><img src="modules/core/img/userpic.png" data-ng-src="{{configObj.photo}}" alt="Patient Photo" /></a>
                     </div>
                 </div>
                 <div class="form-group">
@@ -59,7 +59,7 @@
                     <div class="controls">
                         <div class="btn-group" data-toggle="buttons" id="gender">
                             <label class="btn btn-primary" ng-class="{active:gender._id===patient.gender}"
-                                   ng-repeat="gender in genders">
+                                   ng-repeat="gender in configObj.genders">
                                 <input type="checkbox"
                                        value="{{gender._id}}"
                                        ng-checked="gender._id===patient.gender"
@@ -76,13 +76,13 @@
                             <input type="text" id="birthDate"
                                    placeholder="Birth Date"
                                    class="form-control"
-                                   datepicker-popup="{{format}}"
+                                   datepicker-popup="{{configObj.format}}"
                                    ng-change="birthDateChanged(patient.birthDate)"
                                    ng-model="patient.birthDate"
-                                   is-open="opened"
-                                   min-date="minDate"
-                                   max-date="maxDate"
-                                   datepicker-options="dateOptions"
+                                   is-open="configObj.opened"
+                                   min-date="configObj.minDate"
+                                   max-date="configObj.maxDate"
+                                   datepicker-options="configObj.dateOptions"
                                    show-button-bar="false"
                                    close-text="Close"
                                    required/>
@@ -96,8 +96,8 @@
                 <div class="form-group">
                     <label class="control-label" for="age">Age</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="age" id="age" class="form-control"
-                               placeholder="Age" ng-change="ageChanged(age)"/>
+                        <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
+                               placeholder="Age" ng-change="ageChanged(configObj.age)"/>
                     </div>
                 </div>
                 <div class="form-group">
