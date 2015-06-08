@@ -1127,6 +1127,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             });
         };
 
+        $scope.initSearch = function () {
+            $scope.examination = new Examinations({});
+
+        };
+
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
             $scope.onSubmit($scope.forms.examinationForm);
         });

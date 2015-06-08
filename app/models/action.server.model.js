@@ -194,6 +194,13 @@ Action.findOneAndUpdate({_id:'list_examinations'}, {name: 'List Examinations', o
         return;
     }
 });
+///Search_Examinations Action..
+Action.findOneAndUpdate({_id:'search_examinations'}, {name: 'Search Examinations', order:6, _module:'examinations'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Search Examinations" Action: '+JSON.stringify(err));
+        return;
+    }
+});
 ///View_Examination Action..
 Action.findOneAndUpdate({_id:'view_examination'}, {name: 'View Examination', order:5, _module:'examinations'}, {upsert:true}, function(err){
     if(err){
