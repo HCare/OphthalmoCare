@@ -26,6 +26,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.configObj.photoCss=null;
         $scope.configObj.personalPhotoPath=null;
 
+        $scope.tabsConfig={};
+        $scope.tabsConfig.showResuls=false;
+
         //$scope._ = lodash;
         //$scope.Moment = Moment;
         
@@ -259,9 +262,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         // Search existing patients
-        $scope.search = function () {
+        $scope.search = function (callback) {
                 Patients.query($scope.patient, function (_patients) {
                     $scope.patients = _patients;
+                    if(callback){
+                        callback();
+                    }
                 });
         };
 
@@ -309,7 +315,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
-            $scope.search();
+            $scope.search(function(){
+                $scope.tabsConfig.showResults=true;
+            });
         });
     }
 

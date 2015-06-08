@@ -3,6 +3,8 @@
     <div class="page-header">
         <h1>Search Patient</h1>
     </div>
+    <tabset>
+        <tab heading="Search Terms" >
     <div class="col-md-12">
         <form class="form-horizontal" data-ng-submit="search()" novalidate>
             <fieldset>
@@ -87,14 +89,18 @@
                     <strong data-ng-bind="error"></strong>
                 </div>
             </fieldset>
+        </form>
+    </div>
+            </tab>
+        <tab heading="Search Results" active="tabsConfig.showResults">
             <div class="list-group">
-                <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient.id}}" class="list-group-item">
+                <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient._id}}" class="list-group-item">
                     <h4 class="list-group-item-heading" data-ng-bind="patient.fullName"></h4>
                 </a>
             </div>
             <div class="alert alert-warning text-center" data-ng-hide="!patients.$resolved || patients.length">
                 No Patients Results
             </div>
-        </form>
-    </div>
+            </tab>
+        </tabset>
 </section>
