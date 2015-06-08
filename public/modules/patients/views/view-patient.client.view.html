@@ -2,11 +2,6 @@
 	<div class="page-header">
 		<h1 data-ng-bind="patient.fullName"></h1>
 	</div>
-	<!--<div class="pull-right">
-        &lt;!&ndash;<h-care-action-btn icon="eye-open" click-event="examine()" action="create_examination"></h-care-action-btn>&ndash;&gt;
-        &lt;!&ndash;<h-care-action-btn redirect-url="/#!/patients/{{patient._id}}/edit" icon="edit" action="edit_patient"></h-care-action-btn>&ndash;&gt;
-        &lt;!&ndash;<h-care-action-btn response-message='Are you sure to delete patient "{{patient.fullName}}"?' icon="trash" click-event="remove()" action="delete_role"></h-care-action-btn>&ndash;&gt;
-	</div>-->
     <p class="list-group-item-text">
         <em class="text-muted">
             <strong>Gender: </strong>
@@ -22,7 +17,7 @@
     <p class="list-group-item-text">
         <em class="text-muted">
             <strong>Age: </strong>
-            {{age}}
+            {{configObj.age}}
         </em>
     </p>
     <p class="list-group-item-text">

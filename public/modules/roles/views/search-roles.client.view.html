@@ -3,7 +3,7 @@
         <h1>Search Roles</h1>
     </div>
     <tabset >
-        <tab heading="Search Terms" active="{{!showResults}}">
+        <tab heading="Search Terms">
             <div class="col-md-12">
             <form class="form-horizontal" data-ng-submit="search()" novalidate>
                 <fieldset>
@@ -11,28 +11,26 @@
                         <label class="control-label" for="name">Name</label>
 
                         <div class="controls">
-                            <input type="text" data-ng-model="name" id="name" class="form-control"
+                            <input type="text" data-ng-model="role.name" id="name" class="form-control"
                                    placeholder="Name">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="modules">Modules</label>
-
                         <div class="controls">
-                            <h-care-checkbtn-list id="modules" source="modules" item-label-field="name"
+                            <h-care-checkbtn-list id="modules" source="actionsObj.modules" item-label-field="name"
                                                   item-value-field="_id" is-multi-selection="true"
-                                                  is-active-on-click="false" selected-items="selected_modules"
-                                                  current-tapped-item="selected_module"></h-care-checkbtn-list>
+                                                  is-active-on-click="false" selected-items="actionsObj.selected_modules"
+                                                  current-tapped-item="actionsObj.selected_module"></h-care-checkbtn-list>
                         </div>
                     </div>
-                    <div class="form-group" ng-show="selected_module">
-                        <label class="control-label" for="actions">{{selected_module.name}} Actions</label>
-
+                    <div class="form-group" ng-show="actionsObj.selected_module">
+                        <label class="control-label" for="actions">{{actionsObj.selected_module.name}} Actions</label>
                         <div class="controls">
-                            <h-care-checkbtn-list id="actions" source="actions" item-label-field="name"
+                            <h-care-checkbtn-list id="actions" source="actionsObj.actions" item-label-field="name"
                                                   item-value-field="_id" is-multi-selection="true"
-                                                  is-active-on-click="true" selected-items="role_actions"
-                                                  current-tapped-item="selected_action"></h-care-checkbtn-list>
+                                                  is-active-on-click="true" selected-items="actionsObj.role_actions"
+                                                  current-tapped-item="actionsObj.selected_action"></h-care-checkbtn-list>
                         </div>
                     </div>
                     <!--<div class="form-group">
@@ -45,16 +43,16 @@
             </form>
             </div>
         </tab>
-        <tab heading="Search Results" active="{{showResults}}">
+        <tab heading="Search Results" active="tabsConfig.showResults" >
             <div class="list-group">
                 <a data-ng-repeat="role in roles" data-ng-href="#!/roles/{{role._id}}" class="list-group-item">
 
                     <h4 class="list-group-item-heading" data-ng-bind="role.name"></h4>
-                    <small data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')"
+                    <small data-ng-repeat="module in _.findByValuesInPath(actionsObj.modules, '_id', _.findByValues(actionsObj.all_actions, '_id', role._actions), '_module')"
                            class="list-group-item-text">
                         <em class="text-muted">
                             <strong>{{module.name}}: </strong>
-                            {{_.map(_.where(_.findByValues(all_actions, '_id', role._actions), {_module:module._id}),
+                            {{_.map(_.where(_.findByValues(actionsObj.all_actions, '_id', role._actions), {_module:module._id}),
                             'name').join(', ')}}.
                             <br/>
                             <!--<span data-ng-bind="role.user.displayName"></span>-->

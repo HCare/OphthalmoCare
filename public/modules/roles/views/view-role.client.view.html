@@ -2,16 +2,11 @@
 	<div class="page-header">
 		<h1 data-ng-bind="role.name"></h1>
 	</div>
-	<!--<div class="pull-right" >
-        <h-care-edit-button href="/#!/roles/{{role._id}}/edit" action="edit_role"></h-care-edit-button>
-        <h-care-del-button del-message="Are you sure to delete {{role.name}} Role?" hcare-del-click="remove()" action="delete_role"></h-care-del-button>
-	</div>-->
-    <p data-ng-repeat="module in _.findByValuesInPath(modules, '_id', _.findByValues(all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
+    <p data-ng-repeat="module in _.findByValuesInPath(actionsObj.modules, '_id', _.findByValues(actionsObj.all_actions, '_id', role._actions), '_module')" class="list-group-item-text">
         <em class="text-muted">
             <strong>{{module.name}}: </strong>
-            {{_.map(_.where(_.findByValues(all_actions, '_id', role._actions), {_module:module._id}), 'name').join(', ')}}.
+            {{_.map(_.where(_.findByValues(actionsObj.all_actions, '_id', role._actions), {_module:module._id}), 'name').join(', ')}}
             <br/>
-            <!--<span data-ng-bind="role.user.displayName"></span>-->
         </em>
     </p>
 

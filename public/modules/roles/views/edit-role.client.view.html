@@ -15,16 +15,22 @@
                 <div class="form-group">
                     <label class="control-label" for="modules">Modules</label>
                     <div class="controls">
-                        <h-care-checkbtn-list id="modules" source="modules" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="false" selected-items="selected_modules" current-tapped-item="selected_module"></h-care-checkbtn-list>
+                        <h-care-checkbtn-list id="modules" source="actionsObj.modules" item-label-field="name"
+                                              item-value-field="_id" is-multi-selection="true"
+                                              is-active-on-click="false" selected-items="actionsObj.selected_modules"
+                                              current-tapped-item="actionsObj.selected_module"></h-care-checkbtn-list>
                     </div>
-
                 </div>
-                <div class="form-group" ng-show="selected_module">
-                    <label class="control-label" for="actions">{{selected_module.name}} Actions</label>
+                <div class="form-group" ng-show="actionsObj.selected_module">
+                    <label class="control-label" for="actions">{{actionsObj.selected_module.name}} Actions</label>
                     <div class="controls">
-                        <h-care-checkbtn-list id="actions" source="actions" item-label-field="name" item-value-field="_id" is-multi-selection="true" is-active-on-click="true" selected-items="role_actions"  current-tapped-item="selected_action"></h-care-checkbtn-list>
+                        <h-care-checkbtn-list id="actions" source="actionsObj.actions" item-label-field="name"
+                                              item-value-field="_id" is-multi-selection="true"
+                                              is-active-on-click="true" selected-items="actionsObj.role_actions"
+                                              current-tapped-item="actionsObj.selected_action"></h-care-checkbtn-list>
                     </div>
                 </div>
+
                 <!--<div class="form-group">
                     <input type="submit" value="Update" class="btn btn-default">
                 </div>-->

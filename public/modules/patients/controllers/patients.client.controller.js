@@ -2,20 +2,53 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
-    function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
-        $scope.authentication = Authentication;
-        $scope._ = lodash;
-        $scope.Moment = Moment;
-        $scope.genders = [
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+        
+        $scope.configObj={};
+        $scope.configObj._=lodash;
+        $scope.configObj.Moment=Moment;
+        $scope.configObj.genders=[
             {_id: 'male', name: 'Male'},
             {_id: 'female', name: 'Female'}
         ];
-        $scope.photo = null;
-        $scope.age=null;
-        $scope.patient_genders = [];
-        //$scope.selected_gender = null;
-        //$scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
+        $scope.configObj.photo = null;
+        $scope.configObj.age=null;
+        $scope.configObj.patient_genders = [];
+        $scope.configObj.maxDate = new Moment();
+        $scope.configObj.minDate = new Moment().subtract(150, 'years');
+        $scope.configObj.dateOptions = {
+            formatYear: 'yyyy',
+            startingDay: 6
+        };
+        $scope.configObj.format = 'yyyy/MM/dd';
+        $scope.configObj.opened=false;
+        $scope.configObj.photoCss=null;
+        $scope.configObj.personalPhotoPath=null;
+
+        $scope.tabsConfig={};
+        $scope.tabsConfig.showResuls=false;
+
+        //$scope._ = lodash;
+        //$scope.Moment = Moment;
+        
+        //$scope.genders = [
+          //  {_id: 'male', name: 'Male'},
+          //  {_id: 'female', name: 'Female'}
+        //];
+        //$scope.photo = null;
+        //$scope.age=null;
+        //$scope.patient_genders = [];
+        //$scope.maxDate = new Moment();
+        //$scope.minDate = new Moment().subtract(150, 'years');
+        //$scope.dateOptions = {
+          //  formatYear: 'yyyy',
+          //  startingDay: 6
+        //};
+        //$scope.format = 'yyyy/MM/dd';
+        //$scope.opened
+        //$scope.photoCss
+        //$scope.personalPhotoPath
 
         //region Date functions
         $scope.today = function () {
@@ -26,29 +59,18 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.patient.birthDate = null;
         };
 
-        $scope.maxDate = new Moment();
-        $scope.minDate = new Moment().subtract(150, 'years');
-
         $scope.openDatePicker = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
-
-            $scope.opened = true;
+            $scope.configObj.opened = true;
         };
-
-        $scope.dateOptions = {
-            formatYear: 'yyyy',
-            startingDay: 6
-        };
-
-        $scope.format = 'yyyy/MM/dd';
 
         $scope.ageChanged = function (newAge) {
             $scope.patient.birthDate = new Moment().subtract(newAge, 'years').format('YYYY/MM/DD');
         };
 
         $scope.birthDateChanged = function (birthDate) {
-            $scope.age = new Moment().diff(new Moment(birthDate), 'years');
+            $scope.configObj.age = new Moment().diff(new Moment(birthDate), 'years');
         };
 
 
@@ -73,8 +95,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         //endregion Helper functions
+
         //region Photo
-        //$scope.items = ['item1', 'item2', 'item3'];
 
         $scope.openModal = function (size) {
             var modalInstance = $modal.open({
@@ -88,9 +110,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 }
             });
             modalInstance.result.then(function (finalPhoto) {
-                //console.log(finalPhoto);
-                $scope.photo = finalPhoto;
-                $scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
+                $scope.configObj.photo = finalPhoto;
+                $scope.configObj.photoCss = "{'background-image': 'url('+$scope.configObj.photo+')'}";
             }, function () {
                 //$log.info('Modal dismissed at: ' + new Date());
             });
@@ -101,9 +122,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         //select Gender
         $scope.toggleGenderSelection = function (gender_id) {
-            //console.log(role_id);
             $scope.patient.gender = gender_id;
-            //console.log($scope.manageUser._role);
         };
 
 
@@ -121,22 +140,17 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.create = function () {
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
-            if($scope.photo){
+            if($scope.configObj.photo){
                 lodash.extend(patient,{personalPhoto:true});
             }
-            var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
+            var blob = ($scope.configObj.photo)?dataURItoBlob($scope.configObj.photo):null;
             $upload.upload({
-                url: '/patients', //upload.php script, node.js route, or servlet url
+                url: '/patients',
                 method: 'POST',
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
                 data: patient,
-                file: blob // or list of files ($files) for html5 only
-                //fileName: 'personal-photo' // to modify the name of the file(s)
-                // customize file formData name ('Content-Disposition'), server side file variable name.
-                //fileFormDataName: myFile, //or a list of names for multiple files (html5). Default is 'file'
-                // customize how data is added to formData. See #40#issuecomment-28612000 for sample code
-                //formDataAppender: function(formData, key, val){}
+                file: blob
             }).success(function (response, status) {
                     $location.path('patients/' + response._id);
 
@@ -186,18 +200,16 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
         //redirect to examination
         $scope.examine = function (){
-            var patient = angular.fromJson(angular.toJson($scope.patient));
-            //Patient.setCurrentPatient(patient);
-            $location.path('examinations/create/'+patient._id);
+            $location.path('examinations/create/'+$scope.patient._id);
         }
 
         // Update existing Patient
         $scope.update = function () {
             var patient = angular.fromJson(angular.toJson($scope.patient));
-            if($scope.photo){
+            if($scope.configObj.photo){
                 lodash.extend(patient,{personalPhoto:true});
             }
-            var blob = ($scope.photo)?dataURItoBlob($scope.photo):null;
+            var blob = ($scope.configObj.photo)?dataURItoBlob($scope.configObj.photo):null;
             $upload.upload({
                 url: '/patients/'+patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
@@ -227,7 +239,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Find a list of Patients
         $scope.find = function () {
-            $scope.patients = Patients.query();
+            Patients.query(function(_patients){
+                $scope.patients =_patients ;
+            });
+
         };
 
         // Find existing Patient
@@ -236,10 +251,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 patientId: $stateParams.patientId
             }, function(){
                 $scope.patient=patient;
-                $scope.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+                $scope.configObj.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if($scope.patient.personalPhoto){
-                    $scope.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
-                    //$scope.patient.personalPhoto=filePath;
+                    $scope.configObj.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
                 }
                 if(callback){
                     callback();
@@ -248,9 +262,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         // Search existing patients
-        $scope.search = function () {
+        $scope.search = function (callback) {
                 Patients.query($scope.patient, function (_patients) {
                     $scope.patients = _patients;
+                    if(callback){
+                        callback();
+                    }
                 });
         };
 
@@ -298,83 +315,77 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
-            $scope.search();
+            $scope.search(function(){
+                $scope.tabsConfig.showResults=true;
+            });
         });
     }
 
 ]);
 
 angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $modalInstance, items, Logger) {
-//region Tabs
-    $scope.tabs = [
+    $scope.modalConfig={};
+    $scope.modalConfig.tabs= [
         { active: true, disabled: false },
         { active: false, disabled: false },
         { active: false, disabled: true }
     ];
-    //endregion Tabs
+    $scope.modalConfig.photoWidth = null;
+    $scope.modalConfig.photoHeight = null;
+    $scope.modalConfig.finalPhoto = null;
+    $scope.modalConfig.photos = [];
+    $scope.modalConfig.selectedPhoto = null;
+    $scope.modalConfig.inputImage = null;
+    $scope.modalConfig.webcamError = false;
+    //$scope.tabs = [
+      //  { active: true, disabled: false },
+      //  { active: false, disabled: false },
+      //  { active: false, disabled: true }
+    //];
+    //$scope.photoWidth = null;
+    //$scope.photoHeight = null;
+    //$scope.finalPhoto = null;
+    //$scope.photos = [];
+    //$scope.selectedPhoto = null;
+    //$scope.inputImage = null;
+    //$scope.webcamError = false;
 
     var _video = null;
-    $scope.photos = [];
     $scope.onSuccess = function (videoElem) {
         _video = videoElem;
     };
-    $scope.photoWidth = null;
-    $scope.photoHeight = null;
-    $scope.finalPhoto = null;
+
     var getVideoData = function getVideoData() {
         var hiddenCanvas = document.createElement('canvas');
         hiddenCanvas.width = _video.width;
         hiddenCanvas.height = _video.height;
         var ctx = hiddenCanvas.getContext('2d');
         ctx.drawImage(_video, 0, 0, _video.width, _video.height);
-        $scope.photoWidth = document.defaultView.getComputedStyle(_video, "").getPropertyValue("width");
-        $scope.photoHeight = document.defaultView.getComputedStyle(_video, "").getPropertyValue("height");
-        return hiddenCanvas.toDataURL();//ctx.getImageData(0, 0,_video.width, _video.height);
+        $scope.modalConfig.photoWidth = document.defaultView.getComputedStyle(_video, "").getPropertyValue("width");
+        $scope.modalConfig.photoHeight = document.defaultView.getComputedStyle(_video, "").getPropertyValue("height");
+        return hiddenCanvas.toDataURL();
     };
     $scope.makeSnapshot = function makeSnapshot() {
-        //console.log('makeSnapshot');
         if (_video) {
-            //console.log(_video);
             var idata = getVideoData();
-            //console.log(idata);
-            $scope.photos.push({src: idata})
+            $scope.modalConfig.photos.push({src: idata})
         }
     };
-    $scope.selectedPhoto = null;
 
     var img = new Image();
     img.onload = function () {
         var width = this.width;
         var height = this.height;
         var src = this.src;
-        /*$scope.photoWidth = width;
-         $scope.photoHeight = height;
-         $scope.selectPhoto(src);*/
-        //$scope.photoWidth = width;
-        //$scope.photoHeight = height;
-        /*$scope.$apply(function($scope) {
-         $scope.photoWidth = width;
-         $scope.photoHeight = height;
-
-         //$scope.selectPhoto(src);
-         });*/
-
     };
 
-    $scope.inputImage = null;
     $scope.inputPhoto = function (files) {
         var file = files[0];
-        //console.log(file);
         var reader = new FileReader();
         reader.onload = function (evt) {
-            //console.log(evt);
             $scope.$apply(function ($scope) {
-                $scope.inputImage = evt.target.result;
+                $scope.modalConfig.inputImage = evt.target.result;
                 img.src = evt.target.result;
-                //$scope.selectedPhoto=evt.target.result;
-                //console.log(evt.target.result);
-                //$scope.tabs[2].disabled=false;
-                //$scope.tabs[2].active=true;
             });
         };
         reader.readAsDataURL(file);
@@ -382,54 +393,35 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     };
 
     $scope.selectInputPhoto = function () {
-        $scope.photoWidth = img.width;
-        $scope.photoHeight = img.height;
-        console.log($scope.photoWidth);
-        console.log($scope.photoHeight);
-        $scope.tabs[2].disabled = false;
-        //$scope.tabs[2].active=true;
-    }
-
+        $scope.modalConfig.photoWidth = img.width;
+        $scope.modalConfig.photoHeight = img.height;
+        $scope.modalConfig.tabs[2].disabled = false;
+    };
 
     $scope.selectPhoto = function (photo) {
-        //console.log('select photop');
-        //console.log($scope.photoWidth);
-        //console.log($scope.photoHeight);
-        $scope.selectedPhoto = photo;
-        $scope.tabs[2].disabled = false;
-        $scope.tabs[2].active = true;
+        $scope.modalConfig.selectedPhoto = photo;
+        $scope.modalConfig.tabs[2].disabled = false;
+        $scope.modalConfig.tabs[2].active = true;
 
-    }
-    /*$scope.savePhoto=function(media){
-     console.log('media\n\r');
-     console.log(media);
-     };*/
-
-    $scope.webcamError = false;
+    };
 
     $scope.onCamError = function (err) {
         $scope.$apply(function () {
-            $scope.webcamError = err;
+            $scope.modalConfig.webcamError = err;
         });
-    }
+    };
 
     $scope.photoCropped = function ($dataURI) {
-        $scope.finalPhoto = $dataURI;
-        //console.log($dataURI);
+        $scope.modalConfig.finalPhoto = $dataURI;
     };
 
     $scope.ok = function () {
-        //console.log($scope.finalPhoto);
-        $modalInstance.close($scope.finalPhoto);
+        $modalInstance.close($scope.modalConfig.finalPhoto);
     };
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-
-
-    //alert(err);
-    //Logger.error(err,true);
 
 });
 
