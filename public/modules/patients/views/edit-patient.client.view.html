@@ -2,18 +2,18 @@
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-body">
             <tabset justified="true">
-                <tab heading="Take a Photo" active="tabs[0].active" disabled="tabs[0].disabled">
+                <tab heading="Take a Photo" active="modalConfig.tabs[0].active" disabled="modalConfig.tabs[0].disabled">
                     <div class="controls">
-                        <div ng-hide="webcamError">
+                        <div ng-hide="modalConfig.webcamError">
                             <webcam on-error="onCamError(err)" on-streaming="onSuccess(video)">
                             </webcam>
                         </div>
-                        <div class="alert alert-danger" ng-show="webcamError">
+                        <div class="alert alert-danger" ng-show="modalConfig.webcamError">
                             <span>Webcam could not be started. Did you give access to it?</span>
                         </div>
                         <button type="button" class="btn btn-default" ng-click="makeSnapshot()">
                             <i class="glyphicon glyphicon-camera"></i></button>
-                        <div deckgrid class="deckgrid" source="photos">
+                        <div deckgrid class="deckgrid" source="modalConfig.photos">
                             <div>
                                 <a href="" class="thumbnail" ng-click="mother.selectPhoto(card.src)">
                                     <img src="" data-ng-src="{{card.src}}">
@@ -22,32 +22,12 @@
                         </div>
                     </div>
                 </tab>
-                <!--<tab heading="Browse" active="tabs[1].active" disabled="tabs[1].disabled">
-                        <div class="form-group">
-                            <label class="control-label" for="name">Choose a pic</label>
-
-                            <div class="controls">
-                                <input type="file" id="fileInput" onchange="angular.element(this).scope().inputPhoto(this.files)"/>
-                            </div>
-                            <a href="" class="thumbnail" ng-click="selectInputPhoto()">
-                            <img data-ng-show="inputImage" id="inputImage" src="" data-ng-src="{{inputImage}}"/>
-                                </a>
-
-                        </div>
-                </tab>-->
-                <tab heading="Crop" active="tabs[2].active" disabled="tabs[2].disabled">
-                    <!--<img src="" data-ng-src="{{selectedPhoto}}"/>-->
-                    <div class="cropArea" ng-style="{'width': photoWidth, 'height': photoHeight }">
-                        <img-crop area-min-size="128" result-image-size="128" image="selectedPhoto" result-image="finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
+                <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">
+                    <div class="cropArea" ng-style="{'width': modalConfig.photoWidth, 'height': modalConfig.photoHeight }">
+                        <img-crop area-min-size="128" result-image-size="128" image="modalConfig.selectedPhoto" result-image="modalConfig.finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
                     </div>
-                    <!--<img src="" data-ng-src="{{finalPhoto}}"/>-->
                 </tab>
             </tabset>
-            <!--<div class="modal-header">
-            <h3 class="modal-title">I'm a modal!</h3>
-        </div>-->
-
-
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary"  ng-click="ok()">OK</button>
@@ -61,9 +41,9 @@
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <div class="circular" back-img="{{photo||personalPhotoPath||'modules/core/img/userpic.png'}}">
+                    <div class="circular" back-img="{{configObj.photo||configObj.personalPhotoPath||'modules/core/img/userpic.png'}}">
                         <a href="" ng-click="openModal()">
-                        <img src="modules/core/img/userpic.png" data-ng-src="{{photo||personalPhotoPath}}" alt="Patient Photo" />
+                        <img src="modules/core/img/userpic.png" data-ng-src="{{configObj.photo||configObj.personalPhotoPath}}" alt="Patient Photo" />
                         </a>
                     </div>
                 </div>
@@ -81,7 +61,7 @@
                     <div class="controls">
                         <div class="btn-group" data-toggle="buttons" id="gender">
                             <label class="btn btn-primary" ng-class="{active:gender._id===patient.gender}"
-                                   ng-repeat="gender in genders">
+                                   ng-repeat="gender in configObj.genders">
                                 <input type="checkbox"
                                        value="{{gender._id}}"
                                        ng-checked="gender._id===patient.gender"
@@ -95,10 +75,10 @@
 
                     <div class="controls">
                         <p class="input-group">
-                            <input type="text" id="birthDate" placeholder="Birth Date" class="form-control" datepicker-popup="{{format}}" ng-change="birthDateChanged(patient.birthDate)"
+                            <input type="text" id="birthDate" placeholder="Birth Date" class="form-control" datepicker-popup="{{configObj.format}}" ng-change="birthDateChanged(patient.birthDate)"
                                    ng-model="patient.birthDate"
-                                   is-open="opened" min-date="minDate" max-date="maxDate"
-                                   datepicker-options="dateOptions"
+                                   is-open="configObj.opened" min-date="configObj.minDate" max-date="configObj.maxDate"
+                                   datepicker-options="configObj.dateOptions"
                                    show-button-bar="false"
                                    close-text="Close"
                                    required/>
@@ -112,8 +92,8 @@
                 <div class="form-group">
                     <label class="control-label" for="age">Age</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="age" id="age" class="form-control"
-                               placeholder="Age" ng-change="ageChanged(age)"/>
+                        <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
+                               placeholder="Age" ng-change="ageChanged(configObj.age)"/>
                     </div>
                 </div>
                 <div class="form-group">

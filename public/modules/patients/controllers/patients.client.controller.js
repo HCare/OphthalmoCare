@@ -2,7 +2,7 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
     function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
         
         $scope.configObj={};
@@ -316,19 +316,31 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 ]);
 
 angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $modalInstance, items, Logger) {
-
-    $scope.tabs = [
+    $scope.modalConfig={};
+    $scope.modalConfig.tabs= [
         { active: true, disabled: false },
         { active: false, disabled: false },
         { active: false, disabled: true }
     ];
-    $scope.photoWidth = null;
-    $scope.photoHeight = null;
-    $scope.finalPhoto = null;
-    $scope.photos = [];
-    $scope.selectedPhoto = null;
-    $scope.inputImage = null;
-    $scope.webcamError = false;
+    $scope.modalConfig.photoWidth = null;
+    $scope.modalConfig.photoHeight = null;
+    $scope.modalConfig.finalPhoto = null;
+    $scope.modalConfig.photos = [];
+    $scope.modalConfig.selectedPhoto = null;
+    $scope.modalConfig.inputImage = null;
+    $scope.modalConfig.webcamError = false;
+    //$scope.tabs = [
+      //  { active: true, disabled: false },
+      //  { active: false, disabled: false },
+      //  { active: false, disabled: true }
+    //];
+    //$scope.photoWidth = null;
+    //$scope.photoHeight = null;
+    //$scope.finalPhoto = null;
+    //$scope.photos = [];
+    //$scope.selectedPhoto = null;
+    //$scope.inputImage = null;
+    //$scope.webcamError = false;
 
     var _video = null;
     $scope.onSuccess = function (videoElem) {
@@ -341,17 +353,14 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
         hiddenCanvas.height = _video.height;
         var ctx = hiddenCanvas.getContext('2d');
         ctx.drawImage(_video, 0, 0, _video.width, _video.height);
-        $scope.photoWidth = document.defaultView.getComputedStyle(_video, "").getPropertyValue("width");
-        $scope.photoHeight = document.defaultView.getComputedStyle(_video, "").getPropertyValue("height");
-        return hiddenCanvas.toDataURL();//ctx.getImageData(0, 0,_video.width, _video.height);
+        $scope.modalConfig.photoWidth = document.defaultView.getComputedStyle(_video, "").getPropertyValue("width");
+        $scope.modalConfig.photoHeight = document.defaultView.getComputedStyle(_video, "").getPropertyValue("height");
+        return hiddenCanvas.toDataURL();
     };
     $scope.makeSnapshot = function makeSnapshot() {
-        //console.log('makeSnapshot');
         if (_video) {
-            //console.log(_video);
             var idata = getVideoData();
-            //console.log(idata);
-            $scope.photos.push({src: idata})
+            $scope.modalConfig.photos.push({src: idata})
         }
     };
 
@@ -360,33 +369,15 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
         var width = this.width;
         var height = this.height;
         var src = this.src;
-        /*$scope.photoWidth = width;
-         $scope.photoHeight = height;
-         $scope.selectPhoto(src);*/
-        //$scope.photoWidth = width;
-        //$scope.photoHeight = height;
-        /*$scope.$apply(function($scope) {
-         $scope.photoWidth = width;
-         $scope.photoHeight = height;
-
-         //$scope.selectPhoto(src);
-         });*/
-
     };
 
     $scope.inputPhoto = function (files) {
         var file = files[0];
-        //console.log(file);
         var reader = new FileReader();
         reader.onload = function (evt) {
-            //console.log(evt);
             $scope.$apply(function ($scope) {
-                $scope.inputImage = evt.target.result;
+                $scope.modalConfig.inputImage = evt.target.result;
                 img.src = evt.target.result;
-                //$scope.selectedPhoto=evt.target.result;
-                //console.log(evt.target.result);
-                //$scope.tabs[2].disabled=false;
-                //$scope.tabs[2].active=true;
             });
         };
         reader.readAsDataURL(file);
@@ -394,36 +385,30 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     };
 
     $scope.selectInputPhoto = function () {
-        $scope.photoWidth = img.width;
-        $scope.photoHeight = img.height;
-        console.log($scope.photoWidth);
-        console.log($scope.photoHeight);
-        $scope.tabs[2].disabled = false;
-        //$scope.tabs[2].active=true;
+        $scope.modalConfig.photoWidth = img.width;
+        $scope.modalConfig.photoHeight = img.height;
+        $scope.modalConfig.tabs[2].disabled = false;
     };
 
     $scope.selectPhoto = function (photo) {
-        //console.log('select photop');
-        //console.log($scope.photoWidth);
-        //console.log($scope.photoHeight);
-        $scope.selectedPhoto = photo;
-        $scope.tabs[2].disabled = false;
-        $scope.tabs[2].active = true;
+        $scope.modalConfig.selectedPhoto = photo;
+        $scope.modalConfig.tabs[2].disabled = false;
+        $scope.modalConfig.tabs[2].active = true;
 
     };
 
     $scope.onCamError = function (err) {
         $scope.$apply(function () {
-            $scope.webcamError = err;
+            $scope.modalConfig.webcamError = err;
         });
     };
 
     $scope.photoCropped = function ($dataURI) {
-        $scope.finalPhoto = $dataURI;
+        $scope.modalConfig.finalPhoto = $dataURI;
     };
 
     $scope.ok = function () {
-        $modalInstance.close($scope.finalPhoto);
+        $modalInstance.close($scope.modalConfig.finalPhoto);
     };
 
     $scope.cancel = function () {
