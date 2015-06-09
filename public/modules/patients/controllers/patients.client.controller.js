@@ -26,8 +26,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.configObj.photoCss=null;
         $scope.configObj.personalPhotoPath=null;
 
-        $scope.tabsConfig={};
-        $scope.tabsConfig.showResuls=false;
+
 
         //$scope._ = lodash;
         //$scope.Moment = Moment;
@@ -295,7 +294,22 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.initSearch=function(){
             $scope.initOne();
+            $scope.tabsConfig={};
+            $scope.tabsConfig.showResuls=false;
+            $scope.searchConfig={};
+            $scope.searchConfig.currentPage=1;
+            $scope.searchConfig.totalItems=0;
+            $scope.searchConfig.maxSize=10;
+            $scope.searchConfig.numPages=1;
             Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+        };
+
+        $scope.showPagination=function(){
+            return $scope.searchConfig.totalItems && $scope.searchConfig.totalItems>$scope.searchConfig.maxSize;
+        };
+
+        $scope.pageChanged=function(){
+          console.log($scope.searchConfig.currentPage);
         };
 
         ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
@@ -317,6 +331,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
             $scope.search(function(){
                 $scope.tabsConfig.showResults=true;
+
             });
         });
     }
