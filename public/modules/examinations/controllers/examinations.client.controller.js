@@ -4,6 +4,10 @@
 angular.module('examinations').controller('ExaminationsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Examinations', 'lodash', '$q', 'Patients', 'CoreProperties', 'ActionsHandler', 'Toolbar', 'Logger',
     function ($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patients, CoreProperties, ActionsHandler, Toolbar, Logger) {
         $scope.authentication = Authentication;
+
+        $scope.tabsConfig={};
+        $scope.tabsConfig.showResuls=false;
+
         //$scope.examination={};
         /*$scope.examination.colors=null;
          $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
@@ -1113,8 +1117,22 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             });
         };
 
+        // Search existing Examinations
+        $scope.search = function (callback) {
+            Examinations.query($scope.examinations, function (_examinations) {
+                $scope.examinations = _examinations;
+                if(callback){
+                    callback();
+                }
+            });
+        };
+
         $scope.initOne = function () {
             $scope.examination = new Examinations({});
+        };
+
+        $scope.initCreate = function () {
+            $scope.initOne();
             Patients.get({
                 patientId: $stateParams.patientId
             }, function (patient) {
@@ -1127,13 +1145,19 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             });
         };
 
-        $scope.initSearch = function () {
-            $scope.examination = new Examinations({});
-
+        $scope.initSearch=function(){
+            $scope.initOne();
+            Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
         };
 
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
             $scope.onSubmit($scope.forms.examinationForm);
+        });
+
+        ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
+            $scope.search(function(){
+                $scope.tabsConfig.showResults=true;
+            });
         });
     }
 ]);
