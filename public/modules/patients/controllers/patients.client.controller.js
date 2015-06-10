@@ -262,10 +262,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-                Patients.query($scope.patient, function (_patients) {
-                    $scope.patients = _patients;
+                Patients.search($scope.patient, function (_res) {
+                    $scope.patients = _res.list;
                     if(callback){
-                        callback();
+                        callback(_res.count);
                     }
                 });
         };
@@ -299,13 +299,14 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.searchConfig={};
             $scope.searchConfig.currentPage=1;
             $scope.searchConfig.totalItems=0;
-            $scope.searchConfig.maxSize=10;
+            $scope.searchConfig.maxSize=1;
             $scope.searchConfig.numPages=1;
+            $scope.searchConfig.showPagination=false;
             Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
         };
 
-        $scope.showPagination=function(){
-            return $scope.searchConfig.totalItems && $scope.searchConfig.totalItems>$scope.searchConfig.maxSize;
+        $scope.getShowPagination=function(){
+            return $scope.searchConfig.totalItems>$scope.searchConfig.maxSize;
         };
 
         $scope.pageChanged=function(){
@@ -329,8 +330,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
-            $scope.search(function(){
+            $scope.search(function(_count){
                 $scope.tabsConfig.showResults=true;
+                $scope.searchConfig.totalItems=_count;
+                $scope.searchConfig.showPagination=$scope.getShowPagination();
 
             });
         });

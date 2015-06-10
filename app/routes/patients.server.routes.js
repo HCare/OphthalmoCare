@@ -18,10 +18,15 @@ module.exports = function(app) {
 		.get(security.authorizedToDo('list_patients'), patients.list)
 		.post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
 
+    app.route('/patients/search')
+        .get(security.authorizedToDo('search_patients'), patients.search);
+
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)
 		.put(security.authorizedToDo('edit_patient'), multerTemp, patients.update, fileHandler.uploadFile)
 		.delete(security.authorizedToDo('delete_patient'), patients.delete);
+
+
 
     app.route('/patients/personal-photo/:patientId')
         .get(security.authorizedToDo(['list_patients', 'create_patient', 'edit_patient', 'view_patient']), patients.renderPhoto);

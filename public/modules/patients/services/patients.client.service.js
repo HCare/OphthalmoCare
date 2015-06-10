@@ -7,7 +7,11 @@ angular.module('patients').factory('Patients', ['$resource',
 		}, {
 			update: {
 				method: 'PUT'
-			}
+			},
+            search:{
+                method: 'GET',
+                url:'patients/search'
+            }
 		});
 	}
 ]);
