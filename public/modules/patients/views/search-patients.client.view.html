@@ -99,7 +99,7 @@
                 </a>
             </div>
 
-            <pagination data-ng-hide="!searchConfig.showPagination" total-items="searchConfig.totalItems" ng-model="searchConfig.currentPage" ng-change="pageChanged()"  max-size="searchConfig.maxSize" class="pagination-sm" boundary-links="true" rotate="false" >
+            <pagination data-ng-hide="!searchConfig.showPagination" total-items="searchConfig.totalItems" ng-model="searchConfig.currentPage" ng-change="pageChanged()"  max-size="searchConfig.maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="searchConfig.numPages" >
         </pagination>
 
             <div class="alert alert-warning text-center" data-ng-hide="!patients.$resolved || patients.length">

@@ -262,8 +262,13 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
+            var query=$scope.patient;
+            query.paginationConfig={};
+            query.paginationConfig.pageNo=$scope.searchConfig.currentPage;
+            query.paginationConfig.pageSize=$scope.searchConfig.pageSize;
                 Patients.search($scope.patient, function (_res) {
                     $scope.patients = _res.list;
+                    console.log(_res.count);
                     if(callback){
                         callback(_res.count);
                     }
@@ -297,9 +302,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.tabsConfig={};
             $scope.tabsConfig.showResuls=false;
             $scope.searchConfig={};
+            $scope.searchConfig.pageSize=10;
             $scope.searchConfig.currentPage=1;
             $scope.searchConfig.totalItems=0;
-            $scope.searchConfig.maxSize=1;
+            $scope.searchConfig.maxSize=2;
             $scope.searchConfig.numPages=1;
             $scope.searchConfig.showPagination=false;
             Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
@@ -311,6 +317,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.pageChanged=function(){
           console.log($scope.searchConfig.currentPage);
+            $scope.search();
+        };
+
+        $scope.getNumOfPages=function(){
+            return  $scope.searchConfig.totalItems/$scope.searchConfig.maxSize;
         };
 
         ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
@@ -334,7 +345,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 $scope.tabsConfig.showResults=true;
                 $scope.searchConfig.totalItems=_count;
                 $scope.searchConfig.showPagination=$scope.getShowPagination();
-
+                $scope.searchConfig.numPages=$scope.getNumOfPages();
+                $scope.initOne();
             });
         });
     }

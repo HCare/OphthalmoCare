@@ -191,7 +191,16 @@ exports.search=function(req,res){
             delete req.query.notes; // didn't search by notes
         }
 
-        Patient.find(req.query).exec(function (err, patients) {
+        //pagination
+        var pageNo=0, pageSize=10;
+        if(req.query.hasOwnProperty('paginationConfig')){
+            var paginationConfig=JSON.parse(req.query.paginationConfig);
+            pageNo=paginationConfig.pageNo-1;
+            pageSize=paginationConfig.pageSize;
+            delete req.query.paginationConfig;
+        }
+
+        Patient.find(req.query).skip(pageNo*pageSize).limit(pageSize).exec(function (err, patients) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
