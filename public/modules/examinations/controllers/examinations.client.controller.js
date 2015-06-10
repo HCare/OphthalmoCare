@@ -1119,8 +1119,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Search existing Examinations
         $scope.search = function (callback) {
-            Examinations.query($scope.examinations, function (_examinations) {
+
+            var examination = new Examinations($scope.examination);
+            Examinations.query(examination, function (_examinations) {
                 $scope.examinations = _examinations;
+                console.log($scope.examinations);
                 if(callback){
                     callback();
                 }
