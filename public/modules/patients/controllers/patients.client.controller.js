@@ -262,12 +262,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-                Patients.query($scope.patient, function (_patients) {
-                    $scope.patients = _patients;
-                    if(callback){
-                        callback();
-                    }
-                });
+            Patients.query($scope.patient, function (_patients) {
+                $scope.patients = _patients;
+                if(callback){
+                    callback();
+                }
+            });
         };
 
         // Find existing Patient
