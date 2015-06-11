@@ -99,9 +99,9 @@
                 </a>
             </div>
 
-         <pagination total-items="paginationConfig.totalItems" ng-model="paginationConfig.currentPage" ng-change="pageChanged()"  max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+         <pagination ng-hide="!paginationConfig.showPagination" total-items="paginationConfig.totalItems" ng-model="paginationConfig.currentPage" ng-change="pageChanged()"  max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
          </pagination>
-            <ul class="pagination-sm pagination">
+            <ul ng-hide="!paginationConfig.showPagination" class="pagination-sm pagination">
                 <li ng-repeat="item in paginationConfig.pageSizeOptions" ng-class="{active: isPageSizeOptionSelecetd(item), disabled:!isPageSizeOptionEnabled(item)}">
                     <a href="" ng-click="selectPageSizeOption(item)">{{item}}</a>
                 </li>

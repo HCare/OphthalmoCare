@@ -289,7 +289,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         $scope.getShowPagination=function(){
-            return $scope.paginationConfig.totalItems>$scope.paginationConfig.pageSize;
+            return $scope.paginationConfig.totalItems>0;
         };
 
         $scope.pageChanged=function(){
@@ -313,6 +313,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
             return $scope.paginationConfig.pageSizeOptions[optionIndex-1]<$scope.paginationConfig.totalItems;
         };
+        $scope.showPagination=function(){
+
+        };
+
 
         $scope.isPageSizeOptionSelecetd=function(_option){
             return  $scope.paginationConfig.pageSize==_option;
