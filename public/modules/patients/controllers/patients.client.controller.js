@@ -307,7 +307,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.fireSearch();
         };
         $scope.isPageSizeOptionEnabled=function(_option){
-            return $scope.paginationConfig.totalItems;
+            var optionIndex=$scope.paginationConfig.pageSizeOptions.indexOf(_option);
+            if (optionIndex==0){
+                return true;
+            }
+            return $scope.paginationConfig.pageSizeOptions[optionIndex-1]<$scope.paginationConfig.totalItems;
         };
 
         $scope.isPageSizeOptionSelecetd=function(_option){
