@@ -9,6 +9,9 @@ module.exports = function(app) {
 		.get(security.authorizedToDo('list_examinations'), examinations.list)
 		.post(security.authorizedToDo('create_examination'), examinations.create);
 
+	app.route('/examinations/search')
+		.get(security.authorizedToDo('search_examinations'), examinations.search);
+
 	app.route('/examinations/:examinationId')
 		.get(security.authorizedToDo('view_examination'), examinations.read)
 		.put(security.authorizedToDo('edit_examination'), examinations.update)

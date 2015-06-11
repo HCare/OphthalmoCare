@@ -1083,7 +1083,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 examination.$remove();
 
                 for (var i in $scope.examinations) {
-                    if ($scope.examinations [i] === examination) {
+                    if ($scope.examinations[i] === examination) {
                         $scope.examinations.splice(i, 1);
                     }
                 }
@@ -1119,11 +1119,11 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Search existing Examinations
         $scope.search = function (callback) {
-
             var examination = new Examinations($scope.examination);
-            Examinations.query(examination, function (_examinations) {
+            console.log($scope.examination);
+            Examinations.search(examination, function (_examinations) {
                 $scope.examinations = _examinations;
-                console.log($scope.examinations);
+                //console.log($scope.examinations);
                 if(callback){
                     callback();
                 }
@@ -1159,6 +1159,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
             $scope.search(function(){
+                console.log('tabconfig');
                 $scope.tabsConfig.showResults=true;
             });
         });
