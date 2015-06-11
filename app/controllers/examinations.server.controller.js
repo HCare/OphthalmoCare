@@ -94,6 +94,7 @@ exports.search = function(req,res){
 	console.log('search Examinationssssssss');
 	console.log(req.query);
 
+    /*
 	if (req.query && Object.keys(req.query).length > 0) {
 		//fullName
 		if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
@@ -177,6 +178,8 @@ exports.search = function(req,res){
 			}
 		});
 	}
+
+    */
 
 };
 
