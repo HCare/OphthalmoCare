@@ -99,9 +99,13 @@
                 </a>
             </div>
 
-            <pagination data-ng-hide="!searchConfig.showPagination" total-items="searchConfig.totalItems" ng-model="searchConfig.currentPage" ng-change="pageChanged()"  max-size="searchConfig.maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="searchConfig.numPages" >
-        </pagination>
-
+         <pagination total-items="paginationConfig.totalItems" ng-model="paginationConfig.currentPage" ng-change="pageChanged()"  max-size="paginationConfig.maxSize" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+         </pagination>
+            <ul class="pagination-sm pagination">
+                <li ng-repeat="item in paginationConfig.pageSizeOptions" ng-class="{active: isPageSizeOptionSelecetd(item)}">
+                    <a href="" ng-click="selectPageSizeOption(item)">{{item}}</a>
+                </li>
+            </ul>
             <div class="alert alert-warning text-center" data-ng-hide="!patients.$resolved || patients.length">
                 No Patients Results
             </div>

@@ -26,29 +26,6 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.configObj.photoCss=null;
         $scope.configObj.personalPhotoPath=null;
 
-
-
-        //$scope._ = lodash;
-        //$scope.Moment = Moment;
-        
-        //$scope.genders = [
-          //  {_id: 'male', name: 'Male'},
-          //  {_id: 'female', name: 'Female'}
-        //];
-        //$scope.photo = null;
-        //$scope.age=null;
-        //$scope.patient_genders = [];
-        //$scope.maxDate = new Moment();
-        //$scope.minDate = new Moment().subtract(150, 'years');
-        //$scope.dateOptions = {
-          //  formatYear: 'yyyy',
-          //  startingDay: 6
-        //};
-        //$scope.format = 'yyyy/MM/dd';
-        //$scope.opened
-        //$scope.photoCss
-        //$scope.personalPhotoPath
-
         //region Date functions
         $scope.today = function () {
             $scope.patient.birthDate = new Moment();
@@ -264,11 +241,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.search = function (callback) {
             var query=$scope.patient;
             query.paginationConfig={};
-            query.paginationConfig.pageNo=$scope.searchConfig.currentPage;
-            query.paginationConfig.pageSize=$scope.searchConfig.pageSize;
+            query.paginationConfig.pageNo=$scope.paginationConfig.currentPage;
+            query.paginationConfig.pageSize=$scope.paginationConfig.pageSize;
                 Patients.search($scope.patient, function (_res) {
                     $scope.patients = _res.list;
-                    console.log(_res.count);
                     if(callback){
                         callback(_res.count);
                     }
@@ -301,27 +277,41 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.initOne();
             $scope.tabsConfig={};
             $scope.tabsConfig.showResuls=false;
-            $scope.searchConfig={};
-            $scope.searchConfig.pageSize=10;
-            $scope.searchConfig.currentPage=1;
-            $scope.searchConfig.totalItems=0;
-            $scope.searchConfig.maxSize=2;
-            $scope.searchConfig.numPages=1;
-            $scope.searchConfig.showPagination=false;
+            $scope.paginationConfig={};
+            $scope.paginationConfig.pageSize=10;
+            $scope.paginationConfig.currentPage=1;
+            $scope.paginationConfig.totalItems=0;
+            $scope.paginationConfig.maxSize=2;
+            $scope.paginationConfig.numPages=1;
+            $scope.paginationConfig.pageSizeOptions=[10,50,100];
+            $scope.paginationConfig.showPagination=false;
             Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
         };
 
         $scope.getShowPagination=function(){
-            return $scope.searchConfig.totalItems>$scope.searchConfig.maxSize;
+            return $scope.paginationConfig.totalItems>$scope.paginationConfig.pageSize;
         };
 
         $scope.pageChanged=function(){
-          console.log($scope.searchConfig.currentPage);
-            $scope.search();
+          console.log($scope.paginationConfig.currentPage);
+            $scope.fireSearch();
         };
 
         $scope.getNumOfPages=function(){
-            return  $scope.searchConfig.totalItems/$scope.searchConfig.maxSize;
+            return  $scope.paginationConfig.totalItems/$scope.paginationConfig.maxSize;
+        };
+
+        $scope.selectPageSizeOption=function(_option){
+            console.log(_option);
+            $scope.paginationConfig.pageSize=_option;
+            $scope.fireSearch();
+        };
+        $scope.isPageSizeOptionEnabled=function(_option){
+            return $scope.paginationConfig.totalItems;
+        };
+
+        $scope.isPageSizeOptionSelecetd=function(_option){
+            return  $scope.paginationConfig.pageSize==_option;
         };
 
         ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
@@ -341,14 +331,17 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+            $scope.fireSearch();
+        });
+
+        $scope.fireSearch=function(){
             $scope.search(function(_count){
                 $scope.tabsConfig.showResults=true;
-                $scope.searchConfig.totalItems=_count;
-                $scope.searchConfig.showPagination=$scope.getShowPagination();
-                $scope.searchConfig.numPages=$scope.getNumOfPages();
-                $scope.initOne();
+                $scope.paginationConfig.totalItems=_count;
+                $scope.paginationConfig.showPagination=$scope.getShowPagination();
+                $scope.paginationConfig.numPages=$scope.getNumOfPages();
             });
-        });
+        };
     }
 
 ]);
