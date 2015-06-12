@@ -302,9 +302,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         $scope.selectPageSizeOption=function(_option){
-            console.log(_option);
+            if($scope.isPageSizeOptionEnabled(_option))
+            {
             $scope.paginationConfig.pageSize=_option;
             $scope.fireSearch();
+            }
         };
         $scope.isPageSizeOptionEnabled=function(_option){
             var optionIndex=$scope.paginationConfig.pageSizeOptions.indexOf(_option);
