@@ -15,11 +15,11 @@ module.exports = function(app) {
 
 	// Patients Routes
 	app.route('/patients')
-		.get(security.authorizedToDo('list_patients'), patients.list)
+		.get(security.authorizedToDo('search_patients'), patients.search)
 		.post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
 
-    app.route('/patients/search')
-        .get(security.authorizedToDo('search_patients'), patients.search);
+/*    app.route('/patients/search')
+        .get(security.authorizedToDo('search_patients'), patients.search);*/
 
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)

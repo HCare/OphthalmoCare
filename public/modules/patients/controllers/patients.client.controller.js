@@ -2,18 +2,18 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload','ActionsHandler', 'Toolbar',
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'ActionsHandler', 'Toolbar',
     function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
-        
-        $scope.configObj={};
-        $scope.configObj._=lodash;
-        $scope.configObj.Moment=Moment;
-        $scope.configObj.genders=[
+
+        $scope.configObj = {};
+        $scope.configObj._ = lodash;
+        $scope.configObj.Moment = Moment;
+        $scope.configObj.genders = [
             {_id: 'male', name: 'Male'},
             {_id: 'female', name: 'Female'}
         ];
         $scope.configObj.photo = null;
-        $scope.configObj.age=null;
+        $scope.configObj.age = null;
         $scope.configObj.patient_genders = [];
         $scope.configObj.maxDate = new Moment();
         $scope.configObj.minDate = new Moment().subtract(150, 'years');
@@ -22,9 +22,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             startingDay: 6
         };
         $scope.configObj.format = 'yyyy/MM/dd';
-        $scope.configObj.opened=false;
-        $scope.configObj.photoCss=null;
-        $scope.configObj.personalPhotoPath=null;
+        $scope.configObj.opened = false;
+        $scope.configObj.photoCss = null;
+        $scope.configObj.personalPhotoPath = null;
 
         //region Date functions
         $scope.today = function () {
@@ -116,10 +116,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.create = function () {
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
-            if($scope.configObj.photo){
-                lodash.extend(patient,{personalPhoto:true});
+            if ($scope.configObj.photo) {
+                lodash.extend(patient, {personalPhoto: true});
             }
-            var blob = ($scope.configObj.photo)?dataURItoBlob($scope.configObj.photo):null;
+            var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
             $upload.upload({
                 url: '/patients',
                 method: 'POST',
@@ -175,19 +175,19 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
         };
         //redirect to examination
-        $scope.examine = function (){
-            $location.path('examinations/create/'+$scope.patient._id);
+        $scope.examine = function () {
+            $location.path('examinations/create/' + $scope.patient._id);
         }
 
         // Update existing Patient
         $scope.update = function () {
             var patient = angular.fromJson(angular.toJson($scope.patient));
-            if($scope.configObj.photo){
-                lodash.extend(patient,{personalPhoto:true});
+            if ($scope.configObj.photo) {
+                lodash.extend(patient, {personalPhoto: true});
             }
-            var blob = ($scope.configObj.photo)?dataURItoBlob($scope.configObj.photo):null;
+            var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
             $upload.upload({
-                url: '/patients/'+patient._id, //upload.php script, node.js route, or servlet url
+                url: '/patients/' + patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},
                 //withCredentials: true,
@@ -214,24 +214,24 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
 
         // Find a list of Patients
-        $scope.find = function () {
-            Patients.query(function(_patients){
-                $scope.patients =_patients ;
+        /*$scope.find = function () {
+            Patients.query(function (_patients) {
+                $scope.patients = _patients;
             });
 
-        };
+        };*/
 
         // Find existing Patient
         $scope.findOne = function (callback) {
             var patient = Patients.get({
                 patientId: $stateParams.patientId
-            }, function(){
-                $scope.patient=patient;
-                $scope.configObj.age=new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
-                if($scope.patient.personalPhoto){
-                    $scope.configObj.personalPhotoPath = 'patients/personal-photo/'+$scope.patient._id;
+            }, function () {
+                $scope.patient = patient;
+                $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+                if ($scope.patient.personalPhoto) {
+                    $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
                 }
-                if(callback){
+                if (callback) {
                     callback();
                 }
             });
@@ -239,16 +239,16 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-            var query=$scope.patient;
-            query.paginationConfig={};
-            query.paginationConfig.pageNo=$scope.paginationConfig.currentPage;
-            query.paginationConfig.pageSize=$scope.paginationConfig.pageSize;
-                Patients.search($scope.patient, function (_res) {
-                    $scope.patients = _res.list;
-                    if(callback){
-                        callback(_res.count);
-                    }
-                });
+            var query = $scope.patient;
+            query.paginationConfig = {};
+            query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+            query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+            Patients.query($scope.patient, function (_res) {
+                $scope.patients = _res.list;
+                if (callback) {
+                    callback(_res.count);
+                }
+            });
         };
 
         // Find existing Patient
@@ -256,72 +256,82 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.patient = new Patients({});
         };
 
-        $scope.initCreate=function(){
+        $scope.initCreate = function () {
             $scope.initOne();
             Toolbar.addToolbarCommand('savePatient', 'create_patient', 'Save', 'floppy-save', 0);
         };
-        $scope.initEdit=function(){
-            $scope.findOne(function(){
+        $scope.initEdit = function () {
+            $scope.findOne(function () {
                 Toolbar.addToolbarCommand('updatePatient', 'edit_patient', 'Save', 'floppy-save', 0);
             });
         };
-        $scope.initView=function(){
-            $scope.findOne(function(){
+        $scope.initView = function () {
+            $scope.findOne(function () {
                 Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
                 Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 1);
-                Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 2, null, 'Are you sure to delete patient "'+$scope.patient.fullName+'"?');
+                Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 2, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
             });
         };
 
-        $scope.initSearch=function(){
+        $scope.initSearch = function () {
             $scope.initOne();
-            $scope.tabsConfig={};
-            $scope.tabsConfig.showResuls=false;
-            $scope.paginationConfig={};
-            $scope.paginationConfig.pageSize=10;
-            $scope.paginationConfig.currentPage=1;
-            $scope.paginationConfig.totalItems=0;
-            $scope.paginationConfig.maxSize=2;
-            $scope.paginationConfig.numPages=1;
-            $scope.paginationConfig.pageSizeOptions=[10,50,100];
-            $scope.paginationConfig.showPagination=false;
+            $scope.tabsConfig = {};
+            $scope.tabsConfig.showResuls = false;
+            $scope.paginationConfig = {};
+            $scope.paginationConfig.pageSize = 10;
+            $scope.paginationConfig.currentPage = 1;
+            $scope.paginationConfig.totalItems = 0;
+            $scope.paginationConfig.maxSize = 2;
+            $scope.paginationConfig.numPages = 1;
+            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
+            $scope.paginationConfig.showPagination = false;
             Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
         };
 
-        $scope.getShowPagination=function(){
-            return $scope.paginationConfig.totalItems>0;
-        };
-
-        $scope.pageChanged=function(){
-          console.log($scope.paginationConfig.currentPage);
+        $scope.initList=function(){
+            $scope.initOne();
+            $scope.tabsConfig = {};
+            $scope.tabsConfig.showResuls = false;
+            $scope.paginationConfig = {};
+            $scope.paginationConfig.pageSize = 10;
+            $scope.paginationConfig.currentPage = 1;
+            $scope.paginationConfig.totalItems = 0;
+            $scope.paginationConfig.maxSize = 2;
+            $scope.paginationConfig.numPages = 1;
+            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
+            $scope.paginationConfig.showPagination = false;
             $scope.fireSearch();
         };
 
-        $scope.getNumOfPages=function(){
-            return  $scope.paginationConfig.totalItems/$scope.paginationConfig.maxSize;
+        $scope.getShowPagination = function () {
+            return $scope.paginationConfig.totalItems > 0;
         };
 
-        $scope.selectPageSizeOption=function(_option){
-            if($scope.isPageSizeOptionEnabled(_option))
-            {
-            $scope.paginationConfig.pageSize=_option;
+        $scope.pageChanged = function () {
+            //console.log($scope.paginationConfig.currentPage);
             $scope.fireSearch();
+        };
+
+        $scope.getNumOfPages = function () {
+            return  $scope.paginationConfig.totalItems / $scope.paginationConfig.maxSize;
+        };
+
+        $scope.selectPageSizeOption = function (_option) {
+            if ($scope.isPageSizeOptionEnabled(_option)) {
+                $scope.paginationConfig.pageSize = _option;
+                $scope.fireSearch();
             }
         };
-        $scope.isPageSizeOptionEnabled=function(_option){
-            var optionIndex=$scope.paginationConfig.pageSizeOptions.indexOf(_option);
-            if (optionIndex==0){
+        $scope.isPageSizeOptionEnabled = function (_option) {
+            var optionIndex = $scope.paginationConfig.pageSizeOptions.indexOf(_option);
+            if (optionIndex == 0) {
                 return true;
             }
-            return $scope.paginationConfig.pageSizeOptions[optionIndex-1]<$scope.paginationConfig.totalItems;
-        };
-        $scope.showPagination=function(){
-
+            return $scope.paginationConfig.pageSizeOptions[optionIndex - 1] < $scope.paginationConfig.totalItems;
         };
 
-
-        $scope.isPageSizeOptionSelecetd=function(_option){
-            return  $scope.paginationConfig.pageSize==_option;
+        $scope.isPageSizeOptionSelecetd = function (_option) {
+            return  $scope.paginationConfig.pageSize == _option;
         };
 
         ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
@@ -334,7 +344,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.examine();
         });
         ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
-            $location.path('patients/'+$scope.patient._id+'/edit');
+            $location.path('patients/' + $scope.patient._id + '/edit');
         });
         ActionsHandler.onActionFired('deletePatient', $scope, function (action, args) {
             $scope.remove();
@@ -344,12 +354,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.fireSearch();
         });
 
-        $scope.fireSearch=function(){
-            $scope.search(function(_count){
-                $scope.tabsConfig.showResults=true;
-                $scope.paginationConfig.totalItems=_count;
-                $scope.paginationConfig.showPagination=$scope.getShowPagination();
-                $scope.paginationConfig.numPages=$scope.getNumOfPages();
+        $scope.fireSearch = function () {
+            $scope.search(function (_count) {
+                $scope.tabsConfig.showResults = true;
+                $scope.paginationConfig.totalItems = _count;
+                $scope.paginationConfig.showPagination = $scope.getShowPagination();
+                $scope.paginationConfig.numPages = $scope.getNumOfPages();
             });
         };
     }
@@ -357,8 +367,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 ]);
 
 angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $modalInstance, items, Logger) {
-    $scope.modalConfig={};
-    $scope.modalConfig.tabs= [
+    $scope.modalConfig = {};
+    $scope.modalConfig.tabs = [
         { active: true, disabled: false },
         { active: false, disabled: false },
         { active: false, disabled: true }
@@ -371,9 +381,9 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     $scope.modalConfig.inputImage = null;
     $scope.modalConfig.webcamError = false;
     //$scope.tabs = [
-      //  { active: true, disabled: false },
-      //  { active: false, disabled: false },
-      //  { active: false, disabled: true }
+    //  { active: true, disabled: false },
+    //  { active: false, disabled: false },
+    //  { active: false, disabled: true }
     //];
     //$scope.photoWidth = null;
     //$scope.photoHeight = null;

@@ -8,10 +8,15 @@ angular.module('patients').factory('Patients', ['$resource',
 			update: {
 				method: 'PUT'
 			},
+
+          query:{
+              isArray:false
+          }
+        /*,
             search:{
                 method: 'GET',
                 url:'patients/search'
-            }
+            }*/
 		});
 	}
 ]);

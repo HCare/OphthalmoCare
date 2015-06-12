@@ -120,9 +120,6 @@ exports.delete = function (req, res) {
  * List of Patients
  */
 exports.list = function (req, res) {
-
-
-
         Patient.find().exec(function (err, patients) {
             if (err) {
                 return res.status(400).send({
@@ -132,7 +129,6 @@ exports.list = function (req, res) {
                 res.jsonp(patients);
             }
         });
-
 };
 
 exports.search=function(req,res){
