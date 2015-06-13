@@ -1122,7 +1122,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             var examination = new Examinations($scope.examination);
             console.log($scope.examination);
             Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations;
+                $scope.examinations = _examinations.list;
                 //console.log($scope.examinations);
                 if(callback){
                     callback();

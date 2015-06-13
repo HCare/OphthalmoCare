@@ -12,12 +12,12 @@ var mongoose = require('mongoose'),
  * Create a Examination
  */
 exports.create = function(req, res) {
-    console.log(req.body);
+    //console.log(req.body);
 	var examination = new Examination(req.body);
 	examination.created._user = req.user;
-    console.log(examination);
+    //console.log(examination);
 	examination.save(function(err) {
-        console.log(err);
+        //console.log(err);
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -43,10 +43,10 @@ exports.update = function(req, res) {
     examination.updated._user = req.user;
     examination.updated.time = new Date();
 	examination = _.extend(examination , req.body);
-    console.log(examination);
+    //console.log(examination);
 	examination.save(function(err) {
 		if (err) {
-            console.log(err);
+            //console.log(err);
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -87,14 +87,151 @@ exports.list = function(req, res) { Examination.find().sort('-created').populate
 	});
 };
 
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function convertJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return JSON.parse(str);
+}
+
 /**
  * Search of Examinations
  */
-exports.search = function(req,res){
-	console.log('search Examinationssssssss');
-	console.log(req.query);
+function getSearchQuery(query, result, path) {
+    for (var key in query) {
+        if (typeof query[key] == 'object') {
+            if (Array.isArray(query[key]) && query[key].length > 0) {
+                console.log("Array");
+                if(path != null && path != undefined && path != ""){
+                    //console.log(key + " " + path);
+                    //console.log("{'" + path + "." +key + "':" + "{$all:" + query[key] + "}");
+                    result += "{'" + path + "." +key + "':" + "{$all:" + query[key] + "}";
+                }
+                else{
+                    //console.log(key + " " + path);
+                    //console.log("{'" + key + "':" + "{$all:" + query[key] + "}");
+                    result += "{'" + key + "':" + "{$all:" + query[key] + "}";
+                }
+            }
+            else {
+                //console.log("Object");
+                //console.log(key + " " + path);
+                if(Object.keys(query[key]).length  > 0){
+                    //console.log("recursion call");
+                    getSearchQuery(query[key],result,key);
+                }
 
-    /*
+            }
+        }
+        else if (typeof query[key] == 'string'){
+            try {
+                var obj = JSON.parse(query[key]);
+                if (Array.isArray(obj)) {
+                    //console.log("Array");
+                    var stringArr = "[";
+                    for (var i = 0; i < obj.length; i++) {
+                        if (i == obj.length - 1) {
+                            stringArr += obj[i] + "]";
+                        }
+                        else {
+                            stringArr += obj[i];
+                        }
+                    }
+                    if(path != null && path != undefined && path != ""){
+                        //console.log(key + " " + path);
+                        //console.log("{'" + path + "." + key + "':" + "{$all:" + stringArr + "}");
+                        result += "{'" + path + "." + key + "':" + "{$all:" + stringArr + "}";
+                    }
+                    else{
+                        //console.log(key + " " + path);
+                        //console.log("{'" + key + "':" + "{$all:" + stringArr + "}");
+                        result += "{'" + key + "':" + "{$all:" + stringArr + "}";
+                    }
+
+                }
+                else {
+                    //console.log("Object");
+                    //console.log(key + " " + path);
+                    if(Object.keys(obj).length  > 0) {
+                        //console.log("recursion call");
+                        getSearchQuery(obj, result, key);
+                    }
+                }
+            }
+            catch (e) {
+                console.log("String");
+                if(path != null && path != undefined && path != ""){
+                    //console.log(key + " " + path);
+                    //console.log("{'" + path + "." + key + "':" + "$regex: '.*'" + query[key] + "'.*', $options: 'i'}");
+                    result += "{'" + path + "." + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
+                }
+                else{
+                    //console.log(key + " " + path);
+                    //console.log("{'" + key + "':" + "$regex: '.*'" + query[key] + "'.*', $options: 'i'}");
+                    result += "{'" + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
+                }
+
+            }
+        }
+    }
+    console.log('res');
+    console.log(result);
+}
+exports.search = function(req,res){
+    console.log("***********************************");
+	//console.log(req.query);
+    var s = "";
+    var n = getSearchQuery(req.query, s);
+    console.log("nnnnnnnnnnnn");
+    console.log(s);
+   var newRequest = {"oculusDexter.eyeLid":{$all: [ "rl","stye" ]}};
+
+    Examination.find(newRequest).exec(function (err, examinations) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            Examination.find(req.query).count(function (err, _count) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    //console.log(examinations)
+                    res.jsonp({list: examinations, count: _count});
+                }
+
+            });
+
+        }
+    });
+
+    /*for (var key in req.query) {
+        if (req.query.hasOwnProperty(key)) {
+            var obj = req.query[key];
+            for (var prop in obj) {
+                // important check that this is objects own property
+                // not from prototype prop inherited
+                if(obj.hasOwnProperty(prop)){
+                    console.log(prop + " = " + obj[prop]);
+                }
+            }
+        }
+    }*/
+  /*
 	if (req.query && Object.keys(req.query).length > 0) {
 		//fullName
 		if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
@@ -157,20 +294,20 @@ exports.search = function(req,res){
 			delete req.query.paginationConfig;
 		}
 
-		Patient.find(req.query).skip(pageNo*pageSize).limit(pageSize).exec(function (err, patients) {
+        Examination.find(req.query).skip(pageNo*pageSize).limit(pageSize).exec(function (err, examinations) {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getErrorMessage(err)
 				});
 			} else {
-				Patient.find(req.query).count(function(err, _count){
+                Examination.find(req.query).count(function(err, _count){
 					if (err) {
 						return res.status(400).send({
 							message: errorHandler.getErrorMessage(err)
 						});
 					}
 					else{
-						res.jsonp({list:patients, count:_count});
+						res.jsonp({list:examinations, count:_count});
 					}
 
 				});
@@ -178,8 +315,8 @@ exports.search = function(req,res){
 			}
 		});
 	}
+*/
 
-    */
 
 };
 
