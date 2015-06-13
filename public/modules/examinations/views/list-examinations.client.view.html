@@ -1,7 +1,8 @@
 <section data-ng-controller="ExaminationsController" data-ng-init="find()">
-    <div class="page-header">
+    <!--<div class="page-header">
         <h1>Examinations</h1>
-    </div>
+    </div>-->
+    <div class="content-div">
     <div class="list-group">
         <a data-ng-repeat="examination in examinations" data-ng-href="#!/examinations/{{examination._id}}" class="list-group-item">
 			<small class="list-group-item-text">
@@ -17,5 +18,6 @@
     </div>
     <div class="alert alert-warning text-center" data-ng-hide="!examinations.$resolved || examinations.length">
     	No Examinations yet, why don't you <a href="/#!/examinations/create">create one</a>?
+    </div>
     </div>
 </section>
