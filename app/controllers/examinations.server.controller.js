@@ -180,7 +180,7 @@ exports.search = function(req,res){
     var newRequest = getSearchQuery(req.query);
     console.log(newRequest);
 
-    Examination.find(newRequest).exec(function (err, examinations) {
+    Examination.find(newRequest).populate('_patient').populate('created._user').exec(function (err, examinations) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
