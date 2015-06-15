@@ -105,9 +105,221 @@ function convertJson(str) {
     return JSON.parse(str);
 }
 
+function getSearchQuery(property){
+    //console.log(property);
+
+    var queue = [];
+    var queueValues = [];
+    var result = "";
+    var obj = null;
+
+    if(typeof property == 'string'){
+        try{
+            obj = JSON.parse(property);
+        }
+        catch(e){
+            result += " - " + property;
+
+        }
+    }
+    else{
+        obj = property;
+    }
+
+    if(obj != null && obj != undefined){
+        for(var key in obj){
+            queue.push(key);
+            queueValues.push(obj[key]);
+        }
+        while (queue.length > 0){
+            try{
+                //console.log("value b4 parse "+queueValues[0]);
+                var propKey = queue[0];
+                try{ // Object && Array
+                    var propValue = JSON.parse(queueValues[0]);
+                    if(Array.isArray(propValue) && propValue.length > 0){  // Array
+                        result += " - " + propKey + " :" + propValue;
+                    }
+                    else{  // Object
+                        for(var k in propValue){
+                            queue.push(propKey + "." + k);
+                            queueValues.push(propValue[k]);
+                        }
+                    }
+                }
+                catch(e){  // string && empty array && Already sent as array
+                    if(typeof queueValues[0] == 'string'){
+                        result += " - " + propKey + " :"+ queueValues[0];
+                    }
+                    if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
+                        result += " - " + propKey + " :"+ queueValues[0];
+                    }
+
+                }
+
+            }
+            catch(e){
+                result += " - " + queue[0] + " :"+ queueValues[0];
+            }
+            queue.shift();
+            queueValues.shift();
+        }
+    }
+
+    console.log("ressssssssssult: " + result);
+    return result;
+
+}
 /**
  * Search of Examinations
  */
+
+/*
+function getSearchQuery(value, key, result, path, index, keys, parent) {
+    console.log(value + ' '+key+' '+result+' '+path+' '+index);
+    if(typeof value == 'string'){
+        var obj = null;
+        try{
+            obj = JSON.parse(value);
+            if(Array.isArray(obj)  && obj.length > 0){  // Array
+                var stringArr = "[";
+                for (var i = 0; i < obj.length; i++) {
+                    if (i == obj.length - 1) {
+                        stringArr += obj[i] + "]";
+                    }
+                    else {
+                        stringArr += obj[i];
+                    }
+                }
+                if(path != null && path != undefined && path != ""){
+                    //console.log(key + " " + path);
+                    //console.log("{'" + path + "." + key + "':" + "{$all:" + stringArr + "}");
+                    result += "{'" + path + "." + key + "':" + "{$all:" + stringArr + "}";
+                }
+                else{
+                    //console.log(key + " " + path);
+                    //console.log("{'" + key + "':" + "{$all:" + stringArr + "}");
+                    result += "{'" + key + "':" + "{$all:" + stringArr + "}";
+                }
+            }
+            else{  // Object
+                var keys = Object.keys(obj);
+                if(index != null && index != undefined){
+                    index += 1;
+                }
+                else{
+                    index = 0;
+                }
+                getSearchQuery(obj[keys[index]], keys[index], result, key, index, keys, obj);
+            }
+        }
+        catch(e){
+            // string
+             if(path != null && path != undefined && path != ""){
+                result += "{'" + path + "." +  key + "':" + "$regex: .*" + value + ".*, $options: 'i'}";
+                 console.log(result);
+            }
+            else{
+                result += "{'" + key + "':" + "$regex: .*" + value + ".*, $options: 'i'}";
+                 console.log(result);
+            }
+
+            if(index < keys.length){
+                index += 1;
+                getSearchQuery(parent[keys[index]], keys[index], result, key, index, keys, parent);
+            }
+
+        }
+
+    }
+    else{
+        var keys = Object.keys(value);
+        if(index != null && index != undefined){
+            index += 1;
+        }
+        else{
+            index = 0;
+        }
+        //console.log(query[keys[index]] + ' '+keys[index]+' '+result+' '+key+' '+index);
+        getSearchQuery(value[keys[index]], keys[index], result, key, index, keys, value);
+    }
+}
+
+*/
+/*
+function getSearchQuery(query, result, path, index) {
+    var obj = null;
+    console.log('index on method start:'+index);
+    if(index != null && index != undefined){
+        index += 1;
+        //console.log(index);
+    }
+    else{
+        index = 0;
+        //console.log(index);
+    }
+    console.log('index:'+index);
+
+    //console.log('query[index]:'+query[index]);
+    //console.log('query:'+ query);
+
+    var key = Object.keys(query)[index];
+    console.log('key:'+key);
+
+    if (typeof query[key] == 'string'){
+        try {
+            obj = JSON.parse(query[key]);
+            console.log("Object");
+            console.log(obj);
+        }
+        catch (e) {
+            console.log("String");
+
+            //console.log(Object.keys(obj)[index]);
+            if(path != null && path != undefined && path != ""){
+                result += "{'" + path + "." +  key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
+            }
+            else{
+                result += "{'" + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
+            }
+
+            console.log(result);
+            getSearchQuery(query[key], result, key, index);
+        }
+    }
+
+    if (obj != null && typeof obj == 'object') {
+        if (Array.isArray(obj) && obj.length > 0) {
+            console.log("Array");
+
+            //console.log(Object.keys(obj)[index]);
+            if(path != null && path != undefined && path != ""){
+                result += "{'" + path + "."  +key + "':" + "{$all:" + obj + "}";
+            }
+            else{
+                result += "{'" + key + "':" + "{$all:" + obj + "}";
+            }
+
+            console.log(result);
+        }
+        else {
+            console.log("Object");
+            if(Object.keys(obj).length  > 0){
+                //console.log(result);
+                //console.log(Object.keys(obj)[index]);
+                getSearchQuery(obj, result, key);
+            }
+
+        }
+    }
+
+
+    console.log('res');
+    console.log(result);
+}
+
+*/
+/*
 function getSearchQuery(query, result, path) {
     for (var key in query) {
         if (typeof query[key] == 'object') {
@@ -188,11 +400,15 @@ function getSearchQuery(query, result, path) {
     console.log('res');
     console.log(result);
 }
+
+*/
 exports.search = function(req,res){
     console.log("***********************************");
 	//console.log(req.query);
     var s = "";
-    var n = getSearchQuery(req.query, s);
+
+    //var n = getSearchQuery(req.query,null, s);
+    var n = getSearchQuery(req.query);
     console.log("nnnnnnnnnnnn");
     console.log(s);
    var newRequest = {"oculusDexter.eyeLid":{$all: [ "rl","stye" ]}};
