@@ -1,7 +1,8 @@
 <section data-ng-controller="RolesController" data-ng-init="initList()">
-    <div class="page-header">
+    <!--<div class="page-header">
         <h1>Roles</h1>
-    </div>
+    </div>-->
+    <div class="content-div">
     <div class="list-group">
         <a data-ng-repeat="role in roles" data-ng-href="#!/roles/{{role._id}}" class="list-group-item">
 
@@ -20,5 +21,6 @@
     </div>
     <div class="alert alert-warning text-center" data-ng-hide="!roles.$resolved || roles.length">
     	No Roles yet, why don't you <a href="/#!/roles/create">create one</a>?
+    </div>
     </div>
 </section>
