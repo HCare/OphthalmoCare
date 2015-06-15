@@ -106,7 +106,8 @@ function convertJson(str) {
 }
 
 function getSearchQuery(property){
-    //console.log(property);
+
+    var newQuery = {}; // the new query
 
     var queue = [];
     var queueValues = [];
@@ -119,7 +120,6 @@ function getSearchQuery(property){
         }
         catch(e){
             result += " - " + property;
-
         }
     }
     else{
@@ -133,12 +133,11 @@ function getSearchQuery(property){
         }
         while (queue.length > 0){
             try{
-                //console.log("value b4 parse "+queueValues[0]);
                 var propKey = queue[0];
                 try{ // Object && Array
                     var propValue = JSON.parse(queueValues[0]);
                     if(Array.isArray(propValue) && propValue.length > 0){  // Array
-                        result += " - " + propKey + " :" + propValue;
+                        newQuery[propKey] = {$all: propValue};
                     }
                     else{  // Object
                         for(var k in propValue){
@@ -149,269 +148,37 @@ function getSearchQuery(property){
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
-                        result += " - " + propKey + " :"+ queueValues[0];
+                        newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
                     }
                     if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
-                        result += " - " + propKey + " :"+ queueValues[0];
+                        newQuery[propKey] = {$all: queueValues[0]};
                     }
-
                 }
-
             }
             catch(e){
-                result += " - " + queue[0] + " :"+ queueValues[0];
             }
             queue.shift();
             queueValues.shift();
         }
     }
 
-    console.log("ressssssssssult: " + result);
-    return result;
+    return newQuery;
 
 }
+
+
+
+
 /**
  * Search of Examinations
  */
-
-/*
-function getSearchQuery(value, key, result, path, index, keys, parent) {
-    console.log(value + ' '+key+' '+result+' '+path+' '+index);
-    if(typeof value == 'string'){
-        var obj = null;
-        try{
-            obj = JSON.parse(value);
-            if(Array.isArray(obj)  && obj.length > 0){  // Array
-                var stringArr = "[";
-                for (var i = 0; i < obj.length; i++) {
-                    if (i == obj.length - 1) {
-                        stringArr += obj[i] + "]";
-                    }
-                    else {
-                        stringArr += obj[i];
-                    }
-                }
-                if(path != null && path != undefined && path != ""){
-                    //console.log(key + " " + path);
-                    //console.log("{'" + path + "." + key + "':" + "{$all:" + stringArr + "}");
-                    result += "{'" + path + "." + key + "':" + "{$all:" + stringArr + "}";
-                }
-                else{
-                    //console.log(key + " " + path);
-                    //console.log("{'" + key + "':" + "{$all:" + stringArr + "}");
-                    result += "{'" + key + "':" + "{$all:" + stringArr + "}";
-                }
-            }
-            else{  // Object
-                var keys = Object.keys(obj);
-                if(index != null && index != undefined){
-                    index += 1;
-                }
-                else{
-                    index = 0;
-                }
-                getSearchQuery(obj[keys[index]], keys[index], result, key, index, keys, obj);
-            }
-        }
-        catch(e){
-            // string
-             if(path != null && path != undefined && path != ""){
-                result += "{'" + path + "." +  key + "':" + "$regex: .*" + value + ".*, $options: 'i'}";
-                 console.log(result);
-            }
-            else{
-                result += "{'" + key + "':" + "$regex: .*" + value + ".*, $options: 'i'}";
-                 console.log(result);
-            }
-
-            if(index < keys.length){
-                index += 1;
-                getSearchQuery(parent[keys[index]], keys[index], result, key, index, keys, parent);
-            }
-
-        }
-
-    }
-    else{
-        var keys = Object.keys(value);
-        if(index != null && index != undefined){
-            index += 1;
-        }
-        else{
-            index = 0;
-        }
-        //console.log(query[keys[index]] + ' '+keys[index]+' '+result+' '+key+' '+index);
-        getSearchQuery(value[keys[index]], keys[index], result, key, index, keys, value);
-    }
-}
-
-*/
-/*
-function getSearchQuery(query, result, path, index) {
-    var obj = null;
-    console.log('index on method start:'+index);
-    if(index != null && index != undefined){
-        index += 1;
-        //console.log(index);
-    }
-    else{
-        index = 0;
-        //console.log(index);
-    }
-    console.log('index:'+index);
-
-    //console.log('query[index]:'+query[index]);
-    //console.log('query:'+ query);
-
-    var key = Object.keys(query)[index];
-    console.log('key:'+key);
-
-    if (typeof query[key] == 'string'){
-        try {
-            obj = JSON.parse(query[key]);
-            console.log("Object");
-            console.log(obj);
-        }
-        catch (e) {
-            console.log("String");
-
-            //console.log(Object.keys(obj)[index]);
-            if(path != null && path != undefined && path != ""){
-                result += "{'" + path + "." +  key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
-            }
-            else{
-                result += "{'" + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
-            }
-
-            console.log(result);
-            getSearchQuery(query[key], result, key, index);
-        }
-    }
-
-    if (obj != null && typeof obj == 'object') {
-        if (Array.isArray(obj) && obj.length > 0) {
-            console.log("Array");
-
-            //console.log(Object.keys(obj)[index]);
-            if(path != null && path != undefined && path != ""){
-                result += "{'" + path + "."  +key + "':" + "{$all:" + obj + "}";
-            }
-            else{
-                result += "{'" + key + "':" + "{$all:" + obj + "}";
-            }
-
-            console.log(result);
-        }
-        else {
-            console.log("Object");
-            if(Object.keys(obj).length  > 0){
-                //console.log(result);
-                //console.log(Object.keys(obj)[index]);
-                getSearchQuery(obj, result, key);
-            }
-
-        }
-    }
-
-
-    console.log('res');
-    console.log(result);
-}
-
-*/
-/*
-function getSearchQuery(query, result, path) {
-    for (var key in query) {
-        if (typeof query[key] == 'object') {
-            if (Array.isArray(query[key]) && query[key].length > 0) {
-                console.log("Array");
-                if(path != null && path != undefined && path != ""){
-                    //console.log(key + " " + path);
-                    //console.log("{'" + path + "." +key + "':" + "{$all:" + query[key] + "}");
-                    result += "{'" + path + "." +key + "':" + "{$all:" + query[key] + "}";
-                }
-                else{
-                    //console.log(key + " " + path);
-                    //console.log("{'" + key + "':" + "{$all:" + query[key] + "}");
-                    result += "{'" + key + "':" + "{$all:" + query[key] + "}";
-                }
-            }
-            else {
-                //console.log("Object");
-                //console.log(key + " " + path);
-                if(Object.keys(query[key]).length  > 0){
-                    //console.log("recursion call");
-                    getSearchQuery(query[key],result,key);
-                }
-
-            }
-        }
-        else if (typeof query[key] == 'string'){
-            try {
-                var obj = JSON.parse(query[key]);
-                if (Array.isArray(obj)) {
-                    //console.log("Array");
-                    var stringArr = "[";
-                    for (var i = 0; i < obj.length; i++) {
-                        if (i == obj.length - 1) {
-                            stringArr += obj[i] + "]";
-                        }
-                        else {
-                            stringArr += obj[i];
-                        }
-                    }
-                    if(path != null && path != undefined && path != ""){
-                        //console.log(key + " " + path);
-                        //console.log("{'" + path + "." + key + "':" + "{$all:" + stringArr + "}");
-                        result += "{'" + path + "." + key + "':" + "{$all:" + stringArr + "}";
-                    }
-                    else{
-                        //console.log(key + " " + path);
-                        //console.log("{'" + key + "':" + "{$all:" + stringArr + "}");
-                        result += "{'" + key + "':" + "{$all:" + stringArr + "}";
-                    }
-
-                }
-                else {
-                    //console.log("Object");
-                    //console.log(key + " " + path);
-                    if(Object.keys(obj).length  > 0) {
-                        //console.log("recursion call");
-                        getSearchQuery(obj, result, key);
-                    }
-                }
-            }
-            catch (e) {
-                console.log("String");
-                if(path != null && path != undefined && path != ""){
-                    //console.log(key + " " + path);
-                    //console.log("{'" + path + "." + key + "':" + "$regex: '.*'" + query[key] + "'.*', $options: 'i'}");
-                    result += "{'" + path + "." + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
-                }
-                else{
-                    //console.log(key + " " + path);
-                    //console.log("{'" + key + "':" + "$regex: '.*'" + query[key] + "'.*', $options: 'i'}");
-                    result += "{'" + key + "':" + "$regex: .*" + query[key] + ".*, $options: 'i'}";
-                }
-
-            }
-        }
-    }
-    console.log('res');
-    console.log(result);
-}
-
-*/
 exports.search = function(req,res){
     console.log("***********************************");
-	//console.log(req.query);
-    var s = "";
+    console.log("returned Req.Query");
 
-    //var n = getSearchQuery(req.query,null, s);
-    var n = getSearchQuery(req.query);
-    console.log("nnnnnnnnnnnn");
-    console.log(s);
-   var newRequest = {"oculusDexter.eyeLid":{$all: [ "rl","stye" ]}};
+
+    var newRequest = getSearchQuery(req.query);
+    console.log(newRequest);
 
     Examination.find(newRequest).exec(function (err, examinations) {
         if (err) {
