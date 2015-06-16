@@ -29,7 +29,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 "items": [
                     {
                         "type": "section",
-                        "htmlClass": "col-xs-5",
+                        "htmlClass": "col-xs-5 topMargin",
                         "items": [
                             {   key: "oculusDexter.appearance",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
@@ -43,12 +43,12 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     },
                     {
                         "type": "help",
-                        "helpvalue": "<label class=\"control-label ng-binding\">Appearance</label>",
+                        "helpvalue": "<label class=\"control-label topMargin ng-binding\">Appearance</label>",
                         "htmlClass": "col-xs-2 col-centered"
                     },
                     {
                         "type": "section",
-                        "htmlClass": "col-xs-5",
+                        "htmlClass": "col-xs-5 topMargin",
                         "items": [
                             {   key: "oculusSinister.appearance",
                                 feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
@@ -1048,6 +1048,656 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             }
         };
 
+        $scope.viewForm = [
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5 topMargin",
+                        "items": [
+                            {   key: "oculusDexter.appearance",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                },
+                                readonly: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label topMargin ng-binding\">Appearance</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5 topMargin",
+                        "items": [
+                            {   key: "oculusSinister.appearance",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                },
+                                readonly: true
+
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.eyeLid",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                },
+                                readonly: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Eye Lid</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.eyeLid",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                },
+                                readonly: true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.lacrimalSystem",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Lacrimal System</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.lacrimalSystem",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.conjunctiva",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Conjunctiva</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.conjunctiva",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.sclera",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Sclera</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.sclera",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.cornea",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Cornea</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.cornea",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.anteriorChamber",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Anterior Chamber</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.anteriorChamber",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.iris",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Iris</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.iris",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.pupil",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Pupil</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.pupil",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.lens",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Lens</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.lens",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.fundus",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Fundus</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.fundus",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.opticNerve",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">Optic Nerve</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.opticNerve",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.eom",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">EOM</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.eom",
+                                feedback: "{'glyphicontop': true, 'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError()}",
+                                notitle: true,
+                                options: {
+                                    tagging: $scope.tagTransform,
+                                    taggingLabel: '(new)',
+                                    taggingTokens: 'ENTER'
+                                }}
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.va",
+                                type: "text",
+                                notitle: true
+                            }
+                        ],
+                        readonly: true
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">V/A</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.va",
+                                notitle: true,
+                                type: "text"
+                            }
+                        ],
+                        readonly: true
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.bcva",
+                                type: "text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">BCVA</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.bcva",
+                                notitle: true,
+                                type: "text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.bcvaWith",
+                                type: "text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">BCVA With</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.bcvaWith",
+                                notitle: true,
+                                type: "text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "htmlClass": "row",
+                "items": [
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusDexter.iop",
+                                type: "text",
+                                notitle: true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "help",
+                        "helpvalue": "<label class=\"control-label ng-binding\">IOP</label>",
+                        "htmlClass": "col-xs-2 col-centered"
+                    },
+                    {
+                        "type": "section",
+                        "htmlClass": "col-xs-5",
+                        "items": [
+                            {   key: "oculusSinister.iop",
+                                notitle: true,
+                                type: "text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "comment",
+                "type": "textarea",
+                "placeholder": "Make a comment"
+            }
+        ];
+
 
         $scope.onSubmit = function (form) {
             // First we broadcast an event so all fields validate themselves
@@ -1148,6 +1798,13 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             });
         };
 
+        $scope.initView = function () {
+            $scope.findOne(function () {
+                Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
+                Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination "' + "" + '"?');
+            });
+        };
+
         $scope.initSearch=function(){
             $scope.initOne();
             Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
@@ -1156,12 +1813,17 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
             $scope.onSubmit($scope.forms.examinationForm);
         });
-
         ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
             $scope.search(function(){
                 console.log('tabconfig');
                 $scope.tabsConfig.showResults=true;
             });
+        });
+        ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
+            $location.path('examinations/' + $scope.examination._id + '/edit');
+        });
+        ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {
+            $scope.remove();
         });
     }
 ]);
