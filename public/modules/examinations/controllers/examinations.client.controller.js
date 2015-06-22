@@ -1761,12 +1761,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         };
 
         // Find existing Examination
+
         $scope.findOne = function () {
-            $scope.examination = Examinations.get({
+            Examinations.get({
                 examinationId: $stateParams.examinationId
+            }, function(_examination){
+                $scope.examination =_examination;
+                $scope.$broadcast('schemaFormRedraw');
             });
         };
-
         // Search existing Examinations
         $scope.search = function (callback) {
             var examination = new Examinations($scope.examination);
