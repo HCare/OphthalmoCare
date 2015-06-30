@@ -306,7 +306,7 @@ exports.search = function(req,res){
 /**
  * Examination middleware
  */
-exports.examinationByID = function(req, res, next, id) { Examination.findById(id).populate('user', 'displayName').exec(function(err, examination) {
+exports.examinationByID = function(req, res, next, id) { Examination.findById(id).populate('user', 'displayName').populate('_patient', 'fullName').exec(function(err, examination) {
 		if (err) return next(err);
 		if (! examination) return next(new Error('Failed to load Examination ' + id));
 		req.examination = examination ;

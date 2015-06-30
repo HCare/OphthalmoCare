@@ -2139,6 +2139,10 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
             examination.$update(function () {
                 $location.path('examinations/' + examination._id);
+
+                ///log success message
+                Logger.success('Examination updated successfully', true);
+
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
@@ -2151,18 +2155,20 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Find existing Examination
 
-        $scope.findOne = function () {
+        $scope.findOne = function (callback) {
             Examinations.get({
                 examinationId: $stateParams.examinationId
             }, function(_examination){
                 $scope.examination =_examination;
                 $scope.$broadcast('schemaFormRedraw');
+                if(callback){
+                    callback();
+                }
             });
         };
         // Search existing Examinations
         $scope.search = function (callback) {
             var examination = new Examinations($scope.examination);
-            console.log($scope.examination);
             Examinations.search(examination, function (_examinations) {
                 $scope.examinations = _examinations.list;
                 //console.log($scope.examinations);
@@ -2190,10 +2196,19 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             });
         };
 
-        $scope.initView = function () {
+        $scope.initEdit = function () {
             $scope.findOne(function () {
+                CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+                Toolbar.addToolbarCommand('updateExamination', 'edit_examination', 'Save', 'floppy-save', 0);
+            });
+        };
+
+        $scope.initView = function () {
+            $scope.schema.readonly = true;
+            $scope.findOne(function () {
+                CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
                 Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
-                Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination "' + "" + '"?');
+                Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination ?');
             });
         };
 
@@ -2205,15 +2220,21 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
             $scope.onSubmit($scope.forms.examinationForm);
         });
+
+        ActionsHandler.onActionFired('updateExamination', $scope, function (action, args) {
+            $scope.update();
+        });
+
         ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
             $scope.search(function(){
-                console.log('tabconfig');
                 $scope.tabsConfig.showResults=true;
             });
         });
+
         ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
             $location.path('examinations/' + $scope.examination._id + '/edit');
         });
+
         ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {
             $scope.remove();
         });
