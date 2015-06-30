@@ -268,8 +268,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.initView = function () {
             $scope.findOne(function () {
                 Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-                Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 1);
-                Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 2, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
+                Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+                Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
+                Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
             });
         };
 
@@ -342,6 +343,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
         ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
             $scope.examine();
+        });
+        ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
+            $location.path('examinations/' + $scope.patient._id );
         });
         ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
             $location.path('patients/' + $scope.patient._id + '/edit');
