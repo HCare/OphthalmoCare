@@ -1046,6 +1046,395 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     "type": "string"
                 }
             }
+
+        };
+
+        $scope.viewSchema = {
+            "type": "object",
+            "title": "Examination",
+            "properties": {
+                "oculusDexter":{"type": "object",
+                    "properties": {
+                        "appearance": {
+                            "title": "Appearance",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal"
+                        },
+                        "eyeLid": {
+                            "title": "Eye Lid",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "No Abnormality Detected",
+                            items: [
+                                { value: 'rl', label: 'RL' },
+                                { value: 'entropion', label: 'Entropion' },
+                                { value: 'ectropion', label: 'Ectropion' },
+                                { value: 'eistichiasis', label: 'Distichiasis' },
+                                { value: 'ptosis', label: 'Ptosis' },
+                                { value: 'chalazion', label: 'Chalazion' },
+                                { value: 'stye', label: 'Stye' },
+                                { value: 'blepharitis', label: 'Blepharitis' },
+                                { value: 'mass', label: 'Mass' },
+                                { value: 'madarosis', label: 'Madarosis' },
+                                { value: 'epicanthaus', label: 'Epicanthaus' },
+                                { value: 'blepharochalasis', label: 'Blepharochalasis' },
+                                { value: 'dermatochalasis', label: 'Dermatochalasis' },
+                                { value: 'oedema', label: 'Oedema' }
+                            ]
+                        },
+                        "lacrimalSystem": {
+                            "title": "Lacrimal System",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal"
+                        },
+                        "conjunctiva": {
+                            "title": "Conjunctiva",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'active-trachoma', label: 'Active trachoma' },
+                                { value: 't-iii', label: 'T III' },
+                                { value: 'mpc', label: 'MPC' },
+                                { value: 'pc', label: 'PC' },
+                                { value: 'allergy', label: 'Allergy' },
+                                { value: 'vernal-keratoconjunctivitis', label: 'Vernal keratoconjunctivitis' },
+                                { value: 'ptrygeum', label: 'Ptrygeum' },
+                                { value: 'ptds', label: 'PTDs' }
+                            ]
+                        },
+                        "sclera": {
+                            "title": "Sclera",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
+                                { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
+                                { value: 'scleritis', label: 'Scleritis' }
+                            ]
+                        },
+                        "cornea": {
+                            "title": "Cornea",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Ps, Clear Centre",
+                            items: [
+                                { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
+                                { value: 'ps', label: 'Ps' },
+                                { value: 'nebula', label: 'Nebula' },
+                                { value: 'corneal-ulcer', label: 'Corneal Ulcer' },
+                                { value: 'leukoma-adherent', label: 'Leukoma adherent' },
+                                { value: 'leukoma-non-adherent', label: 'Leukoma non-adherent' },
+                                { value: 'keratitis', label: 'Keratitis' },
+                                { value: 'keratoconus', label: 'Keratoconus' },
+                                { value: 'arcus-senilis', label: 'Arcus senilis' },
+                                { value: 'degeneration', label: 'Degeneration' },
+                                { value: 'stromal-dystophy', label: 'Stromal Dystophy' },
+                                { value: 'endothelial-dystophy', label: 'Endothelial Dystophy' },
+                                { value: 'epithelial-oedema', label: 'Epithelial Oedema' },
+                                { value: 'stromal oedema', label: 'Stromal Oedema' },
+                                { value: 'striated-keratopathy', label: 'Striated Keratopathy' }
+                            ]
+                        },
+                        "anteriorChamber": {
+                            "title": "Anterior Chamber",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal Depth No Abnormal Content",
+                            items: [
+                                { value: 'cells', label: 'Cells' },
+                                { value: 'flare', label: 'Flare' },
+                                { value: 'level-hyphema', label: 'level Hyphema' },
+                                { value: 'diffuse-hyphema', label: 'Diffuse Hyphema' },
+                                { value: 'inflammatory-membrane', label: 'Inflammatory membrane' },
+                                { value: 'hypopion', label: 'Hypopion' }
+                            ]
+                        },
+                        "iris": {
+                            "title": "Iris",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal Color And Pattern"
+                            /*,
+                             items: [
+                             { value: '1', label: 'Normal' }
+                             ]*/
+                        },
+                        "pupil": {
+                            "title": "Pupil",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "R R R Direct and Cons."
+                            /*,
+                             items: [
+                             { value: '1', label: 'Normal' }
+                             ]*/
+                        },
+                        "lens": {
+                            "title": "Lens",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Clear In Place",
+                            items: [
+                                { value: 'imsc', label: 'IMSC' },
+                                { value: 'nuclear-cataract', label: 'Nuclear cataract' },
+                                { value: 'complicated-cataract', label: 'Complicated cataract' },
+                                { value: 'subluxated', label: 'Subluxated' },
+                                { value: 'pseudoexfoliation', label: 'Pseudoexfoliation' },
+                                { value: 'microspherophakia', label: 'Microspherophakia' }
+                            ]
+                        },
+                        "fundus": {
+                            "title": "Fundus",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'tessellated', label: 'Tessellated' },
+                                { value: 'myopic', label: 'Myopic' },
+                                { value: 'mild-npdr', label: 'Mild NPDR' },
+                                { value: 'sever npdr', label: 'Sever NPDR' },
+                                { value: 'pdr', label: 'PDR' },
+                                { value: 'macular-oedema', label: 'Macular Oedema' },
+                                { value: 'drusen', label: 'Drusen' },
+                                { value: 'amd', label: 'AMD' },
+                                { value: 'vein-occlusion', label: 'Vein occlusion' },
+                                { value: 'artery-occlusion', label: 'Artery occlusion' }
+                            ]
+                        },
+                        "opticNerve": {
+                            "title": "Optic Nerve",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'pale', label: 'Pale' },
+                                { value: 'atrophy', label: 'Atrophy' },
+                                { value: 'increased-cd-ratio', label: 'Increased C/D ratio' },
+                                { value: 'cupping', label: 'Cupping' },
+                                { value: 'papilloedema', label: 'Papilloedema' },
+                                { value: 'tilted', label: 'Tilted' }
+                            ]
+                        },
+                        "va": {
+                            "title": "V/A",
+                            "type": "string"
+                        },
+                        "eom": {
+                            "title": "EOM",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                            /*,
+                             items: [
+                             { value: '1', label: 'Normal' }
+                             ]*/
+                        },
+                        "bcva": {
+                            "title": "BCVA",
+                            "type": "string"
+                        },
+                        "bcvaWith": {
+                            "title": "BCVA With",
+                            "type": "string"
+                        },
+                        "iop": {
+                            "title": "IOP",
+                            "type": "string"
+                        }
+                    }
+                },
+                "oculusSinister":{"type": "object",
+                    "properties":{
+                        "appearance": {
+                            "title": "Appearance",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal"
+                        },
+                        "eyeLid": {
+                            "title": "Eye Lid",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "No Abnormality Detected",
+                            items: [
+                                { value: 'rl', label: 'RL' },
+                                { value: 'entropion', label: 'Entropion' },
+                                { value: 'ectropion', label: 'Ectropion' },
+                                { value: 'eistichiasis', label: 'Distichiasis' },
+                                { value: 'ptosis', label: 'Ptosis' },
+                                { value: 'chalazion', label: 'Chalazion' },
+                                { value: 'stye', label: 'Stye' },
+                                { value: 'blepharitis', label: 'Blepharitis' },
+                                { value: 'mass', label: 'Mass' },
+                                { value: 'madarosis', label: 'Madarosis' },
+                                { value: 'epicanthaus', label: 'Epicanthaus' },
+                                { value: 'blepharochalasis', label: 'Blepharochalasis' },
+                                { value: 'dermatochalasis', label: 'Dermatochalasis' },
+                                { value: 'oedema', label: 'Oedema' }
+                            ]
+                        },
+                        "lacrimalSystem": {
+                            "title": "Lacrimal System",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal"
+                        },
+                        "conjunctiva": {
+                            "title": "Conjunctiva",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'active-trachoma', label: 'Active trachoma' },
+                                { value: 't-iii', label: 'T III' },
+                                { value: 'mpc', label: 'MPC' },
+                                { value: 'pc', label: 'PC' },
+                                { value: 'allergy', label: 'Allergy' },
+                                { value: 'vernal-keratoconjunctivitis', label: 'Vernal keratoconjunctivitis' },
+                                { value: 'ptrygeum', label: 'Ptrygeum' },
+                                { value: 'ptds', label: 'PTDs' }
+                            ]
+                        },
+                        "sclera": {
+                            "title": "Sclera",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'nodular-episcleritis', label: 'Nodular Episcleritis' },
+                                { value: 'diffuse-episcleritis', label: 'Diffuse Episcleritis' },
+                                { value: 'scleritis', label: 'Scleritis' }
+                            ]
+                        },
+                        "cornea": {
+                            "title": "Cornea",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Ps, Clear Centre",
+                            items: [
+                                { value: 'scar-of-previous-op.', label: 'Scar of previous op.' },
+                                { value: 'ps', label: 'Ps' },
+                                { value: 'nebula', label: 'Nebula' },
+                                { value: 'corneal-ulcer', label: 'Corneal Ulcer' },
+                                { value: 'leukoma-adherent', label: 'Leukoma adherent' },
+                                { value: 'leukoma-non-adherent', label: 'Leukoma non-adherent' },
+                                { value: 'keratitis', label: 'Keratitis' },
+                                { value: 'keratoconus', label: 'Keratoconus' },
+                                { value: 'arcus-senilis', label: 'Arcus senilis' },
+                                { value: 'degeneration', label: 'Degeneration' },
+                                { value: 'stromal-dystophy', label: 'Stromal Dystophy' },
+                                { value: 'endothelial-dystophy', label: 'Endothelial Dystophy' },
+                                { value: 'epithelial-oedema', label: 'Epithelial Oedema' },
+                                { value: 'stromal oedema', label: 'Stromal Oedema' },
+                                { value: 'striated-keratopathy', label: 'Striated Keratopathy' }
+                            ]
+                        },
+                        "anteriorChamber": {
+                            "title": "Anterior Chamber",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal Depth No Abnormal Content",
+                            items: [
+                                { value: 'cells', label: 'Cells' },
+                                { value: 'flare', label: 'Flare' },
+                                { value: 'level-hyphema', label: 'level Hyphema' },
+                                { value: 'diffuse-hyphema', label: 'Diffuse Hyphema' },
+                                { value: 'inflammatory-membrane', label: 'Inflammatory membrane' },
+                                { value: 'hypopion', label: 'Hypopion' }
+                            ]
+                        },
+                        "iris": {
+                            "title": "Iris",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal Color And Pattern"
+                        },
+                        "pupil": {
+                            "title": "Pupil",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "R R R Direct and Cons."
+                        },
+                        "lens": {
+                            "title": "Lens",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Clear In Place",
+                            items: [
+                                { value: 'imsc', label: 'IMSC' },
+                                { value: 'nuclear-cataract', label: 'Nuclear cataract' },
+                                { value: 'complicated-cataract', label: 'Complicated cataract' },
+                                { value: 'subluxated', label: 'Subluxated' },
+                                { value: 'pseudoexfoliation', label: 'Pseudoexfoliation' },
+                                { value: 'microspherophakia', label: 'Microspherophakia' }
+                            ]
+                        },
+                        "fundus": {
+                            "title": "Fundus",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'tessellated', label: 'Tessellated' },
+                                { value: 'myopic', label: 'Myopic' },
+                                { value: 'mild-npdr', label: 'Mild NPDR' },
+                                { value: 'sever npdr', label: 'Sever NPDR' },
+                                { value: 'pdr', label: 'PDR' },
+                                { value: 'macular-oedema', label: 'Macular Oedema' },
+                                { value: 'drusen', label: 'Drusen' },
+                                { value: 'amd', label: 'AMD' },
+                                { value: 'vein-occlusion', label: 'Vein occlusion' },
+                                { value: 'artery-occlusion', label: 'Artery occlusion' }
+                            ]
+                        },
+                        "opticNerve": {
+                            "title": "Optic Nerve",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Normal",
+                            items: [
+                                { value: 'pale', label: 'Pale' },
+                                { value: 'atrophy', label: 'Atrophy' },
+                                { value: 'increased-cd-ratio', label: 'Increased C/D ratio' },
+                                { value: 'cupping', label: 'Cupping' },
+                                { value: 'papilloedema', label: 'Papilloedema' },
+                                { value: 'tilted', label: 'Tilted' }
+                            ]
+                        },
+                        "eom": {
+                            "title": "EOM",
+                            "type": "array",
+                            format: "uiselect",
+                            placeholder: "Free Balanced Ocular Motility In The Sex Cardinal Directions"
+                        },
+                        "va": {
+                            "title": "V/A",
+                            "type": "string"
+                        },
+                        "bcva": {
+                            "title": "BCVA",
+                            "type": "string"
+                        },
+                        "bcvaWith": {
+                            "title": "BCVA With",
+                            "type": "string"
+                        },
+                        "iop": {
+                            "title": "IOP",
+                            "type": "string"
+                        }
+                    }
+                },
+                "comment": {
+                    "title": "Comment",
+                    "type": "string"
+                }
+            },
+            "readonly":true
         };
 
         $scope.viewForm = [
@@ -1795,7 +2184,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 if (patient) {
                     $scope.examination._patient = patient._id;
                     CoreProperties.setPageSubTitle(patient.fullName);
-                    Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'asterisk', 0);
+                    Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
                     Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
                 }
             });
