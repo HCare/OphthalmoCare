@@ -17,7 +17,7 @@ module.exports = {
 				'public/lib/bootstrap/dist/css/bootstrap-theme.css',
                 'public/lib/angular-loading-bar/build/loading-bar.css',
                 'public/lib/angularjs-toaster/toaster.css',
-                'public/lib/ngImgCrop/compile/minified/ng-img-crop.css',
+                'public/lib/ngImgCrop/compile/unminified/ng-img-crop.css',
                 'public/lib/angular-ui-select/dist/select.css'
 			],
 			js: [
