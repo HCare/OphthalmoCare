@@ -20,7 +20,10 @@ var ApplicationConfiguration = function () {
         'akoenig.deckgrid',
         'ngImgCrop',
         'angularMoment',
-        'angularFileUpload'
+        'angularFileUpload',
+        'pascalprecht.translate',
+        'ui.select',
+        'schemaForm'
       ];
     // Add a new vertical module
     var registerModule = function (moduleName, dependencies) {
@@ -112,6 +115,8 @@ ApplicationConfiguration.registerModule('core');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('directives');'use strict';
 // Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('examinations');'use strict';
+// Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('manage-users');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('module');'use strict';
@@ -151,17 +156,36 @@ angular.module('core').controller('HeaderController', [
   '$scope',
   'Authentication',
   'Menus',
-  function ($scope, Authentication, Menus) {
+  '$state',
+  'CoreProperties',
+  'ActionsHandler',
+  'Toolbar',
+  function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler, Toolbar) {
     $scope.authentication = Authentication;
     $scope.isCollapsed = false;
     $scope.menu = Menus.getMenu('topbar');
+    $scope.toolbarCommands = function () {
+      return Toolbar.getToolbarCommands();
+    };
+    $scope.pageTitle = $state.current.title || null;
+    $scope.showToolBar = $state.current.url != '/' && $state.current.url != '/signin';
+    $scope.pageSubTitle = function () {
+      return CoreProperties.getPageSubTitle();
+    };
     $scope.toggleCollapsibleMenu = function () {
       $scope.isCollapsed = !$scope.isCollapsed;
     };
     // Collapsing the menu after navigation
-    $scope.$on('$stateChangeSuccess', function () {
+    $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+      if (toState.title) {
+        $scope.pageTitle = toState.title;
+      }
+      $scope.showToolBar = toState.url != '/' && toState.url != '/signin';
       $scope.isCollapsed = false;
     });
+    $scope.fireCommand = function (command) {
+      ActionsHandler.fireAction(command, null);
+    };
   }
 ]);'use strict';
 angular.module('core').controller('HomeController', [
@@ -170,6 +194,36 @@ angular.module('core').controller('HomeController', [
   function ($scope, Authentication) {
     // This provides Authentication context.
     $scope.authentication = Authentication;
+  }
+]);'use strict';
+angular.module('core').factory('CoreProperties', function () {
+  var pageSubTitle = null;
+  var setPageSubTitle = function (title) {
+    pageSubTitle = title;
+  };
+  var getPageSubTitle = function () {
+    return pageSubTitle;
+  };
+  return {
+    setPageSubTitle: setPageSubTitle,
+    getPageSubTitle: getPageSubTitle
+  };
+});
+angular.module('core').factory('ActionsHandler', [
+  '$rootScope',
+  function ($rootScope) {
+    var action = {};
+    //var _actionName=null;
+    action.fireAction = function (actionName, args) {
+      //_actionName=actionName;
+      $rootScope.$emit(actionName, args);  //console.log('action fired');
+    };
+    action.onActionFired = function (actionName, scope, func) {
+      var unbind = $rootScope.$on(actionName, func);
+      //console.log(func);
+      scope.$on('$destroy', unbind);  //console.log('action unbind');
+    };
+    return action;
   }
 ]);'use strict';
 /*
@@ -382,6 +436,142 @@ angular.module('core').service('Menus', [
     this.addMenu('topbar', false);
   }
 ]);'use strict';
+//Toolbar service used for managing  toolbar
+angular.module('core').service('Toolbar', function () {
+  this.commands = [];
+  // Add toolbar item
+  this.addToolbarCommand = function (commandName, commandAction, CommandTitle, commandIcon, position, redirectUrl, confirmMessage) {
+    // Push new menu item
+    this.commands.push({
+      command: commandName,
+      action: commandAction,
+      title: CommandTitle,
+      icon: commandIcon,
+      position: position || 0,
+      redirect: redirectUrl || null,
+      confirmMsg: confirmMessage || null
+    });
+    return this.commands;
+  };
+  // Remove existing toolbar item
+  this.removeToolbarCommand = function (commandName) {
+    // Search for toolbar item to remove
+    for (var itemIndex in this.commands) {
+      if (this.commands[itemIndex].command === commandName) {
+        this.commands.splice(itemIndex, 1);
+      }
+    }
+    return this.commands;
+  };
+  this.clearToolbarCommands = function () {
+    this.commands = [];
+    return this.commands;
+  };
+  this.getToolbarCommands = function () {
+    return this.commands;
+  };
+});'use strict';
+angular.module('directives').directive('hCareActionBtn', [
+  'Authentication',
+  'lodash',
+  function (Authentication, lodash) {
+    return {
+      restrict: 'E',
+      replace: true,
+      link: function (scope, element, atts) {
+        if (lodash.contains(Authentication.user._role._actions, atts.action)) {
+          if (atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != '') {
+            atts.$observe('redirectUrl', function (redirectUrl) {
+              var buttonText = '<a class="btn btn-default" href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
+              element.html(buttonText);
+            });
+          }
+          if (atts.clickEvent != null && atts.clickEvent != undefined && atts.clickEvent != '') {
+            var buttonText = '<a class=\'btn btn-default\' >' + '<i class=\'glyphicon glyphicon-' + atts.icon + '\'></i>' + '</a>';
+            element.html(buttonText);
+            element.on('click', function () {
+              if (atts.responseMessage != null && atts.responseMessage != undefined && atts.responseMessage != '') {
+                if (confirm(atts.responseMessage)) {
+                  //apply only
+                  scope.$apply(atts.clickEvent);
+                }
+              } else {
+                scope.$apply(atts.clickEvent);
+              }
+            });
+          }
+        }
+      }
+    };
+  }
+]);'use strict';
+angular.module('directives').directive('hCareCheckbtnList', [
+  'Authentication',
+  'lodash',
+  function (Authentication, lodash) {
+    return {
+      restrict: 'E',
+      replace: true,
+      scope: {
+        source: '=',
+        itemLabelField: '@',
+        itemValueField: '@',
+        itemClicked: '&',
+        selectedItems: '=',
+        selectedItemsIds: '@',
+        currentTappedItem: '='
+      },
+      template: '<div class="btn-group" data-toggle="buttons" id={{atts.id}}>' + '<label class="btn btn-primary" ' + 'ng-class="{active:selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1}"' + 'ng-repeat="item in source"> ' + '<input type="checkbox"' + 'value="{{item[itemLabelField]}}" ' + 'ng-checked="selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1"' + 'ng-click="itemClicked(item)">{{item[itemLabelField]}}' + '</label>' + '</div>',
+      link: function (scope, el, atts) {
+        scope.$watch('selectedItems', function (value) {
+          scope.selectedItems = scope.selectedItems || [];
+          scope.selectedItemsIds = [];
+          for (var i in scope.selectedItems) {
+            if (!lodash.contains(scope.selectedItemsIds, scope.selectedItems[i][scope.itemValueField])) {
+              scope.selectedItemsIds.push(scope.selectedItems[i][scope.itemValueField]);
+            }
+          }
+        }, true);
+        scope.itemClicked = function (item) {
+          scope.selectedItemsIds = scope.selectedItemsIds || [];
+          scope.selectedItems = scope.selectedItems || [];
+          if (atts.isActiveOnClick && atts.isActiveOnClick == 'true') {
+            if (atts.isMultiSelection && atts.isMultiSelection == 'true') {
+              if (!lodash.contains(scope.selectedItemsIds, item[scope.itemValueField])) {
+                scope.selectedItemsIds.push(item[scope.itemValueField]);
+                scope.selectedItems.push(item);
+                scope.currentTappedItem = item;
+              } else {
+                var index = scope.selectedItemsIds.indexOf(item[scope.itemValueField]);
+                scope.selectedItemsIds.splice(index, 1);
+                scope.selectedItems.splice(index, 1);
+                scope.currentTappedItem = null;
+              }
+            } else {
+              // contains only one item
+              if (!lodash.contains(scope.selectedItemsIds, item[scope.itemValueField])) {
+                scope.selectedItemsIds = [];
+                scope.selectedItems = [];
+                scope.selectedItemsIds.push(item[scope.itemValueField]);
+                scope.selectedItems.push(item);
+                scope.currentTappedItem = item;
+              } else {
+                var index = scope.selectedItemsIds.indexOf(item[scope.itemValueField]);
+                scope.selectedItemsIds.splice(index, 1);
+                scope.selectedItems.splice(index, 1);
+                scope.selectedItemsIds = [];
+                scope.selectedItems = [];
+                scope.currentTappedItem = null;
+              }
+            }
+          } else {
+            scope.currentTappedItem = item;
+          }
+        };
+      }
+    };
+  }
+]);'use strict';
 angular.module('directives').directive('hCareDelButton', [
   'Authentication',
   'lodash',
@@ -394,9 +584,11 @@ angular.module('directives').directive('hCareDelButton', [
           var buttonText = '<a class=\'btn btn-primary\' ><i class=\'glyphicon glyphicon-trash\'></i></a>';
           el.html(buttonText);
           el.on('click', function () {
+            //console.log(typeof atts.hcareDelClick);
             var result = confirm(atts.delMessage);
             if (result) {
               //apply only
+              console.log(typeof atts.hcareDelClick);
               scope.$apply(atts.hcareDelClick);
             }
           });
@@ -424,6 +616,3078 @@ angular.module('directives').directive('hCareEditButton', [
     };
   }
 ]);'use strict';
+angular.module('directives').directive('hCareExamineButton', [
+  'Authentication',
+  'lodash',
+  function (Authentication, lodash) {
+    return {
+      restrict: 'E',
+      replace: true,
+      link: function (scope, el, atts) {
+        if (lodash.contains(Authentication.user._role._actions, atts.action)) {
+          var buttonText = '<a class=\'btn btn-primary\' ><i class=\'glyphicon glyphicon-eye-open\'></i></a>';
+          el.html(buttonText);
+          el.on('click', function () {
+            scope.$apply(atts.hcareExamineClick);
+          });
+        }
+      }
+    };
+  }
+]);'use strict';
+// Configuring the Articles module
+angular.module('examinations').run([
+  'Menus',
+  function (Menus) {
+    // Set top bar menu items
+    Menus.addMenuItem('topbar', 'Examinations', 'examinations', 'dropdown', '/examinations(/create)?', false, 3);
+    Menus.addSubMenuItem('topbar', 'examinations', 'List Examinations', 'examinations', '/examinations', false, 'list_examinations', 0);
+    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'search_examinations', 1);
+  }
+]);'use strict';
+//Setting up route
+angular.module('examinations').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Examinations state routing
+    $stateProvider.state('listExaminations', {
+      url: '/examinations',
+      templateUrl: 'modules/examinations/views/list-examinations.client.view.html',
+      action: 'list_examinations',
+      title: 'Examinations'
+    }).state('patientExaminations', {
+      url: '/examinations/:patientId',
+      templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
+      action: 'search_examinations',
+      title: 'Patient Examinations'
+    }).state('searchExaminations', {
+      url: '/examinations/search',
+      templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
+      action: 'search_examinations',
+      title: 'Search Examinations'
+    }).state('createExamination', {
+      url: '/examinations/create/:patientId',
+      templateUrl: 'modules/examinations/views/create-examination.client.view.html',
+      action: 'create_examination',
+      title: 'New Examination'
+    }).state('viewExamination', {
+      url: '/examinations/:examinationId',
+      templateUrl: 'modules/examinations/views/view-examination.client.view.html',
+      action: 'view_examination',
+      title: 'View Examination'
+    }).state('editExamination', {
+      url: '/examinations/:examinationId/edit',
+      templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+      action: 'edit_examination',
+      title: 'Edit Examinations'
+    });
+  }
+]);'use strict';
+// Examinations controller
+angular.module('examinations').controller('ExaminationsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Examinations',
+  'lodash',
+  '$q',
+  'Patients',
+  'CoreProperties',
+  'ActionsHandler',
+  'Toolbar',
+  'Logger',
+  function ($scope, $stateParams, $location, Authentication, Examinations, lodash, $q, Patients, CoreProperties, ActionsHandler, Toolbar, Logger) {
+    $scope.authentication = Authentication;
+    $scope.tabsConfig = {};
+    $scope.tabsConfig.showResuls = false;
+    //$scope.examination={};
+    /*$scope.examination.colors=null;
+         $scope.availableColors=['Red', 'Green', 'Yellow', 'Cool', 'Purple', 'Moove', 'Create', 'Do']*/
+    $scope.tagTransform = function (newTag) {
+      var item = {
+          label: newTag,
+          value: newTag.toLowerCase()
+        };
+      return item;
+    };
+    $scope.forms = {};
+    // $scope.dummy.examinationForm="examinationForm";
+    //region schema form
+    $scope.form = [
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5 topMargin',
+            'items': [{
+                key: 'oculusDexter.appearance',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label topMargin ng-binding">Appearance</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5 topMargin',
+            'items': [{
+                key: 'oculusSinister.appearance',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.eyeLid',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Eye Lid</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.eyeLid',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.lacrimalSystem',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Lacrimal System</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.lacrimalSystem',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.conjunctiva',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Conjunctiva</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.conjunctiva',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.sclera',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Sclera</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.sclera',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.cornea',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Cornea</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.cornea',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.anteriorChamber',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Anterior Chamber</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.anteriorChamber',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.iris',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Iris</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.iris',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.pupil',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Pupil</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.pupil',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.lens',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Lens</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.lens',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.fundus',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Fundus</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.fundus',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.opticNerve',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Optic Nerve</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.opticNerve',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.eom',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">EOM</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.eom',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.va',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">V/A</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.va',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.bcva',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">BCVA</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.bcva',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.bcvaWith',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">BCVA With</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.bcvaWith',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.iop',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">IOP</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.iop',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'key': 'comment',
+        'type': 'textarea',
+        'placeholder': 'Make a comment'
+      }
+    ];
+    $scope.schema = {
+      'type': 'object',
+      'title': 'Examination',
+      'properties': {
+        'oculusDexter': {
+          'type': 'object',
+          'properties': {
+            'appearance': {
+              'title': 'Appearance',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'eyeLid': {
+              'title': 'Eye Lid',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'No Abnormality Detected',
+              items: [
+                {
+                  value: 'rl',
+                  label: 'RL'
+                },
+                {
+                  value: 'entropion',
+                  label: 'Entropion'
+                },
+                {
+                  value: 'ectropion',
+                  label: 'Ectropion'
+                },
+                {
+                  value: 'eistichiasis',
+                  label: 'Distichiasis'
+                },
+                {
+                  value: 'ptosis',
+                  label: 'Ptosis'
+                },
+                {
+                  value: 'chalazion',
+                  label: 'Chalazion'
+                },
+                {
+                  value: 'stye',
+                  label: 'Stye'
+                },
+                {
+                  value: 'blepharitis',
+                  label: 'Blepharitis'
+                },
+                {
+                  value: 'mass',
+                  label: 'Mass'
+                },
+                {
+                  value: 'madarosis',
+                  label: 'Madarosis'
+                },
+                {
+                  value: 'epicanthaus',
+                  label: 'Epicanthaus'
+                },
+                {
+                  value: 'blepharochalasis',
+                  label: 'Blepharochalasis'
+                },
+                {
+                  value: 'dermatochalasis',
+                  label: 'Dermatochalasis'
+                },
+                {
+                  value: 'oedema',
+                  label: 'Oedema'
+                }
+              ]
+            },
+            'lacrimalSystem': {
+              'title': 'Lacrimal System',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'conjunctiva': {
+              'title': 'Conjunctiva',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'active-trachoma',
+                  label: 'Active trachoma'
+                },
+                {
+                  value: 't-iii',
+                  label: 'T III'
+                },
+                {
+                  value: 'mpc',
+                  label: 'MPC'
+                },
+                {
+                  value: 'pc',
+                  label: 'PC'
+                },
+                {
+                  value: 'allergy',
+                  label: 'Allergy'
+                },
+                {
+                  value: 'vernal-keratoconjunctivitis',
+                  label: 'Vernal keratoconjunctivitis'
+                },
+                {
+                  value: 'ptrygeum',
+                  label: 'Ptrygeum'
+                },
+                {
+                  value: 'ptds',
+                  label: 'PTDs'
+                }
+              ]
+            },
+            'sclera': {
+              'title': 'Sclera',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'nodular-episcleritis',
+                  label: 'Nodular Episcleritis'
+                },
+                {
+                  value: 'diffuse-episcleritis',
+                  label: 'Diffuse Episcleritis'
+                },
+                {
+                  value: 'scleritis',
+                  label: 'Scleritis'
+                }
+              ]
+            },
+            'cornea': {
+              'title': 'Cornea',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Ps, Clear Centre',
+              items: [
+                {
+                  value: 'scar-of-previous-op.',
+                  label: 'Scar of previous op.'
+                },
+                {
+                  value: 'ps',
+                  label: 'Ps'
+                },
+                {
+                  value: 'nebula',
+                  label: 'Nebula'
+                },
+                {
+                  value: 'corneal-ulcer',
+                  label: 'Corneal Ulcer'
+                },
+                {
+                  value: 'leukoma-adherent',
+                  label: 'Leukoma adherent'
+                },
+                {
+                  value: 'leukoma-non-adherent',
+                  label: 'Leukoma non-adherent'
+                },
+                {
+                  value: 'keratitis',
+                  label: 'Keratitis'
+                },
+                {
+                  value: 'keratoconus',
+                  label: 'Keratoconus'
+                },
+                {
+                  value: 'arcus-senilis',
+                  label: 'Arcus senilis'
+                },
+                {
+                  value: 'degeneration',
+                  label: 'Degeneration'
+                },
+                {
+                  value: 'stromal-dystophy',
+                  label: 'Stromal Dystophy'
+                },
+                {
+                  value: 'endothelial-dystophy',
+                  label: 'Endothelial Dystophy'
+                },
+                {
+                  value: 'epithelial-oedema',
+                  label: 'Epithelial Oedema'
+                },
+                {
+                  value: 'stromal oedema',
+                  label: 'Stromal Oedema'
+                },
+                {
+                  value: 'striated-keratopathy',
+                  label: 'Striated Keratopathy'
+                }
+              ]
+            },
+            'anteriorChamber': {
+              'title': 'Anterior Chamber',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Depth No Abnormal Content',
+              items: [
+                {
+                  value: 'cells',
+                  label: 'Cells'
+                },
+                {
+                  value: 'flare',
+                  label: 'Flare'
+                },
+                {
+                  value: 'level-hyphema',
+                  label: 'level Hyphema'
+                },
+                {
+                  value: 'diffuse-hyphema',
+                  label: 'Diffuse Hyphema'
+                },
+                {
+                  value: 'inflammatory-membrane',
+                  label: 'Inflammatory membrane'
+                },
+                {
+                  value: 'hypopion',
+                  label: 'Hypopion'
+                }
+              ]
+            },
+            'iris': {
+              'title': 'Iris',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Color And Pattern'
+            },
+            'pupil': {
+              'title': 'Pupil',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'R R R Direct and Cons.'
+            },
+            'lens': {
+              'title': 'Lens',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Clear In Place',
+              items: [
+                {
+                  value: 'imsc',
+                  label: 'IMSC'
+                },
+                {
+                  value: 'nuclear-cataract',
+                  label: 'Nuclear cataract'
+                },
+                {
+                  value: 'complicated-cataract',
+                  label: 'Complicated cataract'
+                },
+                {
+                  value: 'subluxated',
+                  label: 'Subluxated'
+                },
+                {
+                  value: 'pseudoexfoliation',
+                  label: 'Pseudoexfoliation'
+                },
+                {
+                  value: 'microspherophakia',
+                  label: 'Microspherophakia'
+                }
+              ]
+            },
+            'fundus': {
+              'title': 'Fundus',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'tessellated',
+                  label: 'Tessellated'
+                },
+                {
+                  value: 'myopic',
+                  label: 'Myopic'
+                },
+                {
+                  value: 'mild-npdr',
+                  label: 'Mild NPDR'
+                },
+                {
+                  value: 'sever npdr',
+                  label: 'Sever NPDR'
+                },
+                {
+                  value: 'pdr',
+                  label: 'PDR'
+                },
+                {
+                  value: 'macular-oedema',
+                  label: 'Macular Oedema'
+                },
+                {
+                  value: 'drusen',
+                  label: 'Drusen'
+                },
+                {
+                  value: 'amd',
+                  label: 'AMD'
+                },
+                {
+                  value: 'vein-occlusion',
+                  label: 'Vein occlusion'
+                },
+                {
+                  value: 'artery-occlusion',
+                  label: 'Artery occlusion'
+                }
+              ]
+            },
+            'opticNerve': {
+              'title': 'Optic Nerve',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'pale',
+                  label: 'Pale'
+                },
+                {
+                  value: 'atrophy',
+                  label: 'Atrophy'
+                },
+                {
+                  value: 'increased-cd-ratio',
+                  label: 'Increased C/D ratio'
+                },
+                {
+                  value: 'cupping',
+                  label: 'Cupping'
+                },
+                {
+                  value: 'papilloedema',
+                  label: 'Papilloedema'
+                },
+                {
+                  value: 'tilted',
+                  label: 'Tilted'
+                }
+              ]
+            },
+            'va': {
+              'title': 'V/A',
+              'type': 'string'
+            },
+            'eom': {
+              'title': 'EOM',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+            },
+            'bcva': {
+              'title': 'BCVA',
+              'type': 'string'
+            },
+            'bcvaWith': {
+              'title': 'BCVA With',
+              'type': 'string'
+            },
+            'iop': {
+              'title': 'IOP',
+              'type': 'string'
+            }
+          }
+        },
+        'oculusSinister': {
+          'type': 'object',
+          'properties': {
+            'appearance': {
+              'title': 'Appearance',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'eyeLid': {
+              'title': 'Eye Lid',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'No Abnormality Detected',
+              items: [
+                {
+                  value: 'rl',
+                  label: 'RL'
+                },
+                {
+                  value: 'entropion',
+                  label: 'Entropion'
+                },
+                {
+                  value: 'ectropion',
+                  label: 'Ectropion'
+                },
+                {
+                  value: 'eistichiasis',
+                  label: 'Distichiasis'
+                },
+                {
+                  value: 'ptosis',
+                  label: 'Ptosis'
+                },
+                {
+                  value: 'chalazion',
+                  label: 'Chalazion'
+                },
+                {
+                  value: 'stye',
+                  label: 'Stye'
+                },
+                {
+                  value: 'blepharitis',
+                  label: 'Blepharitis'
+                },
+                {
+                  value: 'mass',
+                  label: 'Mass'
+                },
+                {
+                  value: 'madarosis',
+                  label: 'Madarosis'
+                },
+                {
+                  value: 'epicanthaus',
+                  label: 'Epicanthaus'
+                },
+                {
+                  value: 'blepharochalasis',
+                  label: 'Blepharochalasis'
+                },
+                {
+                  value: 'dermatochalasis',
+                  label: 'Dermatochalasis'
+                },
+                {
+                  value: 'oedema',
+                  label: 'Oedema'
+                }
+              ]
+            },
+            'lacrimalSystem': {
+              'title': 'Lacrimal System',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'conjunctiva': {
+              'title': 'Conjunctiva',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'active-trachoma',
+                  label: 'Active trachoma'
+                },
+                {
+                  value: 't-iii',
+                  label: 'T III'
+                },
+                {
+                  value: 'mpc',
+                  label: 'MPC'
+                },
+                {
+                  value: 'pc',
+                  label: 'PC'
+                },
+                {
+                  value: 'allergy',
+                  label: 'Allergy'
+                },
+                {
+                  value: 'vernal-keratoconjunctivitis',
+                  label: 'Vernal keratoconjunctivitis'
+                },
+                {
+                  value: 'ptrygeum',
+                  label: 'Ptrygeum'
+                },
+                {
+                  value: 'ptds',
+                  label: 'PTDs'
+                }
+              ]
+            },
+            'sclera': {
+              'title': 'Sclera',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'nodular-episcleritis',
+                  label: 'Nodular Episcleritis'
+                },
+                {
+                  value: 'diffuse-episcleritis',
+                  label: 'Diffuse Episcleritis'
+                },
+                {
+                  value: 'scleritis',
+                  label: 'Scleritis'
+                }
+              ]
+            },
+            'cornea': {
+              'title': 'Cornea',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Ps, Clear Centre',
+              items: [
+                {
+                  value: 'scar-of-previous-op.',
+                  label: 'Scar of previous op.'
+                },
+                {
+                  value: 'ps',
+                  label: 'Ps'
+                },
+                {
+                  value: 'nebula',
+                  label: 'Nebula'
+                },
+                {
+                  value: 'corneal-ulcer',
+                  label: 'Corneal Ulcer'
+                },
+                {
+                  value: 'leukoma-adherent',
+                  label: 'Leukoma adherent'
+                },
+                {
+                  value: 'leukoma-non-adherent',
+                  label: 'Leukoma non-adherent'
+                },
+                {
+                  value: 'keratitis',
+                  label: 'Keratitis'
+                },
+                {
+                  value: 'keratoconus',
+                  label: 'Keratoconus'
+                },
+                {
+                  value: 'arcus-senilis',
+                  label: 'Arcus senilis'
+                },
+                {
+                  value: 'degeneration',
+                  label: 'Degeneration'
+                },
+                {
+                  value: 'stromal-dystophy',
+                  label: 'Stromal Dystophy'
+                },
+                {
+                  value: 'endothelial-dystophy',
+                  label: 'Endothelial Dystophy'
+                },
+                {
+                  value: 'epithelial-oedema',
+                  label: 'Epithelial Oedema'
+                },
+                {
+                  value: 'stromal oedema',
+                  label: 'Stromal Oedema'
+                },
+                {
+                  value: 'striated-keratopathy',
+                  label: 'Striated Keratopathy'
+                }
+              ]
+            },
+            'anteriorChamber': {
+              'title': 'Anterior Chamber',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Depth No Abnormal Content',
+              items: [
+                {
+                  value: 'cells',
+                  label: 'Cells'
+                },
+                {
+                  value: 'flare',
+                  label: 'Flare'
+                },
+                {
+                  value: 'level-hyphema',
+                  label: 'level Hyphema'
+                },
+                {
+                  value: 'diffuse-hyphema',
+                  label: 'Diffuse Hyphema'
+                },
+                {
+                  value: 'inflammatory-membrane',
+                  label: 'Inflammatory membrane'
+                },
+                {
+                  value: 'hypopion',
+                  label: 'Hypopion'
+                }
+              ]
+            },
+            'iris': {
+              'title': 'Iris',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Color And Pattern'
+            },
+            'pupil': {
+              'title': 'Pupil',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'R R R Direct and Cons.'
+            },
+            'lens': {
+              'title': 'Lens',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Clear In Place',
+              items: [
+                {
+                  value: 'imsc',
+                  label: 'IMSC'
+                },
+                {
+                  value: 'nuclear-cataract',
+                  label: 'Nuclear cataract'
+                },
+                {
+                  value: 'complicated-cataract',
+                  label: 'Complicated cataract'
+                },
+                {
+                  value: 'subluxated',
+                  label: 'Subluxated'
+                },
+                {
+                  value: 'pseudoexfoliation',
+                  label: 'Pseudoexfoliation'
+                },
+                {
+                  value: 'microspherophakia',
+                  label: 'Microspherophakia'
+                }
+              ]
+            },
+            'fundus': {
+              'title': 'Fundus',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'tessellated',
+                  label: 'Tessellated'
+                },
+                {
+                  value: 'myopic',
+                  label: 'Myopic'
+                },
+                {
+                  value: 'mild-npdr',
+                  label: 'Mild NPDR'
+                },
+                {
+                  value: 'sever npdr',
+                  label: 'Sever NPDR'
+                },
+                {
+                  value: 'pdr',
+                  label: 'PDR'
+                },
+                {
+                  value: 'macular-oedema',
+                  label: 'Macular Oedema'
+                },
+                {
+                  value: 'drusen',
+                  label: 'Drusen'
+                },
+                {
+                  value: 'amd',
+                  label: 'AMD'
+                },
+                {
+                  value: 'vein-occlusion',
+                  label: 'Vein occlusion'
+                },
+                {
+                  value: 'artery-occlusion',
+                  label: 'Artery occlusion'
+                }
+              ]
+            },
+            'opticNerve': {
+              'title': 'Optic Nerve',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'pale',
+                  label: 'Pale'
+                },
+                {
+                  value: 'atrophy',
+                  label: 'Atrophy'
+                },
+                {
+                  value: 'increased-cd-ratio',
+                  label: 'Increased C/D ratio'
+                },
+                {
+                  value: 'cupping',
+                  label: 'Cupping'
+                },
+                {
+                  value: 'papilloedema',
+                  label: 'Papilloedema'
+                },
+                {
+                  value: 'tilted',
+                  label: 'Tilted'
+                }
+              ]
+            },
+            'eom': {
+              'title': 'EOM',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+            },
+            'va': {
+              'title': 'V/A',
+              'type': 'string'
+            },
+            'bcva': {
+              'title': 'BCVA',
+              'type': 'string'
+            },
+            'bcvaWith': {
+              'title': 'BCVA With',
+              'type': 'string'
+            },
+            'iop': {
+              'title': 'IOP',
+              'type': 'string'
+            }
+          }
+        },
+        'comment': {
+          'title': 'Comment',
+          'type': 'string'
+        }
+      }
+    };
+    $scope.viewSchema = {
+      'type': 'object',
+      'title': 'Examination',
+      'properties': {
+        'oculusDexter': {
+          'type': 'object',
+          'properties': {
+            'appearance': {
+              'title': 'Appearance',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'eyeLid': {
+              'title': 'Eye Lid',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'No Abnormality Detected',
+              items: [
+                {
+                  value: 'rl',
+                  label: 'RL'
+                },
+                {
+                  value: 'entropion',
+                  label: 'Entropion'
+                },
+                {
+                  value: 'ectropion',
+                  label: 'Ectropion'
+                },
+                {
+                  value: 'eistichiasis',
+                  label: 'Distichiasis'
+                },
+                {
+                  value: 'ptosis',
+                  label: 'Ptosis'
+                },
+                {
+                  value: 'chalazion',
+                  label: 'Chalazion'
+                },
+                {
+                  value: 'stye',
+                  label: 'Stye'
+                },
+                {
+                  value: 'blepharitis',
+                  label: 'Blepharitis'
+                },
+                {
+                  value: 'mass',
+                  label: 'Mass'
+                },
+                {
+                  value: 'madarosis',
+                  label: 'Madarosis'
+                },
+                {
+                  value: 'epicanthaus',
+                  label: 'Epicanthaus'
+                },
+                {
+                  value: 'blepharochalasis',
+                  label: 'Blepharochalasis'
+                },
+                {
+                  value: 'dermatochalasis',
+                  label: 'Dermatochalasis'
+                },
+                {
+                  value: 'oedema',
+                  label: 'Oedema'
+                }
+              ]
+            },
+            'lacrimalSystem': {
+              'title': 'Lacrimal System',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'conjunctiva': {
+              'title': 'Conjunctiva',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'active-trachoma',
+                  label: 'Active trachoma'
+                },
+                {
+                  value: 't-iii',
+                  label: 'T III'
+                },
+                {
+                  value: 'mpc',
+                  label: 'MPC'
+                },
+                {
+                  value: 'pc',
+                  label: 'PC'
+                },
+                {
+                  value: 'allergy',
+                  label: 'Allergy'
+                },
+                {
+                  value: 'vernal-keratoconjunctivitis',
+                  label: 'Vernal keratoconjunctivitis'
+                },
+                {
+                  value: 'ptrygeum',
+                  label: 'Ptrygeum'
+                },
+                {
+                  value: 'ptds',
+                  label: 'PTDs'
+                }
+              ]
+            },
+            'sclera': {
+              'title': 'Sclera',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'nodular-episcleritis',
+                  label: 'Nodular Episcleritis'
+                },
+                {
+                  value: 'diffuse-episcleritis',
+                  label: 'Diffuse Episcleritis'
+                },
+                {
+                  value: 'scleritis',
+                  label: 'Scleritis'
+                }
+              ]
+            },
+            'cornea': {
+              'title': 'Cornea',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Ps, Clear Centre',
+              items: [
+                {
+                  value: 'scar-of-previous-op.',
+                  label: 'Scar of previous op.'
+                },
+                {
+                  value: 'ps',
+                  label: 'Ps'
+                },
+                {
+                  value: 'nebula',
+                  label: 'Nebula'
+                },
+                {
+                  value: 'corneal-ulcer',
+                  label: 'Corneal Ulcer'
+                },
+                {
+                  value: 'leukoma-adherent',
+                  label: 'Leukoma adherent'
+                },
+                {
+                  value: 'leukoma-non-adherent',
+                  label: 'Leukoma non-adherent'
+                },
+                {
+                  value: 'keratitis',
+                  label: 'Keratitis'
+                },
+                {
+                  value: 'keratoconus',
+                  label: 'Keratoconus'
+                },
+                {
+                  value: 'arcus-senilis',
+                  label: 'Arcus senilis'
+                },
+                {
+                  value: 'degeneration',
+                  label: 'Degeneration'
+                },
+                {
+                  value: 'stromal-dystophy',
+                  label: 'Stromal Dystophy'
+                },
+                {
+                  value: 'endothelial-dystophy',
+                  label: 'Endothelial Dystophy'
+                },
+                {
+                  value: 'epithelial-oedema',
+                  label: 'Epithelial Oedema'
+                },
+                {
+                  value: 'stromal oedema',
+                  label: 'Stromal Oedema'
+                },
+                {
+                  value: 'striated-keratopathy',
+                  label: 'Striated Keratopathy'
+                }
+              ]
+            },
+            'anteriorChamber': {
+              'title': 'Anterior Chamber',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Depth No Abnormal Content',
+              items: [
+                {
+                  value: 'cells',
+                  label: 'Cells'
+                },
+                {
+                  value: 'flare',
+                  label: 'Flare'
+                },
+                {
+                  value: 'level-hyphema',
+                  label: 'level Hyphema'
+                },
+                {
+                  value: 'diffuse-hyphema',
+                  label: 'Diffuse Hyphema'
+                },
+                {
+                  value: 'inflammatory-membrane',
+                  label: 'Inflammatory membrane'
+                },
+                {
+                  value: 'hypopion',
+                  label: 'Hypopion'
+                }
+              ]
+            },
+            'iris': {
+              'title': 'Iris',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Color And Pattern'
+            },
+            'pupil': {
+              'title': 'Pupil',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'R R R Direct and Cons.'
+            },
+            'lens': {
+              'title': 'Lens',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Clear In Place',
+              items: [
+                {
+                  value: 'imsc',
+                  label: 'IMSC'
+                },
+                {
+                  value: 'nuclear-cataract',
+                  label: 'Nuclear cataract'
+                },
+                {
+                  value: 'complicated-cataract',
+                  label: 'Complicated cataract'
+                },
+                {
+                  value: 'subluxated',
+                  label: 'Subluxated'
+                },
+                {
+                  value: 'pseudoexfoliation',
+                  label: 'Pseudoexfoliation'
+                },
+                {
+                  value: 'microspherophakia',
+                  label: 'Microspherophakia'
+                }
+              ]
+            },
+            'fundus': {
+              'title': 'Fundus',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'tessellated',
+                  label: 'Tessellated'
+                },
+                {
+                  value: 'myopic',
+                  label: 'Myopic'
+                },
+                {
+                  value: 'mild-npdr',
+                  label: 'Mild NPDR'
+                },
+                {
+                  value: 'sever npdr',
+                  label: 'Sever NPDR'
+                },
+                {
+                  value: 'pdr',
+                  label: 'PDR'
+                },
+                {
+                  value: 'macular-oedema',
+                  label: 'Macular Oedema'
+                },
+                {
+                  value: 'drusen',
+                  label: 'Drusen'
+                },
+                {
+                  value: 'amd',
+                  label: 'AMD'
+                },
+                {
+                  value: 'vein-occlusion',
+                  label: 'Vein occlusion'
+                },
+                {
+                  value: 'artery-occlusion',
+                  label: 'Artery occlusion'
+                }
+              ]
+            },
+            'opticNerve': {
+              'title': 'Optic Nerve',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'pale',
+                  label: 'Pale'
+                },
+                {
+                  value: 'atrophy',
+                  label: 'Atrophy'
+                },
+                {
+                  value: 'increased-cd-ratio',
+                  label: 'Increased C/D ratio'
+                },
+                {
+                  value: 'cupping',
+                  label: 'Cupping'
+                },
+                {
+                  value: 'papilloedema',
+                  label: 'Papilloedema'
+                },
+                {
+                  value: 'tilted',
+                  label: 'Tilted'
+                }
+              ]
+            },
+            'va': {
+              'title': 'V/A',
+              'type': 'string'
+            },
+            'eom': {
+              'title': 'EOM',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+            },
+            'bcva': {
+              'title': 'BCVA',
+              'type': 'string'
+            },
+            'bcvaWith': {
+              'title': 'BCVA With',
+              'type': 'string'
+            },
+            'iop': {
+              'title': 'IOP',
+              'type': 'string'
+            }
+          }
+        },
+        'oculusSinister': {
+          'type': 'object',
+          'properties': {
+            'appearance': {
+              'title': 'Appearance',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'eyeLid': {
+              'title': 'Eye Lid',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'No Abnormality Detected',
+              items: [
+                {
+                  value: 'rl',
+                  label: 'RL'
+                },
+                {
+                  value: 'entropion',
+                  label: 'Entropion'
+                },
+                {
+                  value: 'ectropion',
+                  label: 'Ectropion'
+                },
+                {
+                  value: 'eistichiasis',
+                  label: 'Distichiasis'
+                },
+                {
+                  value: 'ptosis',
+                  label: 'Ptosis'
+                },
+                {
+                  value: 'chalazion',
+                  label: 'Chalazion'
+                },
+                {
+                  value: 'stye',
+                  label: 'Stye'
+                },
+                {
+                  value: 'blepharitis',
+                  label: 'Blepharitis'
+                },
+                {
+                  value: 'mass',
+                  label: 'Mass'
+                },
+                {
+                  value: 'madarosis',
+                  label: 'Madarosis'
+                },
+                {
+                  value: 'epicanthaus',
+                  label: 'Epicanthaus'
+                },
+                {
+                  value: 'blepharochalasis',
+                  label: 'Blepharochalasis'
+                },
+                {
+                  value: 'dermatochalasis',
+                  label: 'Dermatochalasis'
+                },
+                {
+                  value: 'oedema',
+                  label: 'Oedema'
+                }
+              ]
+            },
+            'lacrimalSystem': {
+              'title': 'Lacrimal System',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal'
+            },
+            'conjunctiva': {
+              'title': 'Conjunctiva',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'active-trachoma',
+                  label: 'Active trachoma'
+                },
+                {
+                  value: 't-iii',
+                  label: 'T III'
+                },
+                {
+                  value: 'mpc',
+                  label: 'MPC'
+                },
+                {
+                  value: 'pc',
+                  label: 'PC'
+                },
+                {
+                  value: 'allergy',
+                  label: 'Allergy'
+                },
+                {
+                  value: 'vernal-keratoconjunctivitis',
+                  label: 'Vernal keratoconjunctivitis'
+                },
+                {
+                  value: 'ptrygeum',
+                  label: 'Ptrygeum'
+                },
+                {
+                  value: 'ptds',
+                  label: 'PTDs'
+                }
+              ]
+            },
+            'sclera': {
+              'title': 'Sclera',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'nodular-episcleritis',
+                  label: 'Nodular Episcleritis'
+                },
+                {
+                  value: 'diffuse-episcleritis',
+                  label: 'Diffuse Episcleritis'
+                },
+                {
+                  value: 'scleritis',
+                  label: 'Scleritis'
+                }
+              ]
+            },
+            'cornea': {
+              'title': 'Cornea',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Ps, Clear Centre',
+              items: [
+                {
+                  value: 'scar-of-previous-op.',
+                  label: 'Scar of previous op.'
+                },
+                {
+                  value: 'ps',
+                  label: 'Ps'
+                },
+                {
+                  value: 'nebula',
+                  label: 'Nebula'
+                },
+                {
+                  value: 'corneal-ulcer',
+                  label: 'Corneal Ulcer'
+                },
+                {
+                  value: 'leukoma-adherent',
+                  label: 'Leukoma adherent'
+                },
+                {
+                  value: 'leukoma-non-adherent',
+                  label: 'Leukoma non-adherent'
+                },
+                {
+                  value: 'keratitis',
+                  label: 'Keratitis'
+                },
+                {
+                  value: 'keratoconus',
+                  label: 'Keratoconus'
+                },
+                {
+                  value: 'arcus-senilis',
+                  label: 'Arcus senilis'
+                },
+                {
+                  value: 'degeneration',
+                  label: 'Degeneration'
+                },
+                {
+                  value: 'stromal-dystophy',
+                  label: 'Stromal Dystophy'
+                },
+                {
+                  value: 'endothelial-dystophy',
+                  label: 'Endothelial Dystophy'
+                },
+                {
+                  value: 'epithelial-oedema',
+                  label: 'Epithelial Oedema'
+                },
+                {
+                  value: 'stromal oedema',
+                  label: 'Stromal Oedema'
+                },
+                {
+                  value: 'striated-keratopathy',
+                  label: 'Striated Keratopathy'
+                }
+              ]
+            },
+            'anteriorChamber': {
+              'title': 'Anterior Chamber',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Depth No Abnormal Content',
+              items: [
+                {
+                  value: 'cells',
+                  label: 'Cells'
+                },
+                {
+                  value: 'flare',
+                  label: 'Flare'
+                },
+                {
+                  value: 'level-hyphema',
+                  label: 'level Hyphema'
+                },
+                {
+                  value: 'diffuse-hyphema',
+                  label: 'Diffuse Hyphema'
+                },
+                {
+                  value: 'inflammatory-membrane',
+                  label: 'Inflammatory membrane'
+                },
+                {
+                  value: 'hypopion',
+                  label: 'Hypopion'
+                }
+              ]
+            },
+            'iris': {
+              'title': 'Iris',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal Color And Pattern'
+            },
+            'pupil': {
+              'title': 'Pupil',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'R R R Direct and Cons.'
+            },
+            'lens': {
+              'title': 'Lens',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Clear In Place',
+              items: [
+                {
+                  value: 'imsc',
+                  label: 'IMSC'
+                },
+                {
+                  value: 'nuclear-cataract',
+                  label: 'Nuclear cataract'
+                },
+                {
+                  value: 'complicated-cataract',
+                  label: 'Complicated cataract'
+                },
+                {
+                  value: 'subluxated',
+                  label: 'Subluxated'
+                },
+                {
+                  value: 'pseudoexfoliation',
+                  label: 'Pseudoexfoliation'
+                },
+                {
+                  value: 'microspherophakia',
+                  label: 'Microspherophakia'
+                }
+              ]
+            },
+            'fundus': {
+              'title': 'Fundus',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'tessellated',
+                  label: 'Tessellated'
+                },
+                {
+                  value: 'myopic',
+                  label: 'Myopic'
+                },
+                {
+                  value: 'mild-npdr',
+                  label: 'Mild NPDR'
+                },
+                {
+                  value: 'sever npdr',
+                  label: 'Sever NPDR'
+                },
+                {
+                  value: 'pdr',
+                  label: 'PDR'
+                },
+                {
+                  value: 'macular-oedema',
+                  label: 'Macular Oedema'
+                },
+                {
+                  value: 'drusen',
+                  label: 'Drusen'
+                },
+                {
+                  value: 'amd',
+                  label: 'AMD'
+                },
+                {
+                  value: 'vein-occlusion',
+                  label: 'Vein occlusion'
+                },
+                {
+                  value: 'artery-occlusion',
+                  label: 'Artery occlusion'
+                }
+              ]
+            },
+            'opticNerve': {
+              'title': 'Optic Nerve',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Normal',
+              items: [
+                {
+                  value: 'pale',
+                  label: 'Pale'
+                },
+                {
+                  value: 'atrophy',
+                  label: 'Atrophy'
+                },
+                {
+                  value: 'increased-cd-ratio',
+                  label: 'Increased C/D ratio'
+                },
+                {
+                  value: 'cupping',
+                  label: 'Cupping'
+                },
+                {
+                  value: 'papilloedema',
+                  label: 'Papilloedema'
+                },
+                {
+                  value: 'tilted',
+                  label: 'Tilted'
+                }
+              ]
+            },
+            'eom': {
+              'title': 'EOM',
+              'type': 'array',
+              format: 'uiselect',
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+            },
+            'va': {
+              'title': 'V/A',
+              'type': 'string'
+            },
+            'bcva': {
+              'title': 'BCVA',
+              'type': 'string'
+            },
+            'bcvaWith': {
+              'title': 'BCVA With',
+              'type': 'string'
+            },
+            'iop': {
+              'title': 'IOP',
+              'type': 'string'
+            }
+          }
+        },
+        'comment': {
+          'title': 'Comment',
+          'type': 'string'
+        }
+      },
+      'readonly': true
+    };
+    $scope.viewForm = [
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5 topMargin',
+            'items': [{
+                key: 'oculusDexter.appearance',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                },
+                readonly: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label topMargin ng-binding">Appearance</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5 topMargin',
+            'items': [{
+                key: 'oculusSinister.appearance',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                },
+                readonly: true
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.eyeLid',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                },
+                readonly: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Eye Lid</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.eyeLid',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                },
+                readonly: true
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.lacrimalSystem',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Lacrimal System</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.lacrimalSystem',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.conjunctiva',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Conjunctiva</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.conjunctiva',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.sclera',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Sclera</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.sclera',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.cornea',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Cornea</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.cornea',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.anteriorChamber',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Anterior Chamber</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.anteriorChamber',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.iris',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Iris</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.iris',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.pupil',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Pupil</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.pupil',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.lens',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Lens</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.lens',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.fundus',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Fundus</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.fundus',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.opticNerve',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">Optic Nerve</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.opticNerve',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.eom',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">EOM</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.eom',
+                feedback: '{\'glyphicontop\': true, \'glyphicon\': true, \'glyphicon-ok\': hasSuccess(), \'glyphicon-remove\': hasError()}',
+                notitle: true,
+                options: {
+                  tagging: $scope.tagTransform,
+                  taggingLabel: '(new)',
+                  taggingTokens: 'ENTER'
+                }
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.va',
+                type: 'text',
+                notitle: true
+              }],
+            readonly: true
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">V/A</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.va',
+                notitle: true,
+                type: 'text'
+              }],
+            readonly: true
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.bcva',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">BCVA</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.bcva',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.bcvaWith',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">BCVA With</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.bcvaWith',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusDexter.iop',
+                type: 'text',
+                notitle: true
+              }]
+          },
+          {
+            'type': 'help',
+            'helpvalue': '<label class="control-label ng-binding">IOP</label>',
+            'htmlClass': 'col-xs-2 col-centered'
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-5',
+            'items': [{
+                key: 'oculusSinister.iop',
+                notitle: true,
+                type: 'text'
+              }]
+          }
+        ]
+      },
+      {
+        'key': 'comment',
+        'type': 'textarea',
+        'placeholder': 'Make a comment'
+      }
+    ];
+    $scope.onSubmit = function (form) {
+      // First we broadcast an event so all fields validate themselves
+      $scope.$broadcast('schemaFormValidate');
+      // Then we check if the form is valid
+      if (form.$valid) {
+        console.log($scope.examination);
+        $scope.create();
+      }
+    };
+    //endregion schema form
+    // Create new Examination
+    $scope.create = function () {
+      // Create new Examination object
+      var examination = new Examinations($scope.examination);
+      // Redirect after save
+      examination.$save(function (response) {
+        //$location.path('examinations/' + response._id);
+        Logger.success('Examination created successfully', true);
+        // Clear form fields
+        $scope.examination = {};
+      }, function (errorResponse) {
+        Logger.error(errorResponse.data.message, true);  //$scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Examination
+    $scope.remove = function (examination) {
+      if (examination) {
+        examination.$remove();
+        for (var i in $scope.examinations) {
+          if ($scope.examinations[i] === examination) {
+            $scope.examinations.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.examination.$remove(function () {
+          $location.path('examinations');
+        });
+      }
+    };
+    // Update existing Examination
+    $scope.update = function () {
+      var examination = $scope.examination;
+      examination.$update(function () {
+        $location.path('examinations/' + examination._id);
+        ///log success message
+        Logger.success('Examination updated successfully', true);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Examinations
+    $scope.find = function () {
+      $scope.examinations = Examinations.query();
+    };
+    // Find existing Examination
+    $scope.findOne = function (callback) {
+      Examinations.get({ examinationId: $stateParams.examinationId }, function (_examination) {
+        $scope.examination = _examination;
+        $scope.$broadcast('schemaFormRedraw');
+        if (callback) {
+          callback();
+        }
+      });
+    };
+    // Search existing Examinations
+    $scope.search = function (callback) {
+      var examination = new Examinations($scope.examination);
+      Examinations.search(examination, function (_examinations) {
+        $scope.examinations = _examinations.list;
+        //console.log($scope.examinations);
+        if (callback) {
+          callback();
+        }
+      });
+    };
+    $scope.initOne = function () {
+      $scope.examination = new Examinations({});
+    };
+    $scope.initCreate = function () {
+      $scope.initOne();
+      Patients.get({ patientId: $stateParams.patientId }, function (patient) {
+        if (patient) {
+          $scope.examination._patient = patient._id;
+          CoreProperties.setPageSubTitle(patient.fullName);
+          Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
+          Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
+        }
+      });
+    };
+    $scope.initEdit = function () {
+      $scope.findOne(function () {
+        CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+        Toolbar.addToolbarCommand('updateExamination', 'edit_examination', 'Save', 'floppy-save', 0);
+      });
+    };
+    $scope.initView = function () {
+      $scope.schema.readonly = true;
+      $scope.findOne(function () {
+        CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+        Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
+        Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination ?');
+      });
+    };
+    $scope.initSearch = function () {
+      $scope.initOne();
+      Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
+    };
+    ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
+      $scope.onSubmit($scope.forms.examinationForm);
+    });
+    ActionsHandler.onActionFired('updateExamination', $scope, function (action, args) {
+      $scope.update();
+    });
+    ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
+      $scope.search(function () {
+        $scope.tabsConfig.showResults = true;
+      });
+    });
+    ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
+      $location.path('examinations/' + $scope.examination._id + '/edit');
+    });
+    ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {
+      $scope.remove();
+    });
+  }
+]);'use strict';
+//Examinations service used to communicate Examinations REST endpoints
+angular.module('examinations').factory('Examinations', [
+  '$resource',
+  function ($resource) {
+    return $resource('examinations/:examinationId', { examinationId: '@_id' }, {
+      update: { method: 'PUT' },
+      search: {
+        method: 'GET',
+        url: 'examinations/search'
+      }
+    });
+  }
+]);'use strict';
 // Configuring the Articles module
 angular.module('manage-users').run([
   'Menus',
@@ -432,6 +3696,7 @@ angular.module('manage-users').run([
     Menus.addMenuItem('topbar', 'Users', 'manage-users', 'dropdown', '/manage-users(/create)?', false, 1);
     Menus.addSubMenuItem('topbar', 'manage-users', 'List users', 'manage-users', '/manage-users', false, 'list_users', 0);
     Menus.addSubMenuItem('topbar', 'manage-users', 'New user', 'manage-users/create', '/manage-users/create', false, 'create_user', 1);
+    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'search_users', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -441,16 +3706,29 @@ angular.module('manage-users').config([
     // Manage users state routing
     $stateProvider.state('listManageUsers', {
       url: '/manage-users',
-      templateUrl: 'modules/manage-users/views/list-manage-users.client.view.html'
+      templateUrl: 'modules/manage-users/views/list-manage-users.client.view.html',
+      action: 'list_users',
+      title: 'Users'
     }).state('createManageUser', {
       url: '/manage-users/create',
-      templateUrl: 'modules/manage-users/views/create-manage-user.client.view.html'
+      templateUrl: 'modules/manage-users/views/create-manage-user.client.view.html',
+      action: 'create_user',
+      title: 'New user'
+    }).state('searchManageUser', {
+      url: '/manage-users/search',
+      templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
+      action: 'search_users',
+      title: 'Search Users'
     }).state('viewManageUser', {
       url: '/manage-users/:manageUserId',
-      templateUrl: 'modules/manage-users/views/view-manage-user.client.view.html'
+      templateUrl: 'modules/manage-users/views/view-manage-user.client.view.html',
+      action: 'view_user',
+      title: 'View User'
     }).state('editManageUser', {
       url: '/manage-users/:manageUserId/edit',
-      templateUrl: 'modules/manage-users/views/edit-manage-user.client.view.html'
+      templateUrl: 'modules/manage-users/views/edit-manage-user.client.view.html',
+      action: 'edit_user',
+      title: 'Edit User'
     });
   }
 ]);'use strict';
@@ -459,43 +3737,33 @@ angular.module('manage-users').controller('ManageUsersController', [
   '$scope',
   '$stateParams',
   '$location',
-  'Authentication',
   'ManageUsers',
   'Roles',
-  'lodash',
   'Logger',
-  function ($scope, $stateParams, $location, Authentication, ManageUsers, Roles, lodash, Logger) {
-    //region Init variables
-    $scope.authentication = Authentication;
-    $scope._ = lodash;
-    $scope.roles = Roles.query();
-    //endregion Init variables
-    //region Helper functions
-    lodash.mixin({
-      'findByValues': function (collection, property, values) {
-        return lodash.filter(collection, function (item) {
-          return lodash.contains(values, item[property]);
-        });
-      }
-    });
-    lodash.mixin({
-      'findByValuesInPath': function (collection, property, values, path) {
-        return lodash.filter(collection, function (item) {
-          return lodash.contains(lodash.map(values, path), item[property]);
-        });
-      }
-    });
+  'ActionsHandler',
+  'Toolbar',
+  function ($scope, $stateParams, $location, ManageUsers, Roles, Logger, ActionsHandler, Toolbar) {
+    $scope.initRoles = function (callback) {
+      $scope.rolesObj = {};
+      $scope.rolesObj.selected_role = null;
+      $scope.rolesObj.selected_roles = [];
+      Roles.query(function (_roles) {
+        $scope.rolesObj.roles = _roles;
+        if (callback) {
+          callback();
+        }
+      });
+    };
     //select Role
     $scope.toggleRoleSelection = function (role_id) {
-      //console.log(role_id);
-      $scope.manageUser._role = role_id;  //console.log($scope.manageUser._role);
+      $scope.manageUser._role = role_id;
     };
     // Init New Managed User
     $scope.initOne = function () {
-      $scope.manageUser = new ManageUsers({ password: Math.random().toString(36).slice(-8) });
+      $scope.initRoles(function () {
+        $scope.manageUser = new ManageUsers({ password: Math.random().toString(36).slice(-8) });
+      });
     };
-    //endregion Helper functions
-    //region CRUD functions
     // Create new Managed User
     $scope.create = function () {
       // Create new Managed user object
@@ -508,7 +3776,6 @@ angular.module('manage-users').controller('ManageUsersController', [
         // Clear form fields
         $scope.initOne();
       }, function (errorResponse) {
-        //console.log(errorResponse);
         ///log error message
         Logger.error(errorResponse.data.message, true);  //$scope.error = errorResponse.data.message;
       });
@@ -556,9 +3823,82 @@ angular.module('manage-users').controller('ManageUsersController', [
       $scope.manageUsers = ManageUsers.query();
     };
     // Find existing Manage user
-    $scope.findOne = function () {
-      $scope.manageUser = ManageUsers.get({ manageUserId: $stateParams.manageUserId });
-    };  //endregion CRUD functions
+    $scope.findOne = function (callback) {
+      $scope.initRoles(function () {
+        ManageUsers.get({ manageUserId: $stateParams.manageUserId }, function (_user) {
+          $scope.manageUser = _user;
+          if (_user._role) {
+            $scope.rolesObj.selected_roles.push(_user._role);
+          }
+          if (callback) {
+            callback();
+          }
+        });
+      });
+    };
+    // Search existing Users
+    $scope.search = function (callback) {
+      if ((!$scope.manageUser.fullName || $scope.manageUser.fullName == '' || $scope.manageUser.fullName == undefined) && (!$scope.manageUser.displayName || $scope.manageUser.displayName == '' || $scope.manageUser.displayName == undefined) && (!$scope.manageUser.email || $scope.manageUser.email == '' || $scope.manageUser.email == undefined) && (!$scope.manageUser._role || $scope.manageUser._role == '' || $scope.manageUser._role == undefined)) {
+        Logger.error('Please Enter Search Criteria', true);
+        $scope.manageUsers = [];
+      } else {
+        ManageUsers.query($scope.manageUser, function (_users) {
+          $scope.manageUsers = _users;
+          if (callback) {
+            callback();
+          }
+        });
+      }
+    };
+    $scope.$watch('rolesObj.selected_role', function (value) {
+      if ($scope.manageUser) {
+        if (value) {
+          $scope.manageUser._role = value._id;
+        } else {
+          $scope.manageUser._role = value;  // null
+        }
+      }
+    }, true);
+    $scope.initCreate = function () {
+      $scope.initOne();
+      Toolbar.addToolbarCommand('saveUser', 'create_user', 'Save', 'floppy-save', 0);
+    };
+    $scope.initEdit = function () {
+      $scope.initRoles(function () {
+        $scope.findOne(function () {
+          Toolbar.addToolbarCommand('updateUser', 'edit_user', 'Save', 'floppy-save', 0);
+        });
+      });
+    };
+    $scope.initView = function () {
+      $scope.findOne(function () {
+        Toolbar.addToolbarCommand('editUser', 'edit_user', 'Edit', 'edit', 1);
+        Toolbar.addToolbarCommand('deleteUser', 'delete_user', 'Delete', 'trash', 2, null, 'Are you sure to delete user "' + $scope.manageUser.email + '"?');
+      });
+    };
+    $scope.initSearch = function () {
+      $scope.initOne();
+      $scope.tabsConfig = {};
+      $scope.tabsConfig.showResuls = false;
+      Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+    };
+    ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
+      $scope.create();
+    });
+    ActionsHandler.onActionFired('updateUser', $scope, function (action, args) {
+      $scope.update();
+    });
+    ActionsHandler.onActionFired('editUser', $scope, function (action, args) {
+      $location.path('manage-users/' + $scope.manageUser._id + '/edit');
+    });
+    ActionsHandler.onActionFired('deleteUser', $scope, function (action, args) {
+      $scope.remove();
+    });
+    ActionsHandler.onActionFired('searchUser', $scope, function (action, args) {
+      $scope.search(function () {
+        $scope.tabsConfig.showResults = true;
+      });
+    });
   }
 ]);'use strict';
 //Manage users service used to communicate Manage users REST endpoints
@@ -585,6 +3925,7 @@ angular.module('patients').run([
     Menus.addMenuItem('topbar', 'Patients', 'patients', 'dropdown', '/patients(/create)?', false, 2);
     Menus.addSubMenuItem('topbar', 'patients', 'List Patients', 'patients', '/patients', false, 'list_patients', 0);
     Menus.addSubMenuItem('topbar', 'patients', 'New Patient', 'patients/create', '/patients/create', false, 'create_patient', 1);
+    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'search_patients', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -595,19 +3936,28 @@ angular.module('patients').config([
     $stateProvider.state('listPatients', {
       url: '/patients',
       templateUrl: 'modules/patients/views/list-patients.client.view.html',
-      action: 'list_patients'
+      action: 'list_patients',
+      title: 'Patients'
     }).state('createPatient', {
       url: '/patients/create',
       templateUrl: 'modules/patients/views/create-patient.client.view.html',
-      action: 'create_patient'
+      action: 'create_patient',
+      title: 'New Patient'
+    }).state('searchPatients', {
+      url: '/patients/search',
+      templateUrl: 'modules/patients/views/search-patients.client.view.html',
+      action: 'search_patients',
+      title: 'Search Patients'
     }).state('viewPatient', {
       url: '/patients/:patientId',
       templateUrl: 'modules/patients/views/view-patient.client.view.html',
-      action: 'view_patient'
+      action: 'view_patient',
+      title: 'View Patient'
     }).state('editPatient', {
       url: '/patients/:patientId/edit',
       templateUrl: 'modules/patients/views/edit-patient.client.view.html',
-      action: 'edit_patient'
+      action: 'edit_patient',
+      title: 'Edit Patient'
     });
   }
 ]);'use strict';
@@ -616,18 +3966,19 @@ angular.module('patients').controller('PatientsController', [
   '$scope',
   '$stateParams',
   '$location',
-  'Authentication',
   'Patients',
   'Logger',
   'lodash',
   'moment',
   '$modal',
   '$upload',
-  function ($scope, $stateParams, $location, Authentication, Patients, Logger, lodash, Moment, $modal, $upload) {
-    $scope.authentication = Authentication;
-    $scope._ = lodash;
-    $scope.Moment = Moment;
-    $scope.genders = [
+  'ActionsHandler',
+  'Toolbar',
+  function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+    $scope.configObj = {};
+    $scope.configObj._ = lodash;
+    $scope.configObj.Moment = Moment;
+    $scope.configObj.genders = [
       {
         _id: 'male',
         name: 'Male'
@@ -637,8 +3988,19 @@ angular.module('patients').controller('PatientsController', [
         name: 'Female'
       }
     ];
-    $scope.photo = null;
-    //$scope.photoCss = "{'background-image': 'url('+$scope.photo+')'}";
+    $scope.configObj.photo = null;
+    $scope.configObj.age = null;
+    $scope.configObj.patient_genders = [];
+    $scope.configObj.maxDate = new Moment();
+    $scope.configObj.minDate = new Moment().subtract(150, 'years');
+    $scope.configObj.dateOptions = {
+      formatYear: 'yyyy',
+      startingDay: 6
+    };
+    $scope.configObj.format = 'yyyy/MM/dd';
+    $scope.configObj.opened = false;
+    $scope.configObj.photoCss = null;
+    $scope.configObj.personalPhotoPath = null;
     //region Date functions
     $scope.today = function () {
       $scope.patient.birthDate = new Moment();
@@ -646,23 +4008,16 @@ angular.module('patients').controller('PatientsController', [
     $scope.clear = function () {
       $scope.patient.birthDate = null;
     };
-    $scope.maxDate = new Moment();
-    $scope.minDate = new Moment().subtract(150, 'years');
     $scope.openDatePicker = function ($event) {
       $event.preventDefault();
       $event.stopPropagation();
-      $scope.opened = true;
+      $scope.configObj.opened = true;
     };
-    $scope.dateOptions = {
-      formatYear: 'yyyy',
-      startingDay: 6
-    };
-    $scope.format = 'yyyy/MM/dd';
-    $scope.ageChanged = function (age) {
-      $scope.patient.birthDate = new Moment().subtract(age, 'years').format('YYYY/MM/DD');
+    $scope.ageChanged = function (newAge) {
+      $scope.patient.birthDate = new Moment().subtract(newAge, 'years').format('YYYY/MM/DD');
     };
     $scope.birthDateChanged = function (birthDate) {
-      $scope.patient.age = new Moment().diff(new Moment(birthDate), 'years');
+      $scope.configObj.age = new Moment().diff(new Moment(birthDate), 'years');
     };
     //endregion Date Functions
     //region Helper functions
@@ -682,7 +4037,6 @@ angular.module('patients').controller('PatientsController', [
     });
     //endregion Helper functions
     //region Photo
-    //$scope.items = ['item1', 'item2', 'item3'];
     $scope.openModal = function (size) {
       var modalInstance = $modal.open({
           templateUrl: 'myModalContent.html',
@@ -695,17 +4049,15 @@ angular.module('patients').controller('PatientsController', [
           }
         });
       modalInstance.result.then(function (finalPhoto) {
-        //console.log(finalPhoto);
-        $scope.photo = finalPhoto;
-        $scope.photoCss = '{\'background-image\': \'url(\'+$scope.photo+\')\'}';
+        $scope.configObj.photo = finalPhoto;
+        $scope.configObj.photoCss = '{\'background-image\': \'url(\'+$scope.configObj.photo+\')\'}';
       }, function () {
       });
     };
     //endregion Photo
     //select Gender
     $scope.toggleGenderSelection = function (gender_id) {
-      //console.log(role_id);
-      $scope.patient.gender = gender_id;  //console.log($scope.manageUser._role);
+      $scope.patient.gender = gender_id;
     };
     var dataURItoBlob = function (dataURI) {
       var binary = atob(dataURI.split(',')[1]);
@@ -720,19 +4072,18 @@ angular.module('patients').controller('PatientsController', [
     $scope.create = function () {
       // Create new Patient object
       var patient = angular.fromJson(angular.toJson($scope.patient));
-      if ($scope.photo) {
+      if ($scope.configObj.photo) {
         lodash.extend(patient, { personalPhoto: true });
       }
-      var blob = $scope.photo ? dataURItoBlob($scope.photo) : null;
+      var blob = $scope.configObj.photo ? dataURItoBlob($scope.configObj.photo) : null;
       $upload.upload({
         url: '/patients',
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' },
         data: patient,
-        file: blob,
-        fileName: 'personal-photo'
+        file: blob
       }).success(function (response, status) {
-        $location.path('patients/' + response.id);
+        $location.path('patients/' + response._id);
         if (response.warn) {
           Logger.warn(response.error.message, true);
         } else {
@@ -742,17 +4093,8 @@ angular.module('patients').controller('PatientsController', [
         // Clear form fields
         $scope.initOne();
       }).error(function (err) {
-        Logger.error(err, true);
-      });  // Redirect after save
-           /*patient.$save(function (response) {
-
-
-             }, function (errorResponse) {
-             ///log error message
-             Logger.error(errorResponse.data.message, true);
-
-             //$scope.error = errorResponse.data.message;
-             });*/
+        Logger.error(err.message, true);  //$scope.error = errorResponse.data.message;
+      });
     };
     // Remove existing Patient
     $scope.remove = function (patient) {
@@ -780,34 +4122,181 @@ angular.module('patients').controller('PatientsController', [
         });
       }
     };
+    //redirect to examination
+    $scope.examine = function () {
+      $location.path('examinations/create/' + $scope.patient._id);
+    };
     // Update existing Patient
     $scope.update = function () {
-      var patient = $scope.patient;
-      patient.$update(function () {
-        $location.path('patients/' + patient.id);
-        ///log success message
-        Logger.success('Patient updated successfully', true);
-      }, function (errorResponse) {
-        ///log error message
-        Logger.error(errorResponse.data.message, true);  //$scope.error = errorResponse.data.message;
+      var patient = angular.fromJson(angular.toJson($scope.patient));
+      if ($scope.configObj.photo) {
+        lodash.extend(patient, { personalPhoto: true });
+      }
+      var blob = $scope.configObj.photo ? dataURItoBlob($scope.configObj.photo) : null;
+      $upload.upload({
+        url: '/patients/' + patient._id,
+        method: 'PUT',
+        headers: { 'Content-Type': 'multipart/form-data' },
+        data: patient,
+        file: blob
+      }).success(function (response, status) {
+        $location.path('patients/' + response._id);
+        if (response.warn) {
+          Logger.warn(response.error.message, true);
+        } else {
+          ///log success message
+          Logger.success('Patient updated successfully', true);
+        }
+        // Clear form fields
+        $scope.initOne();
+      }).error(function (err) {
+        Logger.error(err.message, true);  //$scope.error = errorResponse.data.message;
       });
     };
     // Find a list of Patients
-    $scope.find = function () {
-      $scope.patients = Patients.query();
-    };
+    /*$scope.find = function () {
+            Patients.query(function (_patients) {
+                $scope.patients = _patients;
+            });
+
+        };*/
     // Find existing Patient
-    $scope.findOne = function () {
-      $scope.patient = Patients.get({ patientId: $stateParams.patientId }, function () {
-        if ($scope.patient.personalPhoto) {
-          var filePath = 'patients/personal-photo/' + $scope.patient.id;
-          $scope.patient.personalPhoto = filePath;
+    $scope.findOne = function (callback) {
+      var patient = Patients.get({ patientId: $stateParams.patientId }, function () {
+          $scope.patient = patient;
+          $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+          if ($scope.patient.personalPhoto) {
+            $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
+          }
+          if (callback) {
+            callback();
+          }
+        });
+    };
+    // Search existing patients
+    $scope.search = function (callback) {
+      var query = $scope.patient;
+      query.paginationConfig = {};
+      query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      Patients.query($scope.patient, function (_res) {
+        $scope.patients = _res.list;
+        if (callback) {
+          callback(_res.count);
         }
       });
     };
     // Find existing Patient
     $scope.initOne = function () {
       $scope.patient = new Patients({});
+    };
+    $scope.initCreate = function () {
+      $scope.initOne();
+      Toolbar.addToolbarCommand('savePatient', 'create_patient', 'Save', 'floppy-save', 0);
+    };
+    $scope.initEdit = function () {
+      $scope.findOne(function () {
+        Toolbar.addToolbarCommand('updatePatient', 'edit_patient', 'Save', 'floppy-save', 0);
+      });
+    };
+    $scope.initView = function () {
+      $scope.findOne(function () {
+        Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
+        Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+        Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
+        Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
+      });
+    };
+    $scope.initSearch = function () {
+      $scope.initOne();
+      $scope.tabsConfig = {};
+      $scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
+      Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+    };
+    $scope.initList = function () {
+      $scope.initOne();
+      $scope.tabsConfig = {};
+      $scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
+      $scope.fireSearch();
+    };
+    $scope.getShowPagination = function () {
+      return $scope.paginationConfig.totalItems > 0;
+    };
+    $scope.pageChanged = function () {
+      //console.log($scope.paginationConfig.currentPage);
+      $scope.fireSearch();
+    };
+    $scope.getNumOfPages = function () {
+      return $scope.paginationConfig.totalItems / $scope.paginationConfig.maxSize;
+    };
+    $scope.selectPageSizeOption = function (_option) {
+      if ($scope.isPageSizeOptionEnabled(_option)) {
+        $scope.paginationConfig.pageSize = _option;
+        $scope.fireSearch();
+      }
+    };
+    $scope.isPageSizeOptionEnabled = function (_option) {
+      var optionIndex = $scope.paginationConfig.pageSizeOptions.indexOf(_option);
+      if (optionIndex == 0) {
+        return true;
+      }
+      return $scope.paginationConfig.pageSizeOptions[optionIndex - 1] < $scope.paginationConfig.totalItems;
+    };
+    $scope.isPageSizeOptionSelecetd = function (_option) {
+      return $scope.paginationConfig.pageSize == _option;
+    };
+    ActionsHandler.onActionFired('savePatient', $scope, function (action, args) {
+      $scope.create();
+    });
+    ActionsHandler.onActionFired('updatePatient', $scope, function (action, args) {
+      $scope.update();
+    });
+    ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
+      $scope.examine();
+    });
+    ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
+      $location.path('examinations/' + $scope.patient._id);
+    });
+    ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
+      $location.path('patients/' + $scope.patient._id + '/edit');
+    });
+    ActionsHandler.onActionFired('deletePatient', $scope, function (action, args) {
+      $scope.remove();
+    });
+    ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+      $scope.fireSearch();
+    });
+    $scope.fireSearch = function () {
+      $scope.search(function (_count) {
+        $scope.tabsConfig.showResults = true;
+        $scope.paginationConfig.totalItems = _count;
+        $scope.paginationConfig.showPagination = $scope.getShowPagination();
+        $scope.paginationConfig.numPages = $scope.getNumOfPages();
+      });
     };
   }
 ]);
@@ -817,8 +4306,8 @@ angular.module('patients').controller('ModalInstanceCtrl', [
   'items',
   'Logger',
   function ($scope, $modalInstance, items, Logger) {
-    //region Tabs
-    $scope.tabs = [
+    $scope.modalConfig = {};
+    $scope.modalConfig.tabs = [
       {
         active: true,
         disabled: false
@@ -832,104 +4321,86 @@ angular.module('patients').controller('ModalInstanceCtrl', [
         disabled: true
       }
     ];
-    //endregion Tabs
+    $scope.modalConfig.photoWidth = null;
+    $scope.modalConfig.photoHeight = null;
+    $scope.modalConfig.finalPhoto = null;
+    $scope.modalConfig.photos = [];
+    $scope.modalConfig.selectedPhoto = null;
+    $scope.modalConfig.inputImage = null;
+    $scope.modalConfig.webcamError = false;
+    //$scope.tabs = [
+    //  { active: true, disabled: false },
+    //  { active: false, disabled: false },
+    //  { active: false, disabled: true }
+    //];
+    //$scope.photoWidth = null;
+    //$scope.photoHeight = null;
+    //$scope.finalPhoto = null;
+    //$scope.photos = [];
+    //$scope.selectedPhoto = null;
+    //$scope.inputImage = null;
+    //$scope.webcamError = false;
     var _video = null;
-    $scope.photos = [];
     $scope.onSuccess = function (videoElem) {
       _video = videoElem;
     };
-    $scope.photoWidth = null;
-    $scope.photoHeight = null;
-    $scope.finalPhoto = null;
     var getVideoData = function getVideoData() {
       var hiddenCanvas = document.createElement('canvas');
       hiddenCanvas.width = _video.width;
       hiddenCanvas.height = _video.height;
       var ctx = hiddenCanvas.getContext('2d');
       ctx.drawImage(_video, 0, 0, _video.width, _video.height);
-      $scope.photoWidth = document.defaultView.getComputedStyle(_video, '').getPropertyValue('width');
-      $scope.photoHeight = document.defaultView.getComputedStyle(_video, '').getPropertyValue('height');
-      return hiddenCanvas.toDataURL();  //ctx.getImageData(0, 0,_video.width, _video.height);
+      $scope.modalConfig.photoWidth = document.defaultView.getComputedStyle(_video, '').getPropertyValue('width');
+      $scope.modalConfig.photoHeight = document.defaultView.getComputedStyle(_video, '').getPropertyValue('height');
+      return hiddenCanvas.toDataURL();
     };
     $scope.makeSnapshot = function makeSnapshot() {
-      //console.log('makeSnapshot');
       if (_video) {
-        //console.log(_video);
         var idata = getVideoData();
-        //console.log(idata);
-        $scope.photos.push({ src: idata });
+        $scope.modalConfig.photos.push({ src: idata });
       }
     };
-    $scope.selectedPhoto = null;
     var img = new Image();
     img.onload = function () {
       var width = this.width;
       var height = this.height;
-      var src = this.src;  /*$scope.photoWidth = width;
-         $scope.photoHeight = height;
-         $scope.selectPhoto(src);*/
-                           //$scope.photoWidth = width;
-                           //$scope.photoHeight = height;
-                           /*$scope.$apply(function($scope) {
-         $scope.photoWidth = width;
-         $scope.photoHeight = height;
-
-         //$scope.selectPhoto(src);
-         });*/
+      var src = this.src;
     };
-    $scope.inputImage = null;
     $scope.inputPhoto = function (files) {
       var file = files[0];
-      //console.log(file);
       var reader = new FileReader();
       reader.onload = function (evt) {
-        //console.log(evt);
         $scope.$apply(function ($scope) {
-          $scope.inputImage = evt.target.result;
-          img.src = evt.target.result;  //$scope.selectedPhoto=evt.target.result;
-                                        //console.log(evt.target.result);
-                                        //$scope.tabs[2].disabled=false;
-                                        //$scope.tabs[2].active=true;
+          $scope.modalConfig.inputImage = evt.target.result;
+          img.src = evt.target.result;
         });
       };
       reader.readAsDataURL(file);
     };
     $scope.selectInputPhoto = function () {
-      $scope.photoWidth = img.width;
-      $scope.photoHeight = img.height;
-      console.log($scope.photoWidth);
-      console.log($scope.photoHeight);
-      $scope.tabs[2].disabled = false;  //$scope.tabs[2].active=true;
+      $scope.modalConfig.photoWidth = img.width;
+      $scope.modalConfig.photoHeight = img.height;
+      $scope.modalConfig.tabs[2].disabled = false;
     };
     $scope.selectPhoto = function (photo) {
-      //console.log('select photop');
-      //console.log($scope.photoWidth);
-      //console.log($scope.photoHeight);
-      $scope.selectedPhoto = photo;
-      $scope.tabs[2].disabled = false;
-      $scope.tabs[2].active = true;
+      $scope.modalConfig.selectedPhoto = photo;
+      $scope.modalConfig.tabs[2].disabled = false;
+      $scope.modalConfig.tabs[2].active = true;
     };
-    /*$scope.savePhoto=function(media){
-     console.log('media\n\r');
-     console.log(media);
-     };*/
-    $scope.webcamError = false;
     $scope.onCamError = function (err) {
       $scope.$apply(function () {
-        $scope.webcamError = err;
+        $scope.modalConfig.webcamError = err;
       });
     };
     $scope.photoCropped = function ($dataURI) {
-      $scope.finalPhoto = $dataURI;  //console.log($dataURI);
+      $scope.modalConfig.finalPhoto = $dataURI;
     };
     $scope.ok = function () {
-      //console.log($scope.finalPhoto);
-      $modalInstance.close($scope.finalPhoto);
+      $modalInstance.close($scope.modalConfig.finalPhoto);
     };
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
-    };  //alert(err);
-        //Logger.error(err,true);
+    };
   }
 ]);
 angular.module('patients').directive('backImg', function () {
@@ -957,9 +4428,28 @@ angular.module('patients').directive('heightCss', function () {
 angular.module('patients').factory('Patients', [
   '$resource',
   function ($resource) {
-    return $resource('patients/:patientId', { patientId: '@id' }, { update: { method: 'PUT' } });
+    return $resource('patients/:patientId', { patientId: '@_id' }, {
+      update: { method: 'PUT' },
+      query: { isArray: false }
+    });
   }
-]);'use strict';
+]);  /*
+angular.module('patients').factory('Patient',function(){
+    var currentPatient = null;
+
+    var setCurrentPatient = function(patient) {
+        currentPatient=patient;
+    };
+
+    var getCurrentPatient = function(){
+        return currentPatient;
+    };
+
+    return {
+        setCurrentPatient: setCurrentPatient,
+        getCurrentPatient: getCurrentPatient
+    };
+});*/'use strict';
 // Configuring the Articles module
 angular.module('roles').run([
   'Menus',
@@ -1024,27 +4514,32 @@ angular.module('roles').config([
       url: '/roles',
       templateUrl: 'modules/roles/views/list-roles.client.view.html',
       requiresLogin: true,
-      action: 'list_roles'
+      action: 'list_roles',
+      title: 'Roles'
     }).state('createRole', {
       url: '/roles/create',
       templateUrl: 'modules/roles/views/create-role.client.view.html',
       requiresLogin: true,
-      action: 'create_role'
+      action: 'create_role',
+      title: 'New Role'
     }).state('searchRoles', {
       url: '/roles/search',
       templateUrl: 'modules/roles/views/search-roles.client.view.html',
       requiresLogin: true,
-      action: 'search_roles'
+      action: 'search_roles',
+      title: 'Search Roles'
     }).state('editRole', {
       url: '/roles/:roleId/edit',
       templateUrl: 'modules/roles/views/edit-role.client.view.html',
       requiresLogin: true,
-      action: 'edit_role'
+      action: 'edit_role',
+      title: 'Edit Role'
     }).state('viewRole', {
       url: '/roles/:roleId',
       templateUrl: 'modules/roles/views/view-role.client.view.html',
       requiresLogin: true,
-      action: 'view_role'
+      action: 'view_role',
+      title: 'View Role'
     });
   }
 ]);'use strict';
@@ -1053,26 +4548,19 @@ angular.module('roles').controller('RolesController', [
   '$scope',
   '$stateParams',
   '$location',
-  'Authentication',
   'Roles',
   'Module',
   'Action',
-  'lodash',
   'Logger',
-  function ($scope, $stateParams, $location, Authentication, Roles, Module, Action, lodash, Logger) {
+  'ActionsHandler',
+  'Toolbar',
+  'lodash',
+  function ($scope, $stateParams, $location, Roles, Module, Action, Logger, ActionsHandler, Toolbar, lodash) {
     /**
          * Init variables
          */
-    $scope.authentication = Authentication;
     $scope._ = lodash;
-    $scope.modules = $scope.modules || Module.query();
-    $scope.all_actions = $scope.all_actions || Action.query();
-    $scope.selected_module = $scope.selected_module || null;
-    $scope.actions = $scope.actions || [];
-    $scope.role_actions = $scope.role_actions || [];
-    /**
-         * Helper functions
-         */
+    //region Helper functions
     lodash.mixin({
       'findByValues': function (collection, property, values) {
         return lodash.filter(collection, function (item) {
@@ -1087,35 +4575,83 @@ angular.module('roles').controller('RolesController', [
         });
       }
     });
-    $scope.toggleModuleSelection = function toggleSelection(module) {
-      $scope.selected_module = module;
-      $scope.actions = lodash.where($scope.all_actions, { _module: module._id });
+    //endregion Helper functions
+    /*var _modules = $scope.modules || Module.query(function () {
+         $scope.modules = _modules
+         });
+         $scope.selected_modules = [];
+         var _all_actions = $scope.all_actions || Action.query(function () {
+         $scope.all_actions = _all_actions;
+         });
+         $scope.selected_module = $scope.selected_module || null;
+         $scope.selected_action = $scope.selected_action || null;
+         $scope.actions = $scope.actions || [];
+         */
+    /*$scope.role_actions = $scope.role_actions || [];*/
+    /*
+         $scope.role_actions = [];*/
+    $scope.initActions = function (callback) {
+      $scope.actionsObj = {};
+      $scope.actionsObj.selected_modules = [];
+      $scope.actionsObj.actions = [];
+      $scope.actionsObj.role_actions = [];
+      $scope.actionsObj.selected_module = null;
+      $scope.actionsObj.selected_action = null;
+      Module.query(function (_modules) {
+        $scope.actionsObj.modules = _modules;
+        Action.query(function (_all_actions) {
+          $scope.actionsObj.all_actions = _all_actions;
+          callback();
+        });
+      });
     };
-    $scope.toggleActionSelection = function toggleSelection(action) {
-      var exists = lodash.contains($scope.role_actions, action);
-      if (exists) {
-        lodash.remove($scope.role_actions, action);
-      } else {
-        $scope.role_actions.push(action);
+    $scope.$watch('actionsObj.selected_module', function (value) {
+      if ($scope.actionsObj.selected_module) {
+        $scope.actionsObj.actions = lodash.where($scope.actionsObj.all_actions, { '_module': $scope.actionsObj.selected_module._id });
       }
+    }, true);
+    $scope.$watch('actionsObj.role_actions', function (value) {
+      $scope.actionsObj.selected_modules = [];
+      if ($scope.actionsObj.role_actions) {
+        for (var i = 0; i < $scope.actionsObj.role_actions.length; i++) {
+          var actionModule = lodash.where($scope.actionsObj.modules, { '_id': $scope.actionsObj.role_actions[i]._module });
+          if (!lodash.contains($scope.actionsObj.selected_modules, actionModule[0])) {
+            $scope.actionsObj.selected_modules.push(actionModule[0]);
+          }
+        }
+      }
+    }, true);
+    $scope.filterModuleActions = function callbackfn(value, index, array) {
+      if (array && $scope.actionsObj.selected_module) {
+        if (array[index]._module == $scope.actionsObj.selected_module._id)
+          return true;
+      }
+      return false;
+    };
+    $scope.initOne = function (callback) {
+      $scope.initActions(function () {
+        $scope.role = new Roles({});
+        if (callback) {
+          callback();
+        }
+      });
     };
     // Create new Role
     $scope.create = function () {
       // Create new Role object
-      var role = new Roles({
-          name: this.name,
-          _actions: this.role_actions
-        });
+      var _role = $scope.role;
+      _role._actions = $scope.actionsObj.role_actions;
+      /*var role = new Roles({
+             name: this.name,
+             _actions: this.role_actions
+             });*/
       // Redirect after save
-      role.$save(function (response) {
+      _role.$save(function (response) {
         $location.path('roles/' + response._id);
         ///log success message
         Logger.success('Role created successfully', true);
         /// Clear form fields
-        $scope.name = '';
-        $scope.selected_module = null;
-        $scope.actions = [];
-        $scope.role_actions = [];
+        $scope.initOne();
       }, function (errorResponse) {
         ///log error message
         Logger.error(errorResponse.data.message, true);  //$scope.error = errorResponse.data.message;
@@ -1149,9 +4685,9 @@ angular.module('roles').controller('RolesController', [
     };
     // Update existing Role
     $scope.update = function () {
-      var role = $scope.role;
-      role._actions = $scope.role_actions;
-      role.$update(function () {
+      var _role = $scope.role;
+      role._actions = $scope.actionsObj.role_actions;
+      _role.$update(function () {
         $location.path('roles/' + role._id);
         ///log success message
         Logger.success('Role updated successfully', true);
@@ -1160,16 +4696,92 @@ angular.module('roles').controller('RolesController', [
         Logger.error(errorResponse.data.message, true);  //$scope.error = errorResponse.data.message;
       });
     };
+    // Search existing Roles
+    $scope.search = function (callback) {
+      var role = $scope.role;
+      role._actions = $scope.actionsObj.role_actions;
+      if ((!role.name || role.name == '' || role.name == undefined) && (!role._actions || role._actions.length == 0)) {
+        Logger.error('Please Enter Search Criteria', true);
+      } else {
+        //var searchCriteria = {name:$scope.name,_actions:$scope.role._actions};
+        Roles.query(role, function (_roles) {
+          $scope.roles = _roles;
+          callback();
+        });
+      }
+    };
     // Find a list of Roles
     $scope.find = function () {
-      $scope.roles = Roles.query();
-    };
-    // Find existing Role
-    $scope.findOne = function () {
-      $scope.role = Roles.get({ roleId: $stateParams.roleId }, function () {
-        $scope.role_actions = lodash.findByValues($scope.all_actions, '_id', $scope.role._actions);
+      Roles.query(function (_roles) {
+        $scope.roles = _roles;
       });
     };
+    // Find existing Role
+    $scope.findOne = function (callback) {
+      Roles.get({ roleId: $stateParams.roleId }, function (_role) {
+        console.log(_role);
+        $scope.role = _role;
+        $scope.actionsObj.role_actions = lodash.findByValues($scope.actionsObj.all_actions, '_id', $scope.role._actions);
+        for (var i = 0; i < $scope.actionsObj.modules.length; i++) {
+          if (lodash.where($scope.role._actions, { '_module': $scope.actionsObj.modules[i]._id }).length > 0) {
+            $scope.actionsObj.selected_module = $scope.actionsObj.modules[i];
+            break;
+          }
+        }
+        if (callback) {
+          callback();
+        }
+      });
+    };
+    $scope.initCreate = function () {
+      $scope.initOne(function () {
+        Toolbar.addToolbarCommand('saveRole', 'create_role', 'Save', 'floppy-save', 0);
+      });
+    };
+    $scope.initEdit = function () {
+      $scope.initActions(function () {
+        $scope.findOne(function () {
+          Toolbar.addToolbarCommand('updateRole', 'edit_role', 'Save', 'floppy-save', 0);
+        });
+      });
+    };
+    $scope.initView = function () {
+      $scope.initActions(function () {
+        $scope.findOne(function () {
+          Toolbar.addToolbarCommand('editRole', 'edit_role', 'Edit', 'edit', 1);
+          Toolbar.addToolbarCommand('deleteRole', 'delete_role', 'Delete', 'trash', 2, null, 'Are you sure to delete role "' + $scope.role.name + '"?');
+        });
+      });
+    };
+    $scope.initSearch = function () {
+      $scope.initOne(function () {
+        $scope.tabsConfig = {};
+        $scope.tabsConfig.showResuls = false;
+        Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+      });
+    };
+    $scope.initList = function () {
+      $scope.initActions(function () {
+        $scope.find();
+      });
+    };
+    ActionsHandler.onActionFired('saveRole', $scope, function (action, args) {
+      $scope.create();
+    });
+    ActionsHandler.onActionFired('updateRole', $scope, function (action, args) {
+      $scope.update();
+    });
+    ActionsHandler.onActionFired('editRole', $scope, function (action, args) {
+      $location.path('roles/' + $scope.role._id + '/edit');
+    });
+    ActionsHandler.onActionFired('deleteRole', $scope, function (action, args) {
+      $scope.remove();
+    });
+    ActionsHandler.onActionFired('searchRole', $scope, function (action, args) {
+      $scope.search(function () {
+        $scope.tabsConfig.showResults = true;
+      });
+    });
   }
 ]);'use strict';
 //Roles service used to communicate Roles REST endpoints
@@ -1185,9 +4797,13 @@ angular.module('security').run([
   'Authentication',
   '$location',
   'lodash',
-  function ($rootScope, Authentication, $location, lodash) {
+  'CoreProperties',
+  'Toolbar',
+  function ($rootScope, Authentication, $location, lodash, CoreProperties, Toolbar) {
     //console.log($rootScope.authentication.user);
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+      CoreProperties.setPageSubTitle(null);
+      Toolbar.clearToolbarCommands();
       if (toState.requiresLogin) {
         if (!Authentication.user) {
           $location.path('/signin');

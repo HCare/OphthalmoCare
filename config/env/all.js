@@ -21,9 +21,9 @@ module.exports = {
                 'public/lib/angular-ui-select/dist/select.css'
 			],
 			js: [
-                'public/lib/ng-file-upload/angular-file-upload-shim.min.js',
+                'public/lib/ng-file-upload/angular-file-upload-shim.js',
 				'public/lib/angular/angular.js',
-                'public/lib/ng-file-upload/angular-file-upload.min.js',
+                'public/lib/ng-file-upload/angular-file-upload.js',
 				'public/lib/angular-resource/angular-resource.js', 
 				'public/lib/angular-cookies/angular-cookies.js', 
 				'public/lib/angular-animate/angular-animate.js', 
@@ -34,7 +34,7 @@ module.exports = {
                 'public/lib/tv4/tv4.js',
                 'public/lib/objectpath/lib/ObjectPath.js',
                 'public/lib/angular-schema-form/dist/schema-form.js',
-                'public/lib/angular-schema-form/dist/bootstrap-decorator.min.js',
+                'public/lib/angular-schema-form/dist/bootstrap-decorator.js',
                 'public/lib/angular-schema-form-ui-select/bootstrap-ui-select.js',
 				'public/lib/angular-ui-router/release/angular-ui-router.js',
 				'public/lib/angular-ui-utils/ui-utils.js',
