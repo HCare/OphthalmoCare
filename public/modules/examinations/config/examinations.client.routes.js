@@ -12,7 +12,7 @@ angular.module('examinations').config(['$stateProvider',
             title:'Examinations'
 		}).
         state('patientExaminations', {
-            url: '/examinations/:patientId',
+            url: '/examinations/patient/:patientId',
             templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
             action: 'search_examinations',
             title:'Patient Examinations'

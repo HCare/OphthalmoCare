@@ -148,7 +148,8 @@ function getSearchQuery(property){
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
-                        newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
+                        //newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
+                        newQuery[propKey] =  queueValues[0];
                     }
                     if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
                         newQuery[propKey] = {$all: queueValues[0]};
@@ -180,25 +181,31 @@ exports.search = function(req,res){
     var newRequest = getSearchQuery(req.query);
     console.log(newRequest);
 
+    var obj = { _patient: '556a015c3cc50f7012217693'};
     Examination.find(newRequest).populate('_patient').populate('created._user').exec(function (err, examinations) {
         if (err) {
+            console.log('error');
+            console.log(err);
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            Examination.find(req.query).count(function (err, _count) {
+            /*Examination.find(req.query).count(function (err, _count) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
                     });
                 }
                 else {
-                    //console.log(examinations)
+                    console.log(examinations);
                     res.jsonp({list: examinations, count: _count});
                 }
 
-            });
-
+            });*/
+            console.log(examinations);
+            //console.log(_count);
+            //res.jsonp({list: examinations, count: _count});
+            res.jsonp({list: examinations});
         }
     });
 
