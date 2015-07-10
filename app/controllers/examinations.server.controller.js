@@ -148,8 +148,15 @@ function getSearchQuery(property){
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
-                        //newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
-                        newQuery[propKey] =  queueValues[0];
+                        var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+                        if(checkForHexRegExp.test(queueValues[0]) == true){  // check if field is ObjectId
+                            newQuery[propKey] =  queueValues[0];
+                        }
+                        else{
+                            newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
+                        }
+
+
                     }
                     if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
                         newQuery[propKey] = {$all: queueValues[0]};

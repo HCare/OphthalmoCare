@@ -2269,7 +2269,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         $scope.initEdit = function () {
             $scope.findOne(function () {
-                CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+                CoreProperties.setPageSubTitle($scope.examination._patient.fullName + " " + $scope.examination.created.time);
+
                 Toolbar.addToolbarCommand('updateExamination', 'edit_examination', 'Save', 'floppy-save', 0);
             });
         };
@@ -2277,7 +2278,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.initView = function () {
             $scope.schema.readonly = true;
             $scope.findOne(function () {
-                CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+                CoreProperties.setPageSubTitle($scope.examination._patient.fullName + " " + $scope.examination.created.time);
                 Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
                 Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination ?');
             });
