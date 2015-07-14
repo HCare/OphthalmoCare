@@ -642,7 +642,7 @@ angular.module('examinations').run([
     // Set top bar menu items
     Menus.addMenuItem('topbar', 'Examinations', 'examinations', 'dropdown', '/examinations(/create)?', false, 3);
     Menus.addSubMenuItem('topbar', 'examinations', 'List Examinations', 'examinations', '/examinations', false, 'list_examinations', 0);
-    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'search_examinations', 1);
+    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'list_examinations', 1);
   }
 ]);'use strict';
 //Setting up route
@@ -658,12 +658,12 @@ angular.module('examinations').config([
     }).state('patientExaminations', {
       url: '/examinations/patient/:patientId',
       templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Patient Examinations'
     }).state('searchExaminations', {
       url: '/examinations/search',
       templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Search Examinations'
     }).state('createExamination', {
       url: '/examinations/create/:patientId',
@@ -3732,7 +3732,7 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     $scope.initSearch = function () {
       $scope.initOne();
-      Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchExaminations', 'list_examinations', 'Search', 'search', 0);
     };
     ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
       $scope.onSubmit($scope.forms.examinationForm);
@@ -3774,7 +3774,7 @@ angular.module('manage-users').run([
     Menus.addMenuItem('topbar', 'Users', 'manage-users', 'dropdown', '/manage-users(/create)?', false, 1);
     Menus.addSubMenuItem('topbar', 'manage-users', 'List users', 'manage-users', '/manage-users', false, 'list_users', 0);
     Menus.addSubMenuItem('topbar', 'manage-users', 'New user', 'manage-users/create', '/manage-users/create', false, 'create_user', 1);
-    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'search_users', 2);
+    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'list_users', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -3795,7 +3795,7 @@ angular.module('manage-users').config([
     }).state('searchManageUser', {
       url: '/manage-users/search',
       templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
-      action: 'search_users',
+      action: 'list_users',
       title: 'Search Users'
     }).state('viewManageUser', {
       url: '/manage-users/:manageUserId',
@@ -3958,7 +3958,7 @@ angular.module('manage-users').controller('ManageUsersController', [
       $scope.initOne();
       $scope.tabsConfig = {};
       $scope.tabsConfig.showResuls = false;
-      Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchUser', 'list_users', 'Search', 'search', 0);
     };
     ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
       $scope.create();
@@ -4003,7 +4003,7 @@ angular.module('patients').run([
     Menus.addMenuItem('topbar', 'Patients', 'patients', 'dropdown', '/patients(/create)?', false, 2);
     Menus.addSubMenuItem('topbar', 'patients', 'List Patients', 'patients', '/patients', false, 'list_patients', 0);
     Menus.addSubMenuItem('topbar', 'patients', 'New Patient', 'patients/create', '/patients/create', false, 'create_patient', 1);
-    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'search_patients', 2);
+    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'list_patients', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4024,7 +4024,7 @@ angular.module('patients').config([
     }).state('searchPatients', {
       url: '/patients/search',
       templateUrl: 'modules/patients/views/search-patients.client.view.html',
-      action: 'search_patients',
+      action: 'list_patients',
       title: 'Search Patients'
     }).state('viewPatient', {
       url: '/patients/:patientId',
@@ -4280,7 +4280,7 @@ angular.module('patients').controller('PatientsController', [
     $scope.initView = function () {
       $scope.findOne(function () {
         Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-        Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+        Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
         Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
         Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
       });
@@ -4301,7 +4301,7 @@ angular.module('patients').controller('PatientsController', [
         100
       ];
       $scope.paginationConfig.showPagination = false;
-      Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
     };
     $scope.initList = function () {
       $scope.initOne();
@@ -4536,7 +4536,7 @@ angular.module('roles').run([
     Menus.addMenuItem('topbar', 'Roles', 'roles', 'dropdown', '/roles(/create)?(/search)?', false, 0);
     Menus.addSubMenuItem('topbar', 'roles', 'List Roles', 'roles', '/roles', false, 'list_roles', 0);
     Menus.addSubMenuItem('topbar', 'roles', 'New Role', 'roles/create', '/roles/create', false, 'create_role', 1);
-    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'search_roles', 2);
+    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'list_roles', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4604,7 +4604,7 @@ angular.module('roles').config([
       url: '/roles/search',
       templateUrl: 'modules/roles/views/search-roles.client.view.html',
       requiresLogin: true,
-      action: 'search_roles',
+      action: 'list_roles',
       title: 'Search Roles'
     }).state('editRole', {
       url: '/roles/:roleId/edit',
@@ -4835,7 +4835,7 @@ angular.module('roles').controller('RolesController', [
       $scope.initOne(function () {
         $scope.tabsConfig = {};
         $scope.tabsConfig.showResuls = false;
-        Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+        Toolbar.addToolbarCommand('searchRole', 'list_roles', 'Search', 'search', 0);
       });
     };
     $scope.initList = function () {

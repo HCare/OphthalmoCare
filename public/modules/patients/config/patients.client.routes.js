@@ -20,7 +20,7 @@ angular.module('patients').config(['$stateProvider',
             state('searchPatients', {
                 url: '/patients/search',
                 templateUrl: 'modules/patients/views/search-patients.client.view.html',
-                action: 'search_patients',
+                action: 'list_patients',
                 title:'Search Patients'
             }).
             state('viewPatient', {
