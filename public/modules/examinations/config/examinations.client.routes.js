@@ -14,13 +14,13 @@ angular.module('examinations').config(['$stateProvider',
         state('patientExaminations', {
             url: '/examinations/patient/:patientId',
             templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
-            action: 'search_examinations',
+            action: 'list_examinations',
             title:'Patient Examinations'
             }).
 		state('searchExaminations', {
 			url: '/examinations/search',
 			templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
-			action: 'search_examinations',
+			action: 'list_examinations',
 			title:'Search Examinations'
 		}).
 		state('createExamination', {

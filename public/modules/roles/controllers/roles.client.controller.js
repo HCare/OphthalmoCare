@@ -242,7 +242,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             $scope.initOne(function(){
                 $scope.tabsConfig = {};
                 $scope.tabsConfig.showResuls = false;
-                Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+                Toolbar.addToolbarCommand('searchRole', 'list_roles', 'Search', 'search', 0);
             });
         };
 

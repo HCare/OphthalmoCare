@@ -68,7 +68,7 @@ angular.module('roles').config(['$stateProvider',
                 url: '/roles/search',
                 templateUrl: 'modules/roles/views/search-roles.client.view.html',
                 requiresLogin: true,
-                action: 'search_roles',
+                action: 'list_roles',
                 title:'Search Roles'
             }).
             state('editRole', {
