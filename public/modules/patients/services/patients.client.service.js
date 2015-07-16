@@ -12,11 +12,11 @@ angular.module('patients').factory('Patients', ['$resource',
           query:{
               isArray:false
           }
-        /*,
+        ,
             search:{
                 method: 'GET',
                 url:'patients/search'
-            }*/
+            }
 		});
 	}
 ]);

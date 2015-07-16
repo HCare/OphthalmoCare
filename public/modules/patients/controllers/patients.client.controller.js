@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'ActionsHandler', 'Toolbar',
-    function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients','CoreProperties', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
 
         $scope.configObj = {};
         $scope.configObj._ = lodash;
@@ -223,14 +223,16 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Find existing Patient
         $scope.findOne = function (callback) {
-            var patient = Patients.get({
+            Patients.get({
                 patientId: $stateParams.patientId
-            }, function () {
+            }, function (patient) {
                 $scope.patient = patient;
+                CoreProperties.setPageSubTitle(patient.fullName);
                 $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if ($scope.patient.personalPhoto) {
                     $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
                 }
+
                 if (callback) {
                     callback();
                 }
@@ -243,7 +245,14 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             query.paginationConfig = {};
             query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
             query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-            Patients.query($scope.patient, function (_res) {
+           /* Patients.query($scope.patient, function (_res) {
+                $scope.patients = _res.list;
+                if (callback) {
+                    callback(_res.count);
+                }
+            });*/
+
+            Patients.search($scope.patient, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);

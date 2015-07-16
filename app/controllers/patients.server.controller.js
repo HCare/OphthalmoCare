@@ -71,6 +71,7 @@ exports.read = function (req, res) {
 exports.update = function (req, res, next) {
     var patient = req.patient;
     patient = _.extend(patient, req.body);
+
     patient.updated._user = req.user;
     patient.updated.time = Date.now();
     var hasPhoto = patient.personalPhoto;
@@ -119,20 +120,120 @@ exports.delete = function (req, res) {
 /**
  * List of Patients
  */
+/*exports.list = function (req, res) {
+    Patient.find().exec(function (err, patients) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp(patients);
+        }
+    });
+};*/
+
 exports.list = function (req, res) {
-        Patient.find().exec(function (err, patients) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.jsonp(patients);
-            }
-        });
+    Patient.find().exec(function (err, patients) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.jsonp({list: patients});
+        }
+    });
 };
 
-exports.search=function(req,res){
-    console.log('search');
+function getSearchQuery(property){
+
+    var newQuery = {}; // the new query
+
+    var queue = [];
+    var queueValues = [];
+    var result = "";
+    var obj = null;
+
+    if(typeof property == 'string'){
+        try{
+            obj = JSON.parse(property);
+        }
+        catch(e){
+            result += " - " + property;
+        }
+    }
+    else{
+        obj = property;
+    }
+
+    if(obj != null && obj != undefined){
+        for(var key in obj){
+            queue.push(key);
+            queueValues.push(obj[key]);
+        }
+        while (queue.length > 0){
+            try{
+                var propKey = queue[0];
+                try{ // Object && Array
+                    var propValue = JSON.parse(queueValues[0]);
+                    if(Array.isArray(propValue) && propValue.length > 0){  // Array
+                        newQuery[propKey] = {$all: propValue};
+                    }
+                    else{  // Object
+                        for(var k in propValue){
+                            queue.push(propKey + "." + k);
+                            queueValues.push(propValue[k]);
+                        }
+                    }
+                }
+                catch(e){  // string && empty array && Already sent as array
+                    if(typeof queueValues[0] == 'string'){
+                        var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+                        if(checkForHexRegExp.test(queueValues[0]) == true){  // check if field is ObjectId
+                            newQuery[propKey] =  queueValues[0];
+                        }
+                        else{
+                            newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
+                        }
+
+
+                    }
+                    if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
+                        newQuery[propKey] = {$all: queueValues[0]};
+                    }
+                }
+            }
+            catch(e){
+            }
+            queue.shift();
+            queueValues.shift();
+        }
+    }
+
+    return newQuery;
+
+}
+
+exports.search = function(req,res){
+    console.log("***********************************");
+    console.log("returned Req.Query");
+    var newRequest = getSearchQuery(req.query);
+    Patient.find(newRequest).populate('_patient').populate('created._user').exec(function (err, patients) {
+        if (err) {
+            console.log('error');
+            console.log(err);
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            console.log(patients);
+            res.jsonp({list: patients});
+        }
+    });
+};
+
+/*
+exports.search = function (req, res) {
+    console.log('search search search');
     console.log(req.query);
     if (req.query && Object.keys(req.query).length > 0) {
         //fullName
@@ -188,28 +289,28 @@ exports.search=function(req,res){
         }
 
         //pagination
-        var pageNo=0, pageSize=10;
-        if(req.query.hasOwnProperty('paginationConfig')){
-            var paginationConfig=JSON.parse(req.query.paginationConfig);
-            pageNo=paginationConfig.pageNo-1;
-            pageSize=paginationConfig.pageSize;
+        var pageNo = 0, pageSize = 10;
+        if (req.query.hasOwnProperty('paginationConfig')) {
+            var paginationConfig = JSON.parse(req.query.paginationConfig);
+            pageNo = paginationConfig.pageNo - 1;
+            pageSize = paginationConfig.pageSize;
             delete req.query.paginationConfig;
         }
 
-        Patient.find(req.query).skip(pageNo*pageSize).limit(pageSize).exec(function (err, patients) {
+        Patient.find(req.query).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
             } else {
-                Patient.find(req.query).count(function(err, _count){
+                Patient.find(req.query).count(function (err, _count) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getErrorMessage(err)
                         });
                     }
-                        else{
-                        res.jsonp({list:patients, count:_count});
+                    else {
+                        res.jsonp({list: patients, count: _count});
                     }
 
                 });
@@ -217,7 +318,7 @@ exports.search=function(req,res){
             }
         });
     }
-};
+};*/
 
 /**
  * Patient middleware

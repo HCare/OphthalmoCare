@@ -2200,49 +2200,28 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         // findPatientExaminations
         $scope.findPatientExaminations = function (callback) {
             $scope.initOne();
-            //console.log($stateParams.patientId);
-            /*var patient = new Patients({});
-            patient.patientId=  $stateParams.patientId;*/
             $scope.examination._patient =  $stateParams.patientId;
-            //console.log($scope.examination);
-            var examination = new Examinations($scope.examination);
-            console.log(examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-           /* var examination = new Examinations($scope.examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-
             Patients.get({
-            patientId: $stateParams.patientId
+                patientId: $stateParams.patientId
             }, function (patient) {
-            if (patient) {
-            $scope.examination._patient = patient._id;
-            CoreProperties.setPageSubTitle(patient.fullName);
-            Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
-            Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
-            }
-            });*/
+                if (patient) {
+                    CoreProperties.setPageSubTitle(patient.fullName);
+                    var examination = new Examinations($scope.examination);
+                    Examinations.search(examination, function (_examinations) {
+                        $scope.examinations = _examinations.list;
+                        if(callback){
+                            callback();
+                        }
+                    });
+                }
+            });
         };
 
         // Search existing Examinations
         $scope.search = function (callback) {
             var examination = new Examinations($scope.examination);
-            //console.log($scope.examination);
-            console.log(examination);
             Examinations.search(examination, function (_examinations) {
                 $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
                 if(callback){
                     callback();
                 }
