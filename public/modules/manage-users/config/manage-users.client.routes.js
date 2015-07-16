@@ -20,7 +20,7 @@ angular.module('manage-users').config(['$stateProvider',
          state('searchManageUser', {
                 url: '/manage-users/search',
                 templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
-                action:'search_users',
+                action:'list_users',
                 title:'Search Users'
          }).
 		state('viewManageUser', {

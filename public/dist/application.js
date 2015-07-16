@@ -642,7 +642,7 @@ angular.module('examinations').run([
     // Set top bar menu items
     Menus.addMenuItem('topbar', 'Examinations', 'examinations', 'dropdown', '/examinations(/create)?', false, 3);
     Menus.addSubMenuItem('topbar', 'examinations', 'List Examinations', 'examinations', '/examinations', false, 'list_examinations', 0);
-    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'search_examinations', 1);
+    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'list_examinations', 1);
   }
 ]);'use strict';
 //Setting up route
@@ -656,14 +656,14 @@ angular.module('examinations').config([
       action: 'list_examinations',
       title: 'Examinations'
     }).state('patientExaminations', {
-      url: '/examinations/:patientId',
+      url: '/examinations/patient/:patientId',
       templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Patient Examinations'
     }).state('searchExaminations', {
       url: '/examinations/search',
       templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Search Examinations'
     }).state('createExamination', {
       url: '/examinations/create/:patientId',
@@ -1355,7 +1355,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Appearance',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal'
+              placeholder: 'Normal',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'eyeLid': {
               'title': 'Eye Lid',
@@ -1425,7 +1429,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Lacrimal System',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal'
+              placeholder: 'Normal',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'conjunctiva': {
               'title': 'Conjunctiva',
@@ -1591,13 +1599,21 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Iris',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal Color And Pattern'
+              placeholder: 'Normal Color And Pattern',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'pupil': {
               'title': 'Pupil',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'R R R Direct and Cons.'
+              placeholder: 'R R R Direct and Cons.',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'lens': {
               'title': 'Lens',
@@ -1719,7 +1735,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'EOM',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'bcva': {
               'title': 'BCVA',
@@ -1742,7 +1762,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Appearance',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal'
+              placeholder: 'Normal',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'eyeLid': {
               'title': 'Eye Lid',
@@ -1812,7 +1836,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Lacrimal System',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal'
+              placeholder: 'Normal',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'conjunctiva': {
               'title': 'Conjunctiva',
@@ -1978,13 +2006,21 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'Iris',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Normal Color And Pattern'
+              placeholder: 'Normal Color And Pattern',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'pupil': {
               'title': 'Pupil',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'R R R Direct and Cons.'
+              placeholder: 'R R R Direct and Cons.',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'lens': {
               'title': 'Lens',
@@ -2102,7 +2138,11 @@ angular.module('examinations').controller('ExaminationsController', [
               'title': 'EOM',
               'type': 'array',
               format: 'uiselect',
-              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions'
+              placeholder: 'Free Balanced Ocular Motility In The Sex Cardinal Directions',
+              items: [{
+                  value: 'test',
+                  label: 'Test'
+                }]
             },
             'va': {
               'title': 'V/A',
@@ -3613,9 +3653,47 @@ angular.module('examinations').controller('ExaminationsController', [
         }
       });
     };
+    // findPatientExaminations
+    $scope.findPatientExaminations = function (callback) {
+      $scope.initOne();
+      //console.log($stateParams.patientId);
+      /*var patient = new Patients({});
+            patient.patientId=  $stateParams.patientId;*/
+      $scope.examination._patient = $stateParams.patientId;
+      //console.log($scope.examination);
+      var examination = new Examinations($scope.examination);
+      console.log(examination);
+      Examinations.search(examination, function (_examinations) {
+        $scope.examinations = _examinations.list;
+        //console.log($scope.examinations);
+        if (callback) {
+          callback();
+        }
+      });  /* var examination = new Examinations($scope.examination);
+            Examinations.search(examination, function (_examinations) {
+                $scope.examinations = _examinations.list;
+                //console.log($scope.examinations);
+                if(callback){
+                    callback();
+                }
+            });
+
+            Patients.get({
+            patientId: $stateParams.patientId
+            }, function (patient) {
+            if (patient) {
+            $scope.examination._patient = patient._id;
+            CoreProperties.setPageSubTitle(patient.fullName);
+            Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
+            Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
+            }
+            });*/
+    };
     // Search existing Examinations
     $scope.search = function (callback) {
       var examination = new Examinations($scope.examination);
+      //console.log($scope.examination);
+      console.log(examination);
       Examinations.search(examination, function (_examinations) {
         $scope.examinations = _examinations.list;
         //console.log($scope.examinations);
@@ -3640,21 +3718,21 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     $scope.initEdit = function () {
       $scope.findOne(function () {
-        CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+        CoreProperties.setPageSubTitle($scope.examination._patient.fullName + ' ' + $scope.examination.created.time);
         Toolbar.addToolbarCommand('updateExamination', 'edit_examination', 'Save', 'floppy-save', 0);
       });
     };
     $scope.initView = function () {
       $scope.schema.readonly = true;
       $scope.findOne(function () {
-        CoreProperties.setPageSubTitle($scope.examination._patient.fullName);
+        CoreProperties.setPageSubTitle($scope.examination._patient.fullName + ' ' + $scope.examination.created.time);
         Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
         Toolbar.addToolbarCommand('deleteExamination', 'delete_examination', 'Delete', 'trash', 2, null, 'Are you sure to delete examination ?');
       });
     };
     $scope.initSearch = function () {
       $scope.initOne();
-      Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchExaminations', 'list_examinations', 'Search', 'search', 0);
     };
     ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
       $scope.onSubmit($scope.forms.examinationForm);
@@ -3696,7 +3774,7 @@ angular.module('manage-users').run([
     Menus.addMenuItem('topbar', 'Users', 'manage-users', 'dropdown', '/manage-users(/create)?', false, 1);
     Menus.addSubMenuItem('topbar', 'manage-users', 'List users', 'manage-users', '/manage-users', false, 'list_users', 0);
     Menus.addSubMenuItem('topbar', 'manage-users', 'New user', 'manage-users/create', '/manage-users/create', false, 'create_user', 1);
-    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'search_users', 2);
+    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'list_users', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -3717,7 +3795,7 @@ angular.module('manage-users').config([
     }).state('searchManageUser', {
       url: '/manage-users/search',
       templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
-      action: 'search_users',
+      action: 'list_users',
       title: 'Search Users'
     }).state('viewManageUser', {
       url: '/manage-users/:manageUserId',
@@ -3880,7 +3958,7 @@ angular.module('manage-users').controller('ManageUsersController', [
       $scope.initOne();
       $scope.tabsConfig = {};
       $scope.tabsConfig.showResuls = false;
-      Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchUser', 'list_users', 'Search', 'search', 0);
     };
     ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
       $scope.create();
@@ -3925,7 +4003,7 @@ angular.module('patients').run([
     Menus.addMenuItem('topbar', 'Patients', 'patients', 'dropdown', '/patients(/create)?', false, 2);
     Menus.addSubMenuItem('topbar', 'patients', 'List Patients', 'patients', '/patients', false, 'list_patients', 0);
     Menus.addSubMenuItem('topbar', 'patients', 'New Patient', 'patients/create', '/patients/create', false, 'create_patient', 1);
-    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'search_patients', 2);
+    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'list_patients', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -3946,7 +4024,7 @@ angular.module('patients').config([
     }).state('searchPatients', {
       url: '/patients/search',
       templateUrl: 'modules/patients/views/search-patients.client.view.html',
-      action: 'search_patients',
+      action: 'list_patients',
       title: 'Search Patients'
     }).state('viewPatient', {
       url: '/patients/:patientId',
@@ -4202,7 +4280,7 @@ angular.module('patients').controller('PatientsController', [
     $scope.initView = function () {
       $scope.findOne(function () {
         Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-        Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+        Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
         Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
         Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
       });
@@ -4223,7 +4301,7 @@ angular.module('patients').controller('PatientsController', [
         100
       ];
       $scope.paginationConfig.showPagination = false;
-      Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
     };
     $scope.initList = function () {
       $scope.initOne();
@@ -4279,7 +4357,7 @@ angular.module('patients').controller('PatientsController', [
       $scope.examine();
     });
     ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
-      $location.path('examinations/' + $scope.patient._id);
+      $location.path('examinations/patient/' + $scope.patient._id);
     });
     ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
       $location.path('patients/' + $scope.patient._id + '/edit');
@@ -4458,7 +4536,7 @@ angular.module('roles').run([
     Menus.addMenuItem('topbar', 'Roles', 'roles', 'dropdown', '/roles(/create)?(/search)?', false, 0);
     Menus.addSubMenuItem('topbar', 'roles', 'List Roles', 'roles', '/roles', false, 'list_roles', 0);
     Menus.addSubMenuItem('topbar', 'roles', 'New Role', 'roles/create', '/roles/create', false, 'create_role', 1);
-    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'search_roles', 2);
+    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'list_roles', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4526,7 +4604,7 @@ angular.module('roles').config([
       url: '/roles/search',
       templateUrl: 'modules/roles/views/search-roles.client.view.html',
       requiresLogin: true,
-      action: 'search_roles',
+      action: 'list_roles',
       title: 'Search Roles'
     }).state('editRole', {
       url: '/roles/:roleId/edit',
@@ -4757,7 +4835,7 @@ angular.module('roles').controller('RolesController', [
       $scope.initOne(function () {
         $scope.tabsConfig = {};
         $scope.tabsConfig.showResuls = false;
-        Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+        Toolbar.addToolbarCommand('searchRole', 'list_roles', 'Search', 'search', 0);
       });
     };
     $scope.initList = function () {

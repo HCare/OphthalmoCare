@@ -2265,7 +2265,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         $scope.initSearch=function(){
             $scope.initOne();
-            Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
+            Toolbar.addToolbarCommand('searchExaminations', 'list_examinations', 'Search', 'search', 0);
         };
 
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {

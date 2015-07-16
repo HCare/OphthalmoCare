@@ -73,13 +73,6 @@ Action.findOneAndUpdate({_id:'view_role'}, {name: 'View Role', order:5, _module:
         return;
     }
 });
-///Search_Roles Action..
-Action.findOneAndUpdate({_id:'search_roles'}, {name: 'Search Roles', order:6, _module:'roles'}, {upsert:true}, function(err){
-    if(err){
-        console.log('Error Creating "Search Roles" Action: '+JSON.stringify(err));
-        return;
-    }
-});
 //endregion Roles Actions
 
 //region Users Actions
@@ -115,13 +108,6 @@ Action.findOneAndUpdate({_id:'list_users'}, {name: 'List Users', order:4, _modul
 Action.findOneAndUpdate({_id:'view_user'}, {name: 'View User', order:5, _module:'users'}, {upsert:true}, function(err){
     if(err){
         console.log('Error Creating "View User" Action: '+JSON.stringify(err));
-        return;
-    }
-});
-///Search_Users Action..
-Action.findOneAndUpdate({_id:'search_users'}, {name: 'Search Users', order:6, _module:'users'}, {upsert:true}, function(err){
-    if(err){
-        console.log('Error Creating "Search Users" Action: '+JSON.stringify(err));
         return;
     }
 });
@@ -191,13 +177,6 @@ Action.findOneAndUpdate({_id:'delete_examination'}, {name: 'Delete Examination',
 Action.findOneAndUpdate({_id:'list_examinations'}, {name: 'List Examinations', order:4, _module:'examinations'}, {upsert:true}, function(err){
     if(err){
         console.log('Error Creating "List Examinations" Action: '+JSON.stringify(err));
-        return;
-    }
-});
-///Search_Examinations Action..
-Action.findOneAndUpdate({_id:'search_examinations'}, {name: 'Search Examinations', order:6, _module:'examinations'}, {upsert:true}, function(err){
-    if(err){
-        console.log('Error Creating "Search Examinations" Action: '+JSON.stringify(err));
         return;
     }
 });

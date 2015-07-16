@@ -277,7 +277,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.initView = function () {
             $scope.findOne(function () {
                 Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-                Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+                Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
                 Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
                 Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
             });
@@ -295,7 +295,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.paginationConfig.numPages = 1;
             $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
             $scope.paginationConfig.showPagination = false;
-            Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+            Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
         };
 
         $scope.initList=function(){
