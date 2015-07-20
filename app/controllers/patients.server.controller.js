@@ -188,7 +188,7 @@ function getSearchQuery(property){
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
                         var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
-                        if(checkForHexRegExp.test(queueValues[0]) == true){  // check if field is ObjectId
+                        if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender"){  // check if field is ObjectId
                             newQuery[propKey] =  queueValues[0];
                         }
                         else{
@@ -214,9 +214,28 @@ function getSearchQuery(property){
 }
 
 exports.search = function(req,res){
+    console.log("exports.search");
     console.log("***********************************");
-    console.log("returned Req.Query");
+    console.log("returned Req.Queryyyyyyyyy");
+
+    // delete object gender and add string gender
+    if(req.query.gender != null && req.query.gender != undefined){
+        var gender = "";
+        if(typeof req.query.gender == "string"){
+            var g = JSON.parse(req.query.gender);
+            gender = g._id;
+        }
+        else if(typeof req.query.gender == "object"){
+            gender = req.query.gender._id;
+        }
+
+        delete req.query.gender;
+        req.query.gender = gender;
+    }
+
+
     var newRequest = getSearchQuery(req.query);
+    console.log(newRequest);
     Patient.find(newRequest).populate('_patient').populate('created._user').exec(function (err, patients) {
         if (err) {
             console.log('error');
@@ -225,7 +244,7 @@ exports.search = function(req,res){
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            console.log(patients);
+            //console.log(patients);
             res.jsonp({list: patients});
         }
     });
