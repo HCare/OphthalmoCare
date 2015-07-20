@@ -1,111 +1,128 @@
 <section data-ng-controller="PatientsController" data-ng-init="initSearch()">
 
     <div class="content-div">
-    <tabset>
-        <tab heading="Search Terms" >
-    <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="search()" novalidate>
-            <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+        <tabset>
+            <tab heading="Search Terms">
+                <div class="col-md-12">
+                    <form class="form-horizontal" data-ng-submit="search()" novalidate>
+                        <fieldset>
+                            <div class="form-group">
+                                <label class="control-label" for="name">Name</label>
 
-                    <div class="controls">
-                        <input type="text" data-ng-model="patient.fullName" id="name" class="form-control"
-                               placeholder="Name"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="gender">Gender</label>
-                    <div class="controls">
-                        <h-care-checkbtn-list id="gender" source="configObj.genders" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="configObj.patient_genders"  current-tapped-item="patient.gender">
-                        </h-care-checkbtn-list>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="birthDate">Birth Date</label>
+                                <div class="controls">
+                                    <input type="text" data-ng-model="patient.fullName" id="name" class="form-control"
+                                           placeholder="Name"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="gender">Gender</label>
 
-                    <div class="controls">
-                        <p class="input-group">
-                            <input type="text" id="birthDate"
-                                   placeholder="Birth Date"
-                                   class="form-control"
-                                   datepicker-popup="{{configObj.format}}"
-                                   ng-change="birthDateChanged(patient.birthDate)"
-                                   ng-model="patient.birthDate"
-                                   is-open="configObj.opened"
-                                   min-date="configObj.minDate"
-                                   max-date="configObj.maxDate"
-                                   datepicker-options="configObj.dateOptions"
-                                   show-button-bar="false"
-                                   close-text="Close"/>
+                                <div class="controls">
+                                    <h-care-checkbtn-list id="gender" source="configObj.genders" item-label-field="name"
+                                                          item-value-field="_id" is-multi-selection="false"
+                                                          is-active-on-click="true"
+                                                          selected-items="configObj.patient_genders"
+                                                          current-tapped-item="patient.gender">
+                                    </h-care-checkbtn-list>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="birthDate">Birth Date</label>
+
+                                <div class="controls">
+                                    <p class="input-group">
+                                        <input type="text" id="birthDate"
+                                               placeholder="Birth Date"
+                                               class="form-control"
+                                               datepicker-popup="{{configObj.format}}"
+                                               ng-change="birthDateChanged(patient.birthDate)"
+                                               ng-model="patient.birthDate"
+                                               is-open="configObj.opened"
+                                               min-date="configObj.minDate"
+                                               max-date="configObj.maxDate"
+                                               datepicker-options="configObj.dateOptions"
+                                               show-button-bar="false"
+                                               close-text="Close"/>
                         <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i
                                 class="glyphicon glyphicon-calendar"></i></button>
                         </span>
-                        </p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="age">Age</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
-                               placeholder="Age" ng-change="ageChanged(configObj.age)"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="tel">Tel</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="patient.tel" id="tel" class="form-control"
-                               placeholder="Tel"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="address">Address</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="patient.address" id="address" class="form-control"
-                               placeholder="Address"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="email">Email</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="patient.email" id="email" class="form-control"
-                               placeholder="Email"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="notes">Notes</label>
-                    <div class="controls">
-                        <textarea name="content" data-ng-model="patient.notes" id="notes" class="form-control" cols="30" rows="10" placeholder="Notes"></textarea>
-                    </div>
-                </div>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="age">Age</label>
 
-                <!--<div class="form-group">
-                    <input type="submit" value="Search" class="btn btn-default">
-                </div>-->
-                <div data-ng-show="error" class="text-danger">
-                    <strong data-ng-bind="error"></strong>
+                                <div class="controls">
+                                    <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
+                                           placeholder="Age" ng-change="ageChanged(configObj.age)"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="tel">Tel</label>
+
+                                <div class="controls">
+                                    <input type="text" data-ng-model="patient.tel" id="tel" class="form-control"
+                                           placeholder="Tel"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="address">Address</label>
+
+                                <div class="controls">
+                                    <input type="text" data-ng-model="patient.address" id="address" class="form-control"
+                                           placeholder="Address"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="email">Email</label>
+
+                                <div class="controls">
+                                    <input type="text" data-ng-model="patient.email" id="email" class="form-control"
+                                           placeholder="Email"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="notes">Notes</label>
+
+                                <div class="controls">
+                                    <textarea name="content" data-ng-model="patient.notes" id="notes"
+                                              class="form-control" cols="30" rows="10" placeholder="Notes"></textarea>
+                                </div>
+                            </div>
+
+                            <!--<div class="form-group">
+                                <input type="submit" value="Search" class="btn btn-default">
+                            </div>-->
+                            <div data-ng-show="error" class="text-danger">
+                                <strong data-ng-bind="error"></strong>
+                            </div>
+                        </fieldset>
+                    </form>
                 </div>
-            </fieldset>
-        </form>
-    </div>
             </tab>
-        <tab heading="Search Results" active="tabsConfig.showResults">
-            <div class="list-group">
-                <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient._id}}" class="list-group-item">
-                    <h4 class="list-group-item-heading" data-ng-bind="patient.fullName"></h4>
-                </a>
-            </div>
-            <pagination ng-hide="!paginationConfig.showPagination" total-items="paginationConfig.totalItems" ng-model="paginationConfig.currentPage" ng-change="pageChanged()"  max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
-            </pagination>
-            <ul ng-hide="!paginationConfig.showPagination" class="pagination-sm pagination">
-                <li ng-repeat="item in paginationConfig.pageSizeOptions" ng-class="{active: isPageSizeOptionSelecetd(item), disabled:!isPageSizeOptionEnabled(item)}" >
-                    <a href="" ng-click="selectPageSizeOption(item)">{{item}}</a>
-                </li>
-            </ul>
-            <div class="alert alert-warning text-center" data-ng-hide="!patients || patients.length">
-                No Results Found
-            </div>
+            <tab heading="Search Results" active="tabsConfig.showResults">
+                <div class="list-group topMargin">
+                    <a data-ng-repeat="patient in patients" data-ng-href="#!/patients/{{patient._id}}"
+                       class="list-group-item">
+                        <h4 class="list-group-item-heading" data-ng-bind="patient.fullName"></h4>
+                    </a>
+                </div>
+                <pagination ng-hide="!paginationConfig.showPagination" total-items="paginationConfig.totalItems"
+                            ng-model="paginationConfig.currentPage" ng-change="pageChanged()"
+                            max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize"
+                            class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;"
+                            next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+                </pagination>
+                <ul ng-hide="!paginationConfig.showPagination" class="pagination-sm pagination">
+                    <li ng-repeat="item in paginationConfig.pageSizeOptions"
+                        ng-class="{active: isPageSizeOptionSelecetd(item), disabled:!isPageSizeOptionEnabled(item)}">
+                        <a href="" ng-click="selectPageSizeOption(item)">{{item}}</a>
+                    </li>
+                </ul>
+                <div class="alert alert-warning text-center" data-ng-hide="!patients || patients.length">
+                    No Results Found
+                </div>
             </tab>
         </tabset>
     </div>
