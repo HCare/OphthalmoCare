@@ -178,31 +178,36 @@ function getSearchQuery(property){
                     if(Array.isArray(propValue) && propValue.length > 0){  // Array
                         newQuery[propKey] = {$all: propValue};
                     }
-                    else{  // Object
+                    else if(typeof propValue == 'object'){  // Object
                         for(var k in propValue){
                             queue.push(propKey + "." + k);
                             queueValues.push(propValue[k]);
                         }
                     }
+                    else if(typeof propValue == "number"){
+                        newQuery[propKey] = new RegExp('.*' +  propValue + '.*', 'i');
+                    }
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
                         var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
-                        if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender"){  // check if field is ObjectId
+                        if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender" || propKey == "birthDate"){  // check if field is ObjectId
                             newQuery[propKey] =  queueValues[0];
                         }
                         else{
                             newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
                         }
-
-
                     }
-                    if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
+                    else if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
                         newQuery[propKey] = {$all: queueValues[0]};
+                    }
+                    else{
+                        //console.log(typeof queueValues[0]);
                     }
                 }
             }
             catch(e){
+                console.log(typeof queueValues[0]);
             }
             queue.shift();
             queueValues.shift();
@@ -233,7 +238,7 @@ exports.search = function(req,res){
         req.query.gender = gender;
     }
 
-
+    console.log(req.query);
     var newRequest = getSearchQuery(req.query);
     console.log(newRequest);
     Patient.find(newRequest).populate('_patient').populate('created._user').exec(function (err, patients) {
@@ -250,94 +255,7 @@ exports.search = function(req,res){
     });
 };
 
-/*
-exports.search = function (req, res) {
-    console.log('search search search');
-    console.log(req.query);
-    if (req.query && Object.keys(req.query).length > 0) {
-        //fullName
-        if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
-            req.query.fullName = new RegExp('.*' + req.query.fullName + '.*', 'i');
-        }
-        else {
-            delete req.query.fullName; // didn't search by fullName
-        }
-        //gender
-        if (req.query.hasOwnProperty('gender') && req.query.gender && req.query.gender.length > 0) {
-        }
-        else {
-            delete req.query.gender; // didn't search by gender
-        }
-        //birthDate
-        if (req.query.hasOwnProperty('birthDate') && req.query.birthDate && req.query.birthDate.length > 0) {
-        }
-        else {
-            delete req.query.birthDate; // didn't search by birthDate
-        }
-        //tel
-        if (req.query.hasOwnProperty('tel') && req.query.tel && req.query.tel.length > 0) {
-            //req.query.tel = {$regex: '.*' + req.query.tel + '.*', $options: 'i'};
-            req.query.tel = new RegExp('.*' + req.query.tel + '.*', 'i');
-        }
-        else {
-            delete req.query.tel; // didn't search by tel
-        }
-        //address
-        if (req.query.hasOwnProperty('address') && req.query.address && req.query.address.length > 0) {
-            //req.query.address = {$regex: '.*' + req.query.address + '.*', $options: 'i'};
-            req.query.address = new RegExp('.*' + req.query.address + '.*', 'i');
-        }
-        else {
-            delete req.query.address; // didn't search by address
-        }
-        //email
-        if (req.query.hasOwnProperty('email') && req.query.email && req.query.email.length > 0) {
-            //req.query.email = {$regex: '.*' + req.query.email + '.*', $options: 'i'};
-            req.query.email = new RegExp('.*' + req.query.email + '.*', 'i');
-        }
-        else {
-            delete req.query.email; // didn't search by email
-        }
-        //notes
-        if (req.query.hasOwnProperty('notes') && req.query.notes && req.query.notes.length > 0) {
-            //req.query.notes = {$regex: '.*' + req.query.notes + '.*', $options: 'i'};
-            req.query.notes = new RegExp('.*' + req.query.notes + '.*', 'i');
-        }
-        else {
-            delete req.query.notes; // didn't search by notes
-        }
 
-        //pagination
-        var pageNo = 0, pageSize = 10;
-        if (req.query.hasOwnProperty('paginationConfig')) {
-            var paginationConfig = JSON.parse(req.query.paginationConfig);
-            pageNo = paginationConfig.pageNo - 1;
-            pageSize = paginationConfig.pageSize;
-            delete req.query.paginationConfig;
-        }
-
-        Patient.find(req.query).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                Patient.find(req.query).count(function (err, _count) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    }
-                    else {
-                        res.jsonp({list: patients, count: _count});
-                    }
-
-                });
-
-            }
-        });
-    }
-};*/
 
 /**
  * Patient middleware
