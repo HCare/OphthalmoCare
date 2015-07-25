@@ -2133,10 +2133,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.create = function () {
             // Create new Examination object
             var examination = new Examinations($scope.examination);
-
             // Redirect after save
             examination.$save(function (response) {
-                //$location.path('examinations/' + response._id);
+                $location.path('/examinations/patient/' + examination._patient);
                 Logger.success('Examination created successfully', true);
                 // Clear form fields
                 $scope.examination = {};
@@ -2150,7 +2149,6 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.remove = function (examination) {
             if (examination) {
                 examination.$remove();
-
                 for (var i in $scope.examinations) {
                     if ($scope.examinations[i] === examination) {
                         $scope.examinations.splice(i, 1);
@@ -2158,7 +2156,13 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 }
             } else {
                 $scope.examination.$remove(function () {
-                    $location.path('examinations');
+                    console.log($scope._patient);
+                    if($scope._patient != undefined && $scope._patient != null){
+                        $location.path('examinations/patient/' + $scope._patient);
+                    }
+                    else{
+                        $location.path('examinations');
+                    }
                 });
             }
         };
@@ -2180,6 +2184,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Find a list of Examinations
         $scope.find = function () {
+            $scope._patient = null;
             $scope.examinations = Examinations.query();
         };
 
@@ -2199,6 +2204,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // findPatientExaminations
         $scope.findPatientExaminations = function (callback) {
+            $scope._patient = $stateParams.patientId;
             $scope.initOne();
             $scope.examination._patient =  $stateParams.patientId;
             Patients.get({
@@ -2256,6 +2262,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         $scope.initView = function () {
             $scope.schema.readonly = true;
+            console.log($scope._patient);
             $scope.findOne(function () {
                 CoreProperties.setPageSubTitle($scope.examination._patient.fullName + " " + $scope.examination.created.time);
                 Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
