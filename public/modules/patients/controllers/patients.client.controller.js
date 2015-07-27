@@ -356,7 +356,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.examine();
         });
         ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
-            $location.path('examinations/patient/' + $scope.patient._id );
+            $location.path('examinations/patient/'+ $scope.patient._id );
         });
         ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
             $location.path('patients/' + $scope.patient._id + '/edit');

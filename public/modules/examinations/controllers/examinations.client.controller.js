@@ -2155,10 +2155,12 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                     }
                 }
             } else {
+
                 $scope.examination.$remove(function () {
-                    console.log($scope._patient);
-                    if($scope._patient != undefined && $scope._patient != null){
-                        $location.path('examinations/patient/' + $scope._patient);
+                    console.log($scope.examination._patient);
+                    if($location.url().indexOf("/examinations/view/") > -1){
+                        console.log($scope.examination._patient);
+                        $location.path('examinations/patient/' + $scope.examination._patient._id);
                     }
                     else{
                         $location.path('examinations');
@@ -2262,7 +2264,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         $scope.initView = function () {
             $scope.schema.readonly = true;
-            console.log($scope._patient);
+            //console.log($scope._patient);
+            //console.log($location.url());
             $scope.findOne(function () {
                 CoreProperties.setPageSubTitle($scope.examination._patient.fullName + " " + $scope.examination.created.time);
                 Toolbar.addToolbarCommand('editExamination', 'edit_examination', 'Edit', 'edit', 1);
