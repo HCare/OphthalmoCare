@@ -2173,16 +2173,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         // Update existing Examination
         $scope.update = function () {
             var examination = $scope.examination;
+            console.log(examination._patient);
             examination.$update(function () {
-                /*if($location.url().indexOf("/examinations/"+$scope.examination._id+"/edit") > -1){
-                    $location.path('examinations/patient/' + $scope.examination._patient._id);
-                    Logger.success('Examination deleted successfully', true);
+                if ($location.url().indexOf("/examinations/edit") > -1) {
+                    $location.path('examinations/view/' + examination._id);
                 }
-                else{
-                    $location.path('examinations');
-                }*/
+                else {
+                    $location.path('examinations/' + examination._id);
+                }
 
-                $location.path('examinations/patient/' + examination._patient._id);
                 ///log success message
                 Logger.success('Examination updated successfully', true);
             }, function (errorResponse) {
@@ -2296,7 +2295,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         });
 
         ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
-            $location.path('examinations/' + $scope.examination._id + '/edit');
+
+            if($location.url().indexOf("/examinations/view/") > -1){
+                $location.path('examinations/edit/' + $scope.examination._id + '/edit');
+            }
+            else{
+                $location.path('examinations/' + $scope.examination._id + '/edit');
+            }
+
+
         });
 
         ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {

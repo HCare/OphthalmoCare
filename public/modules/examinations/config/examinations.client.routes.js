@@ -41,6 +41,12 @@ angular.module('examinations').config(['$stateProvider',
                 action: 'view_examination',
                 title: 'View Examination'
             }).
+            state('editPatientExamination', {
+                url: '/examinations/edit/:examinationId/edit',
+                templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+                action: 'edit_examination',
+                title: 'Edit Examinations'
+            }).
             state('editExamination', {
                 url: '/examinations/:examinationId/edit',
                 templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
