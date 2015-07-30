@@ -22,8 +22,8 @@ module.exports = function(app) {
         .get(security.authorizedToDo('list_patients'), patients.list)
         .post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
 
-    app.route('/patients/search')
-        .get(security.authorizedToDo('list_patients'), patients.search);
+    /*app.route('/patients/search')
+        .get(security.authorizedToDo('list_patients'), patients.search);*/
 
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)

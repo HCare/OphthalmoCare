@@ -132,7 +132,8 @@ exports.delete = function (req, res) {
     });
 };*/
 
-exports.list = function (req, res) {
+/*
+exports.list= function (req, res) {
     //pagination
     var pageNo = 0, pageSize = 10;
     if (req.query.hasOwnProperty('paginationConfig')) {
@@ -162,7 +163,7 @@ exports.list = function (req, res) {
         }
     });
 };
-
+*/
 
 function getSearchQuery(property){
 
@@ -238,7 +239,7 @@ function getSearchQuery(property){
 
 }
 
-exports.search = function(req,res){
+exports.list = function(req,res){
       // delete object gender and add string gender
     if(req.query.gender != null && req.query.gender != undefined){
         var gender = "";
@@ -271,13 +272,14 @@ exports.search = function(req,res){
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            Patient.find(req.query).count(function (err, _count) {
+            Patient.find(newRequest).count(function (err, _count) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
                     });
                 }
                 else {
+                    console.log(_count);
                     res.jsonp({list: patients, count: _count});
                 }
 
