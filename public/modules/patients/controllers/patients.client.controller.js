@@ -242,24 +242,24 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         // Search existing patients
         $scope.search = function (callback) {
             var query = $scope.patient;
-            //query.paginationConfig = {};
-            //query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-            //query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+            query.paginationConfig = {};
+            query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+            query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
 
 
-           /* Patients.query($scope.patient, function (_res) {
+            Patients.query($scope.patient, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
                 }
-            });*/
+            });
 
-            Patients.search($scope.patient, function (_res) {
+            /*Patients.search($scope.patient, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.list.length);
                 }
-            });
+            });*/
         };
 
         // Find existing Patient
@@ -305,8 +305,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.tabsConfig = {};
             $scope.tabsConfig.showResuls = false;
             $scope.paginationConfig = {};
-            $scope.paginationConfig.pageSize = 5;
-            console.log($scope.paginationConfig.pageSize);
+            $scope.paginationConfig.pageSize = 10;
             $scope.paginationConfig.currentPage = 1;
             $scope.paginationConfig.totalItems = 0;
             $scope.paginationConfig.maxSize = 2;

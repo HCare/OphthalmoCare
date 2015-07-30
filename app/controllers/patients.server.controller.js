@@ -133,16 +133,36 @@ exports.delete = function (req, res) {
 };*/
 
 exports.list = function (req, res) {
-    Patient.find().exec(function (err, patients) {
+    //pagination
+    var pageNo = 0, pageSize = 10;
+    if (req.query.hasOwnProperty('paginationConfig')) {
+        var paginationConfig = JSON.parse(req.query.paginationConfig);
+        pageNo = paginationConfig.pageNo - 1;
+        pageSize = paginationConfig.pageSize;
+        delete req.query.paginationConfig;
+    }
+    Patient.find().skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            res.jsonp({list: patients});
+            Patient.find(req.query).count(function (err, _count) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.jsonp({list: patients, count: _count});
+                }
+
+            });
+
         }
     });
 };
+
 
 function getSearchQuery(property){
 
@@ -219,11 +239,7 @@ function getSearchQuery(property){
 }
 
 exports.search = function(req,res){
-    console.log("exports.search");
-    console.log("***********************************");
-    console.log("returned Req.Queryyyyyyyyy");
-
-    // delete object gender and add string gender
+      // delete object gender and add string gender
     if(req.query.gender != null && req.query.gender != undefined){
         var gender = "";
         if(typeof req.query.gender == "string"){
@@ -238,9 +254,38 @@ exports.search = function(req,res){
         req.query.gender = gender;
     }
 
-    console.log(req.query);
+    //pagination
+    var pageNo = 0, pageSize = 10;
+    if (req.query.hasOwnProperty('paginationConfig')) {
+        var paginationConfig = JSON.parse(req.query.paginationConfig);
+        pageNo = paginationConfig.pageNo - 1;
+        pageSize = paginationConfig.pageSize;
+        delete req.query.paginationConfig;
+    }
+
     var newRequest = getSearchQuery(req.query);
-    console.log(newRequest);
+
+    Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            Patient.find(req.query).count(function (err, _count) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.jsonp({list: patients, count: _count});
+                }
+
+            });
+
+        }
+    });
+    /*
     Patient.find(newRequest).populate('_patient').populate('created._user').exec(function (err, patients) {
         if (err) {
             console.log('error');
@@ -252,7 +297,7 @@ exports.search = function(req,res){
             //console.log(patients);
             res.jsonp({list: patients});
         }
-    });
+    });*/
 };
 
 
