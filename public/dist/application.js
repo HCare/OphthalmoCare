@@ -675,6 +675,16 @@ angular.module('examinations').config([
       templateUrl: 'modules/examinations/views/view-examination.client.view.html',
       action: 'view_examination',
       title: 'View Examination'
+    }).state('viewPatientExamination', {
+      url: '/examinations/view/:examinationId',
+      templateUrl: 'modules/examinations/views/view-examination.client.view.html',
+      action: 'view_examination',
+      title: 'View Examination'
+    }).state('editPatientExamination', {
+      url: '/examinations/edit/:examinationId/edit',
+      templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+      action: 'edit_examination',
+      title: 'Edit Examinations'
     }).state('editExamination', {
       url: '/examinations/:examinationId/edit',
       templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
@@ -3605,7 +3615,7 @@ angular.module('examinations').controller('ExaminationsController', [
       var examination = new Examinations($scope.examination);
       // Redirect after save
       examination.$save(function (response) {
-        //$location.path('examinations/' + response._id);
+        $location.path('/examinations/patient/' + examination._patient);
         Logger.success('Examination created successfully', true);
         // Clear form fields
         $scope.examination = {};
@@ -3616,6 +3626,7 @@ angular.module('examinations').controller('ExaminationsController', [
     // Remove existing Examination
     $scope.remove = function (examination) {
       if (examination) {
+        // ?????????????
         examination.$remove();
         for (var i in $scope.examinations) {
           if ($scope.examinations[i] === examination) {
@@ -3624,15 +3635,27 @@ angular.module('examinations').controller('ExaminationsController', [
         }
       } else {
         $scope.examination.$remove(function () {
-          $location.path('examinations');
+          //console.log($scope.examination._patient);
+          if ($location.url().indexOf('/examinations/view/') > -1) {
+            //console.log($scope.examination._patient);
+            $location.path('examinations/patient/' + $scope.examination._patient._id);
+            Logger.success('Examination deleted successfully', true);
+          } else {
+            $location.path('examinations');
+          }
         });
       }
     };
     // Update existing Examination
     $scope.update = function () {
       var examination = $scope.examination;
+      console.log(examination._patient);
       examination.$update(function () {
-        $location.path('examinations/' + examination._id);
+        if ($location.url().indexOf('/examinations/edit') > -1) {
+          $location.path('examinations/view/' + examination._id);
+        } else {
+          $location.path('examinations/' + examination._id);
+        }
         ///log success message
         Logger.success('Examination updated successfully', true);
       }, function (errorResponse) {
@@ -3641,6 +3664,7 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     // Find a list of Examinations
     $scope.find = function () {
+      $scope._patient = null;
       $scope.examinations = Examinations.query();
     };
     // Find existing Examination
@@ -3655,48 +3679,27 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     // findPatientExaminations
     $scope.findPatientExaminations = function (callback) {
+      $scope._patient = $stateParams.patientId;
       $scope.initOne();
-      //console.log($stateParams.patientId);
-      /*var patient = new Patients({});
-            patient.patientId=  $stateParams.patientId;*/
       $scope.examination._patient = $stateParams.patientId;
-      //console.log($scope.examination);
-      var examination = new Examinations($scope.examination);
-      console.log(examination);
-      Examinations.search(examination, function (_examinations) {
-        $scope.examinations = _examinations.list;
-        //console.log($scope.examinations);
-        if (callback) {
-          callback();
-        }
-      });  /* var examination = new Examinations($scope.examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-
-            Patients.get({
-            patientId: $stateParams.patientId
-            }, function (patient) {
-            if (patient) {
-            $scope.examination._patient = patient._id;
-            CoreProperties.setPageSubTitle(patient.fullName);
-            Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
-            Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
+      Patients.get({ patientId: $stateParams.patientId }, function (patient) {
+        if (patient) {
+          CoreProperties.setPageSubTitle(patient.fullName);
+          var examination = new Examinations($scope.examination);
+          Examinations.search(examination, function (_examinations) {
+            $scope.examinations = _examinations.list;
+            if (callback) {
+              callback();
             }
-            });*/
+          });
+        }
+      });
     };
     // Search existing Examinations
     $scope.search = function (callback) {
       var examination = new Examinations($scope.examination);
-      //console.log($scope.examination);
-      console.log(examination);
       Examinations.search(examination, function (_examinations) {
         $scope.examinations = _examinations.list;
-        //console.log($scope.examinations);
         if (callback) {
           callback();
         }
@@ -3746,7 +3749,11 @@ angular.module('examinations').controller('ExaminationsController', [
       });
     });
     ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
-      $location.path('examinations/' + $scope.examination._id + '/edit');
+      if ($location.url().indexOf('/examinations/view/') > -1) {
+        $location.path('examinations/edit/' + $scope.examination._id + '/edit');
+      } else {
+        $location.path('examinations/' + $scope.examination._id + '/edit');
+      }
     });
     ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {
       $scope.remove();
@@ -4045,6 +4052,7 @@ angular.module('patients').controller('PatientsController', [
   '$stateParams',
   '$location',
   'Patients',
+  'CoreProperties',
   'Logger',
   'lodash',
   'moment',
@@ -4052,7 +4060,7 @@ angular.module('patients').controller('PatientsController', [
   '$upload',
   'ActionsHandler',
   'Toolbar',
-  function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+  function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
     $scope.configObj = {};
     $scope.configObj._ = lodash;
     $scope.configObj.Moment = Moment;
@@ -4240,16 +4248,17 @@ angular.module('patients').controller('PatientsController', [
         };*/
     // Find existing Patient
     $scope.findOne = function (callback) {
-      var patient = Patients.get({ patientId: $stateParams.patientId }, function () {
-          $scope.patient = patient;
-          $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
-          if ($scope.patient.personalPhoto) {
-            $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
-          }
-          if (callback) {
-            callback();
-          }
-        });
+      Patients.get({ patientId: $stateParams.patientId }, function (patient) {
+        $scope.patient = patient;
+        CoreProperties.setPageSubTitle(patient.fullName);
+        $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+        if ($scope.patient.personalPhoto) {
+          $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
+        }
+        if (callback) {
+          callback();
+        }
+      });
     };
     // Search existing patients
     $scope.search = function (callback) {
@@ -4262,7 +4271,12 @@ angular.module('patients').controller('PatientsController', [
         if (callback) {
           callback(_res.count);
         }
-      });
+      });  /*Patients.search($scope.patient, function (_res) {
+                $scope.patients = _res.list;
+                if (callback) {
+                    callback(_res.list.length);
+                }
+            });*/
     };
     // Find existing Patient
     $scope.initOne = function () {
@@ -4322,6 +4336,7 @@ angular.module('patients').controller('PatientsController', [
       $scope.fireSearch();
     };
     $scope.getShowPagination = function () {
+      //console.log($scope.paginationConfig.totalItems);
       return $scope.paginationConfig.totalItems > 0;
     };
     $scope.pageChanged = function () {
@@ -4508,7 +4523,11 @@ angular.module('patients').factory('Patients', [
   function ($resource) {
     return $resource('patients/:patientId', { patientId: '@_id' }, {
       update: { method: 'PUT' },
-      query: { isArray: false }
+      query: { isArray: false },
+      search: {
+        method: 'GET',
+        url: 'patients/search'
+      }
     });
   }
 ]);  /*
@@ -4764,9 +4783,9 @@ angular.module('roles').controller('RolesController', [
     // Update existing Role
     $scope.update = function () {
       var _role = $scope.role;
-      role._actions = $scope.actionsObj.role_actions;
+      _role._actions = $scope.actionsObj.role_actions;
       _role.$update(function () {
-        $location.path('roles/' + role._id);
+        $location.path('roles/' + _role._id);
         ///log success message
         Logger.success('Role updated successfully', true);
       }, function (errorResponse) {
@@ -4797,7 +4816,7 @@ angular.module('roles').controller('RolesController', [
     // Find existing Role
     $scope.findOne = function (callback) {
       Roles.get({ roleId: $stateParams.roleId }, function (_role) {
-        console.log(_role);
+        //console.log(_role);
         $scope.role = _role;
         $scope.actionsObj.role_actions = lodash.findByValues($scope.actionsObj.all_actions, '_id', $scope.role._actions);
         for (var i = 0; i < $scope.actionsObj.modules.length; i++) {

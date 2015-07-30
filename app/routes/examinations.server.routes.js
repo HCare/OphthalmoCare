@@ -17,6 +17,7 @@ module.exports = function(app) {
 		.put(security.authorizedToDo('edit_examination'), examinations.update)
 		.delete(security.authorizedToDo('delete_examination'), examinations.delete);
 
+
 	// Finish by binding the Examination middleware
 	app.param('examinationId', examinations.examinationByID);
 };

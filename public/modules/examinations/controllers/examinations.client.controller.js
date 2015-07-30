@@ -2133,10 +2133,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.create = function () {
             // Create new Examination object
             var examination = new Examinations($scope.examination);
-
             // Redirect after save
             examination.$save(function (response) {
-                //$location.path('examinations/' + response._id);
+                $location.path('/examinations/patient/' + examination._patient);
                 Logger.success('Examination created successfully', true);
                 // Clear form fields
                 $scope.examination = {};
@@ -2148,17 +2147,25 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Remove existing Examination
         $scope.remove = function (examination) {
-            if (examination) {
+            if (examination) {  // ?????????????
                 examination.$remove();
-
                 for (var i in $scope.examinations) {
                     if ($scope.examinations[i] === examination) {
                         $scope.examinations.splice(i, 1);
                     }
                 }
             } else {
+
                 $scope.examination.$remove(function () {
-                    $location.path('examinations');
+                    //console.log($scope.examination._patient);
+                    if($location.url().indexOf("/examinations/view/") > -1){
+                        //console.log($scope.examination._patient);
+                        $location.path('examinations/patient/' + $scope.examination._patient._id);
+                        Logger.success('Examination deleted successfully', true);
+                    }
+                    else{
+                        $location.path('examinations');
+                    }
                 });
             }
         };
@@ -2166,13 +2173,17 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         // Update existing Examination
         $scope.update = function () {
             var examination = $scope.examination;
-
+            console.log(examination._patient);
             examination.$update(function () {
-                $location.path('examinations/' + examination._id);
+                if ($location.url().indexOf("/examinations/edit") > -1) {
+                    $location.path('examinations/view/' + examination._id);
+                }
+                else {
+                    $location.path('examinations/' + examination._id);
+                }
 
                 ///log success message
                 Logger.success('Examination updated successfully', true);
-
             }, function (errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
@@ -2180,6 +2191,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Find a list of Examinations
         $scope.find = function () {
+            $scope._patient = null;
             $scope.examinations = Examinations.query();
         };
 
@@ -2199,50 +2211,30 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // findPatientExaminations
         $scope.findPatientExaminations = function (callback) {
+            $scope._patient = $stateParams.patientId;
             $scope.initOne();
-            //console.log($stateParams.patientId);
-            /*var patient = new Patients({});
-            patient.patientId=  $stateParams.patientId;*/
             $scope.examination._patient =  $stateParams.patientId;
-            //console.log($scope.examination);
-            var examination = new Examinations($scope.examination);
-            console.log(examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-           /* var examination = new Examinations($scope.examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-
             Patients.get({
-            patientId: $stateParams.patientId
+                patientId: $stateParams.patientId
             }, function (patient) {
-            if (patient) {
-            $scope.examination._patient = patient._id;
-            CoreProperties.setPageSubTitle(patient.fullName);
-            Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
-            Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
-            }
-            });*/
+                if (patient) {
+                    CoreProperties.setPageSubTitle(patient.fullName);
+                    var examination = new Examinations($scope.examination);
+                    Examinations.search(examination, function (_examinations) {
+                        $scope.examinations = _examinations.list;
+                        if(callback){
+                            callback();
+                        }
+                    });
+                }
+            });
         };
 
         // Search existing Examinations
         $scope.search = function (callback) {
             var examination = new Examinations($scope.examination);
-            //console.log($scope.examination);
-            console.log(examination);
             Examinations.search(examination, function (_examinations) {
                 $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
                 if(callback){
                     callback();
                 }
@@ -2270,7 +2262,6 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         $scope.initEdit = function () {
             $scope.findOne(function () {
                 CoreProperties.setPageSubTitle($scope.examination._patient.fullName + " " + $scope.examination.created.time);
-
                 Toolbar.addToolbarCommand('updateExamination', 'edit_examination', 'Save', 'floppy-save', 0);
             });
         };
@@ -2304,7 +2295,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         });
 
         ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
-            $location.path('examinations/' + $scope.examination._id + '/edit');
+
+            if($location.url().indexOf("/examinations/view/") > -1){
+                $location.path('examinations/edit/' + $scope.examination._id + '/edit');
+            }
+            else{
+                $location.path('examinations/' + $scope.examination._id + '/edit');
+            }
+
+
         });
 
         ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {

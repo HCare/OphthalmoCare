@@ -14,12 +14,16 @@ module.exports = function(app) {
     }});
 
 	// Patients Routes
-	app.route('/patients')
+	/*app.route('/patients')
 		.get(security.authorizedToDo('list_patients'), patients.search)
-		.post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
+		.post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);*/
 
-/*    app.route('/patients/search')
-        .get(security.authorizedToDo('search_patients'), patients.search);*/
+    app.route('/patients')
+        .get(security.authorizedToDo('list_patients'), patients.list)
+        .post(security.authorizedToDo('create_patient'), multerTemp, patients.create, fileHandler.uploadFile);
+
+    /*app.route('/patients/search')
+        .get(security.authorizedToDo('list_patients'), patients.search);*/
 
 	app.route('/patients/:patientId')
 		.get(security.authorizedToDo('view_patient'), patients.read)
