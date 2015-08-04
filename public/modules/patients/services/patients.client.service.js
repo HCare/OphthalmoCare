@@ -9,7 +9,6 @@ angular.module('patients').factory('Patients', ['$resource',
             update: {
                 method: 'PUT'
             },
-
             query: {
                 isArray: false
             }

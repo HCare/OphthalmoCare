@@ -2192,7 +2192,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         // Find a list of Examinations
         $scope.find = function () {
             $scope._patient = null;
-            $scope.examinations = Examinations.query();
+            Examinations.query(function(res){
+                $scope.examinations =res.list;
+            });
         };
 
         // Find existing Examination
@@ -2220,7 +2222,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 if (patient) {
                     CoreProperties.setPageSubTitle(patient.fullName);
                     var examination = new Examinations($scope.examination);
-                    Examinations.search(examination, function (_examinations) {
+                    Examinations.query(examination, function (_examinations) {
                         $scope.examinations = _examinations.list;
                         if(callback){
                             callback();
@@ -2233,7 +2235,7 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         // Search existing Examinations
         $scope.search = function (callback) {
             var examination = new Examinations($scope.examination);
-            Examinations.search(examination, function (_examinations) {
+            Examinations.query(examination, function (_examinations) {
                 $scope.examinations = _examinations.list;
                 if(callback){
                     callback();

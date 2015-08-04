@@ -8,10 +8,9 @@ angular.module('examinations').factory('Examinations', ['$resource',
 			update: {
 				method: 'PUT'
 			},
-            search:{
-                method: 'GET',
-                url:'examinations/search'
-            }
+			query: {
+				isArray: false
+			}
 		});
 	}
 ]);
