@@ -241,25 +241,15 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-
             $scope.patient.paginationConfig = {};
             $scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
             $scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-
-
             Patients.query($scope.patient, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
                 }
             });
-
-            /*Patients.search($scope.patient, function (_res) {
-                $scope.patients = _res.list;
-                if (callback) {
-                    callback(_res.list.length);
-                }
-            });*/
         };
 
         // Find existing Patient
