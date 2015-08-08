@@ -179,8 +179,20 @@ function getSearchQuery(property){
  * Search of Examinations
  */
 exports.list = function(req,res){
+
+    //pagination
+    var pageNo = 0, pageSize = 10;
+    if (req.query.hasOwnProperty('paginationConfig')) {
+        var paginationConfig = JSON.parse(req.query.paginationConfig);
+        pageNo = paginationConfig.pageNo - 1;
+        pageSize = paginationConfig.pageSize;
+        delete req.query.paginationConfig;
+    }
+
+
     var newRequest = getSearchQuery(req.query);
-    Examination.find(newRequest).sort('-created').populate('_patient').populate('created._user').exec(function (err, examinations) {
+
+    Examination.find(newRequest).skip(pageNo * pageSize).limit(pageSize).sort('-created').populate('_patient').populate('created._user').exec(function (err, examinations) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -200,6 +212,33 @@ exports.list = function(req,res){
         }
     });
 };
+
+/*
+ exports.list = function(req,res){
+
+ var newRequest = getSearchQuery(req.query);
+
+ Examination.find(newRequest).sort('-created').populate('_patient').populate('created._user').exec(function (err, examinations) {
+ if (err) {
+ return res.status(400).send({
+ message: errorHandler.getErrorMessage(err)
+ });
+ } else {
+ Examination.find(newRequest).count(function (err, _count) {
+ if (err) {
+ return res.status(400).send({
+ message: errorHandler.getErrorMessage(err)
+ });
+ }
+ else {
+ res.jsonp({list: examinations, count: _count});
+ }
+
+ });
+ }
+ });
+ };
+ */
 
 /**
  * Examination middleware
