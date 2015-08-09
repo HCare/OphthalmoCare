@@ -72,7 +72,7 @@
                 <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
             </div>
         <div class="navbar-right toolbar" >
-            <h-care-action-btn class="toolbar-btn" data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" icon="{{item.icon}}" click-event="fireCommand('{{item.command}}')" action="{{item.action}}" redirect-url="{{item.redirect}}" response-message="{{item.confirmMsg}}" ></h-care-action-btn>
+            <h-care-action-btn class="toolbar-btn" data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" icon="{{item.icon}}" click-event="fireCommand('{{item.command}}')" action="{{item.action}}" redirect-url="{{item.redirect}}" title="{{item.title}}" response-message="{{item.confirmMsg}}" ></h-care-action-btn>
         </div>
             <!--<form class="navbar-right toolbar" role="search">
             <button class="btn btn-success" ng-click="fire()" >Button</button>
