@@ -482,12 +482,12 @@ angular.module('directives').directive('hCareActionBtn', [
         if (lodash.contains(Authentication.user._role._actions, atts.action)) {
           if (atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != '') {
             atts.$observe('redirectUrl', function (redirectUrl) {
-              var buttonText = '<a class="btn btn-default" href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
+              var buttonText = '<a class="btn btn-default" title=' + atts.title + ' href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
               element.html(buttonText);
             });
           }
           if (atts.clickEvent != null && atts.clickEvent != undefined && atts.clickEvent != '') {
-            var buttonText = '<a class=\'btn btn-default\' >' + '<i class=\'glyphicon glyphicon-' + atts.icon + '\'></i>' + '</a>';
+            var buttonText = '<a class=\'btn btn-default\' title=' + atts.title + ' >' + '<i class=\'glyphicon glyphicon-' + atts.icon + '\'></i>' + '</a>';
             element.html(buttonText);
             element.on('click', function () {
               if (atts.responseMessage != null && atts.responseMessage != undefined && atts.responseMessage != '') {
