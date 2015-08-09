@@ -3604,7 +3604,7 @@ angular.module('examinations').controller('ExaminationsController', [
       $scope.$broadcast('schemaFormValidate');
       // Then we check if the form is valid
       if (form.$valid) {
-        console.log($scope.examination);
+        //console.log($scope.examination);
         $scope.create();
       }
     };
@@ -3649,7 +3649,7 @@ angular.module('examinations').controller('ExaminationsController', [
     // Update existing Examination
     $scope.update = function () {
       var examination = $scope.examination;
-      console.log(examination._patient);
+      //console.log(examination._patient);
       examination.$update(function () {
         if ($location.url().indexOf('/examinations/edit') > -1) {
           $location.path('examinations/view/' + examination._id);
@@ -3665,7 +3665,9 @@ angular.module('examinations').controller('ExaminationsController', [
     // Find a list of Examinations
     $scope.find = function () {
       $scope._patient = null;
-      $scope.examinations = Examinations.query();
+      Examinations.query(function (res) {
+        $scope.examinations = res.list;
+      });
     };
     // Find existing Examination
     $scope.findOne = function (callback) {
@@ -3685,23 +3687,54 @@ angular.module('examinations').controller('ExaminationsController', [
       Patients.get({ patientId: $stateParams.patientId }, function (patient) {
         if (patient) {
           CoreProperties.setPageSubTitle(patient.fullName);
-          var examination = new Examinations($scope.examination);
-          Examinations.search(examination, function (_examinations) {
-            $scope.examinations = _examinations.list;
-            if (callback) {
-              callback();
-            }
-          });
+          $scope.paginationConfig = {};
+          $scope.paginationConfig.pageSize = 10;
+          $scope.paginationConfig.currentPage = 1;
+          $scope.paginationConfig.totalItems = 0;
+          $scope.paginationConfig.maxSize = 2;
+          $scope.paginationConfig.numPages = 1;
+          $scope.paginationConfig.pageSizeOptions = [
+            10,
+            50,
+            100
+          ];
+          $scope.paginationConfig.showPagination = false;
+          $scope.fireSearch();
         }
       });
     };
+    /*
+         // findPatientExaminations
+         $scope.findPatientExaminations = function (callback) {
+         $scope._patient = $stateParams.patientId;
+         $scope.initOne();
+         $scope.examination._patient =  $stateParams.patientId;
+         Patients.get({
+         patientId: $stateParams.patientId
+         }, function (patient) {
+         if (patient) {
+         CoreProperties.setPageSubTitle(patient.fullName);
+         var examination = new Examinations($scope.examination);
+         Examinations.query(examination, function (_examinations) {
+         $scope.examinations = _examinations.list;
+         if(callback){
+         callback();
+         }
+         });
+         }
+         });
+         };
+         */
     // Search existing Examinations
     $scope.search = function (callback) {
-      var examination = new Examinations($scope.examination);
-      Examinations.search(examination, function (_examinations) {
+      $scope.examination.paginationConfig = {};
+      $scope.examination.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      $scope.examination.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      //var examination = new Examinations($scope.examination);
+      Examinations.query($scope.examination, function (_examinations) {
         $scope.examinations = _examinations.list;
         if (callback) {
-          callback();
+          callback(_examinations.count);
         }
       });
     };
@@ -3735,7 +3768,74 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     $scope.initSearch = function () {
       $scope.initOne();
+      //$scope.tabsConfig = {};
+      //$scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
       Toolbar.addToolbarCommand('searchExaminations', 'list_examinations', 'Search', 'search', 0);
+    };
+    $scope.isPageSizeOptionEnabled = function (_option) {
+      var optionIndex = $scope.paginationConfig.pageSizeOptions.indexOf(_option);
+      if (optionIndex == 0) {
+        return true;
+      }
+      return $scope.paginationConfig.pageSizeOptions[optionIndex - 1] < $scope.paginationConfig.totalItems;
+    };
+    $scope.isPageSizeOptionSelecetd = function (_option) {
+      return $scope.paginationConfig.pageSize == _option;
+    };
+    $scope.selectPageSizeOption = function (_option) {
+      if ($scope.isPageSizeOptionEnabled(_option)) {
+        $scope.paginationConfig.pageSize = _option;
+        $scope.fireSearch();
+      }
+    };
+    $scope.pageChanged = function () {
+      //console.log($scope.paginationConfig.currentPage);
+      $scope.fireSearch();
+    };
+    $scope.getShowPagination = function () {
+      //console.log($scope.paginationConfig.totalItems);
+      return $scope.paginationConfig.totalItems > 0;
+    };
+    $scope.getNumOfPages = function () {
+      return $scope.paginationConfig.totalItems / $scope.paginationConfig.maxSize;
+    };
+    $scope.fireSearch = function () {
+      $scope.search(function (_count) {
+        $scope.tabsConfig.showResults = true;
+        $scope.paginationConfig.totalItems = _count;
+        $scope.paginationConfig.showPagination = $scope.getShowPagination();
+        $scope.paginationConfig.numPages = $scope.getNumOfPages();
+      });
+    };
+    $scope.initList = function () {
+      $scope.initOne();
+      //$scope.tabsConfig = {};
+      //$scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
+      $scope.fireSearch();
     };
     ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
       $scope.onSubmit($scope.forms.examinationForm);
@@ -3744,9 +3844,7 @@ angular.module('examinations').controller('ExaminationsController', [
       $scope.update();
     });
     ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
-      $scope.search(function () {
-        $scope.tabsConfig.showResults = true;
-      });
+      $scope.fireSearch();
     });
     ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
       if ($location.url().indexOf('/examinations/view/') > -1) {
@@ -3766,10 +3864,7 @@ angular.module('examinations').factory('Examinations', [
   function ($resource) {
     return $resource('examinations/:examinationId', { examinationId: '@_id' }, {
       update: { method: 'PUT' },
-      search: {
-        method: 'GET',
-        url: 'examinations/search'
-      }
+      query: { isArray: false }
     });
   }
 ]);'use strict';
@@ -4262,21 +4357,15 @@ angular.module('patients').controller('PatientsController', [
     };
     // Search existing patients
     $scope.search = function (callback) {
-      var query = $scope.patient;
-      query.paginationConfig = {};
-      query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-      query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      $scope.patient.paginationConfig = {};
+      $scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      $scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
       Patients.query($scope.patient, function (_res) {
         $scope.patients = _res.list;
         if (callback) {
           callback(_res.count);
         }
-      });  /*Patients.search($scope.patient, function (_res) {
-                $scope.patients = _res.list;
-                if (callback) {
-                    callback(_res.list.length);
-                }
-            });*/
+      });
     };
     // Find existing Patient
     $scope.initOne = function () {
@@ -4523,30 +4612,26 @@ angular.module('patients').factory('Patients', [
   function ($resource) {
     return $resource('patients/:patientId', { patientId: '@_id' }, {
       update: { method: 'PUT' },
-      query: { isArray: false },
-      search: {
-        method: 'GET',
-        url: 'patients/search'
-      }
+      query: { isArray: false }
     });
   }
 ]);  /*
-angular.module('patients').factory('Patient',function(){
-    var currentPatient = null;
+ angular.module('patients').factory('Patient',function(){
+ var currentPatient = null;
 
-    var setCurrentPatient = function(patient) {
-        currentPatient=patient;
-    };
+ var setCurrentPatient = function(patient) {
+ currentPatient=patient;
+ };
 
-    var getCurrentPatient = function(){
-        return currentPatient;
-    };
+ var getCurrentPatient = function(){
+ return currentPatient;
+ };
 
-    return {
-        setCurrentPatient: setCurrentPatient,
-        getCurrentPatient: getCurrentPatient
-    };
-});*/'use strict';
+ return {
+ setCurrentPatient: setCurrentPatient,
+ getCurrentPatient: getCurrentPatient
+ };
+ });*/'use strict';
 // Configuring the Articles module
 angular.module('roles').run([
   'Menus',
