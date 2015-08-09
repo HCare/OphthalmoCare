@@ -76,6 +76,7 @@ exports.delete = function(req, res) {
 /**
  * List of Examinations
  */
+/*
 exports.list = function(req, res) { Examination.find().sort('-created').populate('created._user', 'displayName').populate('_patient', 'fullName').exec(function(err, examinations) {
 		if (err) {
 			return res.status(400).send({
@@ -86,7 +87,7 @@ exports.list = function(req, res) { Examination.find().sort('-created').populate
 		}
 	});
 };
-
+*/
 function isJson(str) {
     try {
         JSON.parse(str);
@@ -174,45 +175,70 @@ function getSearchQuery(property){
 
 }
 
-
-
-
 /**
  * Search of Examinations
  */
-exports.search = function(req,res){
-    console.log("***********************************");
-    console.log("returned Req.Query");
+exports.list = function(req,res){
+
+    //pagination
+    var pageNo = 0, pageSize = 10;
+    if (req.query.hasOwnProperty('paginationConfig')) {
+        var paginationConfig = JSON.parse(req.query.paginationConfig);
+        pageNo = paginationConfig.pageNo - 1;
+        pageSize = paginationConfig.pageSize;
+        delete req.query.paginationConfig;
+    }
+
+
     var newRequest = getSearchQuery(req.query);
-    //console.log(newRequest);
-    //var obj = { _patient: '556a015c3cc50f7012217693'};
-    Examination.find(newRequest).populate('_patient').populate('created._user').exec(function (err, examinations) {
+
+    Examination.find(newRequest).skip(pageNo * pageSize).limit(pageSize).sort('-created').populate('_patient').populate('created._user').exec(function (err, examinations) {
         if (err) {
-            console.log('error');
-            console.log(err);
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         } else {
-            /*Examination.find(req.query).count(function (err, _count) {
+            Examination.find(newRequest).count(function (err, _count) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
                     });
                 }
                 else {
-                    console.log(examinations);
                     res.jsonp({list: examinations, count: _count});
                 }
 
-            });*/
-            console.log(examinations);
-            //console.log(_count);
-            //res.jsonp({list: examinations, count: _count});
-            res.jsonp({list: examinations});
+            });
         }
     });
 };
+
+/*
+ exports.list = function(req,res){
+
+ var newRequest = getSearchQuery(req.query);
+
+ Examination.find(newRequest).sort('-created').populate('_patient').populate('created._user').exec(function (err, examinations) {
+ if (err) {
+ return res.status(400).send({
+ message: errorHandler.getErrorMessage(err)
+ });
+ } else {
+ Examination.find(newRequest).count(function (err, _count) {
+ if (err) {
+ return res.status(400).send({
+ message: errorHandler.getErrorMessage(err)
+ });
+ }
+ else {
+ res.jsonp({list: examinations, count: _count});
+ }
+
+ });
+ }
+ });
+ };
+ */
 
 /**
  * Examination middleware

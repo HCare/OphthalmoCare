@@ -279,7 +279,6 @@ exports.list = function(req,res){
                     });
                 }
                 else {
-                    console.log(_count);
                     res.jsonp({list: patients, count: _count});
                 }
 
