@@ -21,9 +21,9 @@ module.exports = {
                 'public/lib/angular-ui-select/dist/select.css'
 			],
 			js: [
-                'public/lib/ng-file-upload/angular-file-upload-shim.js',
 				'public/lib/angular/angular.js',
-                'public/lib/ng-file-upload/angular-file-upload.js',
+				'public/lib/ng-file-upload/ng-file-upload-shim.js',
+                'public/lib/ng-file-upload/ng-file-upload.js',
 				'public/lib/angular-resource/angular-resource.js', 
 				'public/lib/angular-cookies/angular-cookies.js', 
 				'public/lib/angular-animate/angular-animate.js', 

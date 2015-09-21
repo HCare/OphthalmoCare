@@ -11,9 +11,9 @@
                         <div class="alert alert-danger" ng-show="modalConfig.webcamError">
                             <span>Webcam could not be started. Did you give access to it?</span>
                         </div>
-                        <button type="button" class="btn btn-default" ng-click="makeSnapshot()">
+                        <button type="button" class="btn btn-default" ng-click="makeSnapshot()" ng-hide="modalConfig.webcamError">
                             <i class="glyphicon glyphicon-camera"></i></button>
-                        <div deckgrid class="deckgrid" source="modalConfig.photos">
+                        <div deckgrid class="deckgrid" source="modalConfig.photos" ng-hide="modalConfig.webcamError">
                             <div>
                                 <a href="" class="thumbnail" ng-click="mother.selectPhoto(card.src)">
                                     <img src="" data-ng-src="{{card.src}}">
@@ -24,7 +24,10 @@
                 </tab>
                 <tab heading="Browse" active="modalConfig.tabs[1].active" disabled="modalConfig.tabs[1].disabled">
                     <div class="controls">
-
+                        <div class="well drop-zone" ngf-drag-over-class="{accept:'drag-over', delay:100}"
+                             ngf-multiple="false" ngf-drop-available="true"
+                             ngf-pattern="'image/*'" accept="'image/*'"
+                             ngf-select="" ngf-drop="" ng-model="files">Drop Image here</div>
                     </div>
                 </tab>
                 <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">

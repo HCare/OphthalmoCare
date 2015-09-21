@@ -21,9 +21,9 @@ module.exports = {
 				'public/lib/angular-ui-select/dist/select.min.css'
 			],
 			js: [
-				'public/lib/ng-file-upload/angular-file-upload-shim.min.js',
 				'public/lib/angular/angular.min.js',
-				'public/lib/ng-file-upload/angular-file-upload.min.js',
+				'public/lib/ng-file-upload/ng-file-upload-shim.min.js',
+				'public/lib/ng-file-upload/ng-file-upload.min.js',
 				'public/lib/angular-resource/angular-resource.min.js',
 				'public/lib/angular-cookies/angular-cookies.min.js',
 				'public/lib/angular-animate/angular-animate.min.js',

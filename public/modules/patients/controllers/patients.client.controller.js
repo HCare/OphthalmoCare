@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients','CoreProperties', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'ActionsHandler', 'Toolbar',
-    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients','CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar',
+    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar) {
 
         $scope.configObj = {};
         $scope.configObj._ = lodash;
@@ -120,7 +120,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 lodash.extend(patient, {personalPhoto: true});
             }
             var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
-            $upload.upload({
+            Upload.upload({
                 url: '/patients',
                 method: 'POST',
                 headers: {'Content-Type': 'multipart/form-data'},
@@ -186,7 +186,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 lodash.extend(patient, {personalPhoto: true});
             }
             var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
-            $upload.upload({
+            Upload.upload({
                 url: '/patients/' + patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},

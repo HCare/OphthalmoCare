@@ -49,7 +49,7 @@ exports.create = function (req, res, next) {
                     moment(time).date() + '/' +
                     newPatient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, newPatient);
+                _.extend(req.body, {newPatient: newPatient});
                 next();
                 return;
             }

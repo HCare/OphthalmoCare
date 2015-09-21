@@ -5,7 +5,7 @@ var ApplicationConfiguration = (function() {
     //console.log('config');
 	// Init module configuration options
 	var applicationModuleName = 'ophthalmocare';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngLodash', 'angular-loading-bar', 'toaster', 'webcam', 'akoenig.deckgrid', 'ngImgCrop', 'angularMoment', 'angularFileUpload', 'pascalprecht.translate', 'ui.select', 'schemaForm'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils', 'ngLodash', 'angular-loading-bar', 'toaster', 'webcam', 'akoenig.deckgrid', 'ngImgCrop', 'angularMoment', 'ngFileUpload', 'pascalprecht.translate', 'ui.select', 'schemaForm'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

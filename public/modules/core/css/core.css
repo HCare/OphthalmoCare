@@ -1,18 +1,23 @@
 .content {
-	margin-top: 100px;
+    margin-top: 100px;
 }
+
 .undecorated-link:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
+
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-	display: none !important;
+    display: none !important;
 }
-.ng-invalid.ng-dirty{
-    border-color:#FA787E;
+
+.ng-invalid.ng-dirty {
+    border-color: #FA787E;
 }
-.ng-valid.ng-dirty{
-    border-color:#78FA89;
+
+.ng-valid.ng-dirty {
+    border-color: #78FA89;
 }
+
 .circular {
     width: 128px;
     height: 128px;
@@ -24,13 +29,15 @@
     -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
     -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 }
+
 .circular img {
     opacity: 0;
     filter: alpha(opacity=0);
 }
-.webcam-live{
-    width: 100%    !important;
-    height: auto   !important;
+
+.webcam-live {
+    width: 100% !important;
+    height: auto !important;
     display: block;
     padding: 4px;
     /*margin-bottom: 10px;*/
@@ -42,6 +49,7 @@
     -o-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
 }
+
 .deckgrid[deckgrid]::before {
     /* Specifies that the grid should have a maximum of 4 columns. Each column will have the classes 'column' and 'column-1-4' */
     content: '4 .column.column-1-4';
@@ -61,6 +69,7 @@ img {
     height: auto;
     max-width: 100%;
 }
+
 .cropArea {
     background: #E4E4E4;
     overflow: hidden;
@@ -68,22 +77,23 @@ img {
     height: 128px;
 }
 
-.col-centered{
+.col-centered {
     /*float: none;*/
     /*margin: 0 auto;*/
     text-align: center;
 }
 
-.glyphicontop{
-    top:0
+.glyphicontop {
+    top: 0
 }
+
 .navbar-lower {
     top: 50px;
-    width:100%;
+    width: 100%;
     z-index: 10;
 }
 
-.page-title{
+.page-title {
     color: #ffffff;
     float: left;
     height: 50px;
@@ -91,19 +101,23 @@ img {
     font-size: 18px;
     line-height: 20px;
 }
-.page-sub-title{
+
+.page-sub-title {
     color: #ffffff;
     float: left;
     height: 50px;
     padding: 15px 15px;
 }
-.toolbar{
+
+.toolbar {
     padding: 8px 0px;
 }
-.toolbar-btn{
+
+.toolbar-btn {
     margin-left: 5px;
 }
-.content-div{
+
+.content-div {
     margin-top: 30px;
 }
 
@@ -111,6 +125,14 @@ img {
     margin-bottom: 0px;
 }
 
-.topMargin{
+.topMargin {
     margin-top: 10px;
+}
+
+.drop-zone {
+    border: dotted 3px lightgray;
+}
+
+.drag-over {
+    border: dotted 3px green;
 }
