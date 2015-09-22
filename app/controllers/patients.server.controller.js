@@ -29,14 +29,18 @@ exports.renderPhoto = function (req, res) {
  * Create a Patient
  */
 exports.create = function (req, res, next) {
-    var patient = new Patient(req.body);
+    //console.log(req.body.data);
+    var patient = new Patient(JSON.parse(req.body.data));
     patient.created._user = req.user;
+    console.log(patient);
     var hasPhoto = patient.personalPhoto;
     if (hasPhoto === 'true') {
         patient.personalPhoto = config.patientPhotoFileName;
     }
+    console.log(hasPhoto);
     patient.save(function (err, newPatient) {
         if (err) {
+            console.log(err);
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
@@ -70,7 +74,7 @@ exports.read = function (req, res) {
  */
 exports.update = function (req, res, next) {
     var patient = req.patient;
-    patient = _.extend(patient, req.body);
+    patient = _.extend(patient, JSON.parse(req.body.data));
 
     patient.updated._user = req.user;
     patient.updated.time = Date.now();
@@ -91,7 +95,7 @@ exports.update = function (req, res, next) {
                     moment(time).date() + '/' +
                     patient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, patient);
+                _.extend(req.body, {newPatient: patient});
                 next();
                 return;
             }
