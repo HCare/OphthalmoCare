@@ -4,7 +4,10 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+    autoIncrement = require('mongoose-auto-increment');
+console.log(mongoose);
+autoIncrement.initialize(mongoose.connection);
 
 /**
  * Patient Schema
@@ -66,5 +69,7 @@ var PatientSchema = new Schema({
         }
     }
 });
+
+PatientSchema.plugin(autoIncrement.plugin, { model: 'Patient', field: 'seq', startAt: 1, incrementBy: 1 });
 
 mongoose.model('Patient', PatientSchema);
