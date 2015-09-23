@@ -417,7 +417,8 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     $scope.makeSnapshot = function makeSnapshot() {
         if (_video) {
             var idata = getVideoData();
-            $scope.modalConfig.photos.push({src: idata})
+            $scope.selectPhoto(idata);
+            //$scope.modalConfig.photos.push({src: idata})
         }
     };
 
@@ -440,6 +441,20 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
         reader.readAsDataURL(file);
 
     };
+
+    $scope.selectFile=function(file){
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            $scope.$apply(function ($scope) {
+                $scope.selectPhoto(event.target.result);
+            });
+        };
+        // when the file is read it triggers the onload event above.
+        reader.readAsDataURL(file);
+
+    };
+
 
     $scope.selectInputPhoto = function () {
         $scope.modalConfig.photoWidth = img.width;
