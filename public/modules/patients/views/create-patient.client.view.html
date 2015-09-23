@@ -27,7 +27,7 @@
                         <div class="well drop-zone" ngf-drag-over-class="{accept:'drag-over', delay:100}"
                              ngf-multiple="false" ngf-drop-available="true"
                              ngf-pattern="'image/*'" accept="image/*"
-                             ngf-select="selectFile($file)" ngf-drop="">Drop Image here, or click to select</div>
+                             ngf-select="selectFile($file)" ngf-drop="selectFile($file)">Drop Image here, or click to select</div>
                     </div>
                 </tab>
                 <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">
