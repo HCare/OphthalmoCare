@@ -95,7 +95,7 @@ exports.update = function (req, res, next) {
                     moment(time).date() + '/' +
                     patient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, {newPatient: patient});
+                _.extend(req.body, patient);
                 next();
                 return;
             }
@@ -245,30 +245,30 @@ function getSearchQuery(property){
 
 exports.list = function(req,res){
       // delete object gender and add string gender
-    if(req.query.gender != null && req.query.gender != undefined){
+    if(req.query.query.gender != null && req.query.query.gender != undefined){
         var gender = "";
-        if(typeof req.query.gender == "string"){
-            var g = JSON.parse(req.query.gender);
+        if(typeof req.query.query.gender == "string"){
+            var g = JSON.parse(req.query.query.gender);
             gender = g._id;
         }
-        else if(typeof req.query.gender == "object"){
-            gender = req.query.gender._id;
+        else if(typeof req.query.query.gender == "object"){
+            gender = req.query.query.gender._id;
         }
 
-        delete req.query.gender;
-        req.query.gender = gender;
+        delete req.query.query.gender;
+        req.query.query.gender = gender;
     }
 
     //pagination
     var pageNo = 0, pageSize = 10;
-    if (req.query.hasOwnProperty('paginationConfig')) {
-        var paginationConfig = JSON.parse(req.query.paginationConfig);
+    if (req.query.hasOwnProperty('paging')) {
+        var paginationConfig = JSON.parse(req.query.paging);
         pageNo = paginationConfig.pageNo - 1;
         pageSize = paginationConfig.pageSize;
-        delete req.query.paginationConfig;
+        delete req.query.paging;
     }
 
-    var newRequest = getSearchQuery(req.query);
+    var newRequest = getSearchQuery(req.query.query);
 
     Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
         if (err) {

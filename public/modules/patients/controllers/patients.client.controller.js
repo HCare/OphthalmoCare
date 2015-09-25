@@ -2,8 +2,9 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients','CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar',
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar',
     function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar) {
+
 
         $scope.configObj = {};
         $scope.configObj._ = lodash;
@@ -215,11 +216,11 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Find a list of Patients
         /*$scope.find = function () {
-            Patients.query(function (_patients) {
-                $scope.patients = _patients;
-            });
+         Patients.query(function (_patients) {
+         $scope.patients = _patients;
+         });
 
-        };*/
+         };*/
 
         // Find existing Patient
         $scope.findOne = function (callback) {
@@ -241,10 +242,22 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-            $scope.patient.paginationConfig = {};
-            $scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-            $scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-            Patients.query($scope.patient, function (_res) {
+                var paginationConfig = {};
+                    paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+                    paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+            //$scope.patient.paginationConfig = {};
+            //$scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+            //$scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+            //console.log($scope.patient);
+            if ($scope.patient && !lodash.isEmpty($scope.patient)) {
+                $location.search({query: JSON.stringify($scope.patient), paging:JSON.stringify(paginationConfig)});
+                //$location.replace();
+                console.log('b4 search');
+                console.log(JSON.parse(JSON.stringify($scope.patient)));
+                console.log(paginationConfig);
+            }
+            //$scope.patient.paginationConfig=paginationConfig;
+            Patients.query({query:$scope.patient, paging:paginationConfig}, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
@@ -282,15 +295,28 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.paginationConfig = {};
             $scope.paginationConfig.pageSize = 10;
             $scope.paginationConfig.currentPage = 1;
-            $scope.paginationConfig.totalItems = 0;
+            $scope.paginationConfig.totalItems = Number.MAX_VALUE;
             $scope.paginationConfig.maxSize = 2;
             $scope.paginationConfig.numPages = 1;
             $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
             $scope.paginationConfig.showPagination = false;
             Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
+            var searchQuery = $location.search();
+            if (searchQuery && !lodash.isEmpty(searchQuery)) {
+                $scope.patient = JSON.parse(searchQuery.query);
+                var pagingConf=JSON.parse(searchQuery.paging);
+                $scope.paginationConfig.currentPage = pagingConf.pageNo;
+                $scope.paginationConfig.pageSize = pagingConf.pageSize;
+                console.log('after redirect');
+                //console.log(searchQuery);
+                console.log($scope.patient);
+                console.log($scope.paginationConfig);
+                //console.log(searchQuery);
+                $scope.fireSearch();
+            }
         };
 
-        $scope.initList=function(){
+        $scope.initList = function () {
             $scope.initOne();
             $scope.tabsConfig = {};
             $scope.tabsConfig.showResuls = false;
@@ -312,6 +338,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.pageChanged = function () {
             //console.log($scope.paginationConfig.currentPage);
+            console.log('page changed');
             $scope.fireSearch();
         };
 
@@ -347,7 +374,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.examine();
         });
         ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
-            $location.path('examinations/patient/'+ $scope.patient._id );
+            $location.path('examinations/patient/' + $scope.patient._id);
         });
         ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
             $location.path('patients/' + $scope.patient._id + '/edit');
@@ -447,10 +474,10 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
 
     };
 
-    $scope.selectFile=function(file){
+    $scope.selectFile = function (file) {
         var reader = new FileReader();
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             $scope.$apply(function ($scope) {
                 $scope.selectPhoto(event.target.result);
             });
