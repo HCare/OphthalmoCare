@@ -290,16 +290,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.initSearch = function () {
             $scope.initOne();
-            $scope.tabsConfig = {};
-            $scope.tabsConfig.showResuls = false;
-            $scope.paginationConfig = {};
-            $scope.paginationConfig.pageSize = 10;
-            $scope.paginationConfig.currentPage = 1;
-            $scope.paginationConfig.totalItems = Number.MAX_VALUE;
-            $scope.paginationConfig.maxSize = 2;
-            $scope.paginationConfig.numPages = 1;
-            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
-            $scope.paginationConfig.showPagination = false;
+            $scope.initPagination();
             Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
             var searchQuery = $location.search();
             if (searchQuery && !lodash.isEmpty(searchQuery)) {
@@ -318,17 +309,21 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.initList = function () {
             $scope.initOne();
+            $scope.initPagination();
+            $scope.fireSearch();
+        };
+
+        $scope.initPagination=function(){
             $scope.tabsConfig = {};
             $scope.tabsConfig.showResuls = false;
             $scope.paginationConfig = {};
             $scope.paginationConfig.pageSize = 10;
             $scope.paginationConfig.currentPage = 1;
-            $scope.paginationConfig.totalItems = 0;
+            $scope.paginationConfig.totalItems = Number.MAX_VALUE;
             $scope.paginationConfig.maxSize = 2;
             $scope.paginationConfig.numPages = 1;
             $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
             $scope.paginationConfig.showPagination = false;
-            $scope.fireSearch();
         };
 
         $scope.getShowPagination = function () {
@@ -384,6 +379,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+            $scope.initPagination();
             $scope.fireSearch();
         });
 
