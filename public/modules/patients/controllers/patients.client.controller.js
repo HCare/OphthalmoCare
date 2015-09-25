@@ -400,10 +400,15 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     //$scope.webcamError = false;
 
     var _video = null;
-    $scope.onSuccess = function (videoElem) {
-        _video = videoElem;
+    $scope.onSuccess = function () {
+        _video = $scope.myChannel.video;
     };
-
+    $scope.myChannel = {
+        // the fields below are all optional
+        videoHeight: '240',
+        videoWidth: '320',
+        video: null // Will reference the video element on success
+    };
     var getVideoData = function getVideoData() {
         var hiddenCanvas = document.createElement('canvas');
         hiddenCanvas.width = _video.width;

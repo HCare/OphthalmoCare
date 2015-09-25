@@ -36,8 +36,8 @@
 }
 
 .webcam-live {
-    width: 100% !important;
-    height: auto !important;
+    min-width: 320px;
+    min-height: 240px;
     display: block;
     padding: 4px;
     /*margin-bottom: 10px;*/
@@ -73,8 +73,8 @@ img {
 .cropArea {
     background: #E4E4E4;
     overflow: hidden;
-    width: 128px;
-    height: 128px;
+    width: 320px;
+    height: 240px;
 }
 
 .col-centered {

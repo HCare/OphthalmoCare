@@ -44,7 +44,7 @@ module.exports = {
 				'public/lib/angularjs-toaster/toaster.js',
 				'public/lib/moment/min/moment.min.js',
 				'public/lib/angular-moment/angular-moment.min.js',
-				'public/lib/webcam-directive/dist/1.1.0/webcam.min.js',
+				'public/lib/webcam/dist/webcam.min.js',
 				'public/lib/angular-deckgrid/angular-deckgrid.min.js',
 				'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
 			]

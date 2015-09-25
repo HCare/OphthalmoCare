@@ -24,6 +24,6 @@
     "ng-file-upload": "~7.3.8",
     "ng-lodash": "~0.0.2",
     "ngImgCrop": "~0.2.0",
-    "webcam-directive": "~1.1.0"
+    "webcam": "webcam-directive#~3.0.0"
   }
 }

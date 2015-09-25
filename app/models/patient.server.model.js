@@ -6,7 +6,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
     autoIncrement = require('mongoose-auto-increment');
-console.log(mongoose);
+
 autoIncrement.initialize(mongoose.connection);
 
 /**

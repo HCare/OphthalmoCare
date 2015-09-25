@@ -5,7 +5,7 @@
                 <tab heading="Take a Photo" active="modalConfig.tabs[0].active" disabled="modalConfig.tabs[0].disabled">
                     <div class="controls">
                         <div ng-hide="modalConfig.webcamError">
-                            <webcam on-error="onCamError(err)" on-streaming="onSuccess(video)">
+                            <webcam on-error="onCamError(err)" on-streaming="onSuccess()" channel="myChannel">
                             </webcam>
                         </div>
                         <div class="alert alert-danger" ng-show="modalConfig.webcamError">
@@ -31,7 +31,7 @@
                     </div>
                 </tab>
                 <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">
-                    <div class="cropArea" ng-style="{'width': modalConfig.photoWidth, 'height': modalConfig.photoHeight }">
+                    <div class="cropArea" >
                         <img-crop area-min-size="128" result-image-size="128" image="modalConfig.selectedPhoto" result-image="modalConfig.finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
                     </div>
                 </tab>
