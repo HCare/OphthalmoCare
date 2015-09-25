@@ -5,7 +5,7 @@
                 <tab heading="Take a Photo" active="modalConfig.tabs[0].active" disabled="modalConfig.tabs[0].disabled">
                     <div class="controls">
                         <div ng-hide="modalConfig.webcamError">
-                            <webcam on-error="onCamError(err)" on-streaming="onSuccess(video)">
+                            <webcam on-error="onCamError(err)" on-streaming="onSuccess()" channel="myChannel">
                             </webcam>
                         </div>
                         <div class="alert alert-danger" ng-show="modalConfig.webcamError">
@@ -20,6 +20,14 @@
                                 </a>
                             </div>
                         </div>
+                    </div>
+                </tab>
+                <tab heading="Browse" active="modalConfig.tabs[1].active" disabled="modalConfig.tabs[1].disabled">
+                    <div class="controls">
+                        <div class="well drop-zone" ngf-drag-over-class="{accept:'drag-over', delay:100}"
+                             ngf-multiple="false" ngf-drop-available="true"
+                             ngf-pattern="'image/*'" accept="image/*"
+                             ngf-select="selectFile($file)" ngf-drop="selectFile($file)">Drop Image here, or click to select</div>
                     </div>
                 </tab>
                 <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">

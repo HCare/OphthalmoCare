@@ -95,7 +95,7 @@ exports.update = function (req, res, next) {
                     moment(time).date() + '/' +
                     patient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, patient);
+                _.extend(req.body, {newPatient: patient});
                 next();
                 return;
             }
