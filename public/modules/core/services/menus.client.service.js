@@ -125,7 +125,7 @@ angular.module('core').service('Menus', [ 'lodash',
                 position: position || 0,
                 items: [],
                 shouldRender: shouldRender,
-                collapsed: false
+                collapsed: true
             });
 
             // Return the menu object

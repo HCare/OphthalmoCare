@@ -298,10 +298,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
                 var pagingConf=JSON.parse(searchQuery.paging);
                 $scope.paginationConfig.currentPage = pagingConf.pageNo;
                 $scope.paginationConfig.pageSize = pagingConf.pageSize;
-                console.log('after redirect');
+                //console.log('after redirect');
                 //console.log(searchQuery);
-                console.log($scope.patient);
-                console.log($scope.paginationConfig);
+                //console.log($scope.patient);
+                //console.log($scope.paginationConfig);
                 //console.log(searchQuery);
                 $scope.fireSearch();
             }

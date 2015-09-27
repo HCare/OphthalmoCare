@@ -245,7 +245,14 @@ function getSearchQuery(property){
 
 exports.list = function(req,res){
       // delete object gender and add string gender
-    if(req.query.query.gender != null && req.query.query.gender != undefined){
+    //console.log(req.query);
+
+    if(typeof req.query.query=="string"){
+        req.query.query=JSON.parse(req.query.query);
+    }
+    //console.log(req.query.query.gender);
+    if(req.query.query.hasOwnProperty('gender')){
+      //console.log('gender query');
         var gender = "";
         if(typeof req.query.query.gender == "string"){
             var g = JSON.parse(req.query.query.gender);
@@ -254,7 +261,7 @@ exports.list = function(req,res){
         else if(typeof req.query.query.gender == "object"){
             gender = req.query.query.gender._id;
         }
-
+        //console.log(gender);
         delete req.query.query.gender;
         req.query.query.gender = gender;
     }
@@ -267,9 +274,10 @@ exports.list = function(req,res){
         pageSize = paginationConfig.pageSize;
         delete req.query.paging;
     }
-
+    //console.log(req.query.query);
     var newRequest = getSearchQuery(req.query.query);
-
+    //console.log('xxxxx');
+    //console.log(newRequest);
     Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
         if (err) {
             return res.status(400).send({
@@ -285,9 +293,7 @@ exports.list = function(req,res){
                 else {
                     res.jsonp({list: patients, count: _count});
                 }
-
             });
-
         }
     });
     /*

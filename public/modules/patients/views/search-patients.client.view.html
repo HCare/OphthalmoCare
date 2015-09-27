@@ -16,11 +16,10 @@
                                            placeholder="Name"/>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label" for="gender">Gender</label>
+                            <div class="form-group">                                <label class="control-label" for="gender">Gender</label>
 
-                                <div class="controls">
-                                    <h-care-checkbtn-list id="gender" source="configObj.genders" item-label-field="name"
+                                <div class="controls" id="gender" >
+                                    <h-care-checkbtn-list source="configObj.genders" item-label-field="name"
                                                           item-value-field="_id" is-multi-selection="false"
                                                           is-active-on-click="true"
                                                           selected-items="configObj.patient_genders"
@@ -29,35 +28,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label" for="birthDate">Birth Date</label>
-
+                                <label class="control-label" for="ageFrom">Age From</label>
                                 <div class="controls">
-                                    <p class="input-group">
-                                        <input type="text" id="birthDate"
-                                               placeholder="Birth Date"
-                                               class="form-control"
-                                               datepicker-popup="{{configObj.format}}"
-                                               ng-change="birthDateChanged(patient.birthDate)"
-                                               ng-model="patient.birthDate"
-                                               is-open="configObj.opened"
-                                               min-date="configObj.minDate"
-                                               max-date="configObj.maxDate"
-                                               datepicker-options="configObj.dateOptions"
-                                               show-button-bar="false"
-                                               close-text="Close"/>
-                        <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i
-                                class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                                    </p>
+                                    <input type="text" data-ng-model="patient.age.from" id="ageFrom" class="form-control"
+                                           placeholder="Age From"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label" for="age">Age</label>
-
+                                <label class="control-label" for="ageTo">Age To</label>
                                 <div class="controls">
-                                    <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
-                                           placeholder="Age" ng-change="ageChanged(configObj.age)"/>
+                                    <input type="text" data-ng-model="patient.age.To" id="ageTo" class="form-control"
+                                           placeholder="Age To" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -110,19 +91,7 @@
                         <h4 class="list-group-item-heading" data-ng-bind="patient.fullName"></h4>
                     </a>
                 </div>
-                <pagination
-                        ng-hide="!paginationConfig.showPagination"
-                        total-items="paginationConfig.totalItems"
-                        ng-model="paginationConfig.currentPage"
-                        ng-change="pageChanged()"
-                        max-size="paginationConfig.maxSize"
-                        items-per-page="paginationConfig.pageSize"
-                        class="pagination-sm" boundary-links="true"
-                        rotate="false"
-                        previous-text="&lsaquo;"
-                        next-text="&rsaquo;"
-                        first-text="&laquo;"
-                        last-text="&raquo;">
+                <pagination ng-hide="!paginationConfig.showPagination" total-items="paginationConfig.totalItems" ng-model="paginationConfig.currentPage" ng-change="pageChanged()"  max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
                 </pagination>
                 <ul ng-hide="!paginationConfig.showPagination" class="pagination-sm pagination">
                     <li ng-repeat="item in paginationConfig.pageSizeOptions" ng-class="{active: isPageSizeOptionSelecetd(item), disabled:!isPageSizeOptionEnabled(item)}" >
