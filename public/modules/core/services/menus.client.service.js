@@ -124,7 +124,8 @@ angular.module('core').service('Menus', [ 'lodash',
                 //roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
                 position: position || 0,
                 items: [],
-                shouldRender: shouldRender
+                shouldRender: shouldRender,
+                collapsed: false
             });
 
             // Return the menu object

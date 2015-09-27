@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus', '$state','CoreProperties','ActionsHandler','Toolbar',
-    function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler, Toolbar) {
+angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus', '$state', 'CoreProperties', 'ActionsHandler', 'Toolbar', '$aside',
+    function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler, Toolbar, $aside) {
         $scope.authentication = Authentication;
         $scope.isCollapsed = false;
         $scope.menu = Menus.getMenu('topbar');
@@ -20,6 +20,7 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 
         // Collapsing the menu after navigation
         $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            $scope.closeAside();
             if(toState.title){
                 $scope.pageTitle=toState.title;
             }
@@ -29,6 +30,36 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 
         $scope.fireCommand=function(command){
             ActionsHandler.fireAction(command, null);
-        }
+        };
+        $scope.closeAside = function() {
+            if($scope.asideInstance) {
+                $scope.asideInstance.close();
+            }
+        };
+        $scope.openAside = function(template, position, slideOver) {
+            $scope.asideInstance=$aside.open({
+                templateUrl: template,
+                placement: position,
+                backdrop: slideOver,
+                controller: function($scope, $modalInstance, Authentication, Menus) {
+
+                    $scope.ok = function(e) {
+                        $modalInstance.close();
+                        e.stopPropagation();
+                    };
+                    $scope.cancel = function(e) {
+                        $modalInstance.dismiss();
+                        e.stopPropagation();
+                    };
+
+                    $scope.authentication = Authentication;
+                    $scope.isCollapsed = false;
+                    $scope.menu = Menus.getMenu('topbar');
+                    $scope.toggleCollapsibleMenu = function () {
+                        $scope.isCollapsed = !$scope.isCollapsed;
+                    };
+                }
+            });
+        };
     }
 ]);

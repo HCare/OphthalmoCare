@@ -18,7 +18,8 @@ module.exports = {
 				'public/lib/angular-loading-bar/build/loading-bar.min.css',
 				'public/lib/angularjs-toaster/toaster.css',
 				'public/lib/ngImgCrop/compile/minified/ng-img-crop.css',
-				'public/lib/angular-ui-select/dist/select.min.css'
+				'public/lib/angular-ui-select/dist/select.min.css',
+                'public/lib/angular-aside/dist/css/angular-aside.min.css'
 			],
 			js: [
 				'public/lib/angular/angular.min.js',
@@ -46,7 +47,8 @@ module.exports = {
 				'public/lib/angular-moment/angular-moment.min.js',
 				'public/lib/webcam/dist/webcam.min.js',
 				'public/lib/angular-deckgrid/angular-deckgrid.min.js',
-				'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
+				'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
+                'public/lib/angular-aside/dist/js/angular-aside.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',

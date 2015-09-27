@@ -1,26 +1,100 @@
 <div data-ng-controller="HeaderController">
-<div class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container">
+    <div class="navbar navbar-fixed-top navbar-inverse">
+
+            <div class="navbar-header">
+                <button class="navbar-toggle" type="button" data-ng-click="toggleCollapsibleMenu()">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div data-ng-if="showToolBar" class="toolbar" >
+                    <h-care-action-btn class="toolbar-btn" data-ng-repeat="item in toolbarCommands() | orderBy: 'position'"
+                                       icon="{{item.icon}}" click-event="fireCommand('{{item.command}}')"
+                                       action="{{item.action}}" redirect-url="{{item.redirect}}" title="{{item.title}}"
+                                       response-message="{{item.confirmMsg}}"></h-care-action-btn>
+                </div>
+
+                <a href="" class="navbar-brand" ng-click="openAside('aside.html','left', true)">OphthalmoCare</a>
+            </div>
         <div class="navbar-header">
-            <button class="navbar-toggle" type="button" data-ng-click="toggleCollapsibleMenu()">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="/#!/" class="navbar-brand">OphthalmoCare</a>
+            </div>
+
+        <div class="container">
+            <!--<div data-ng-if="showToolBar" class="navbar-header">
+                <span class="page-title">{{pageTitle}}</span>
+                <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
+            </div>-->
+            <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
+                <ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
+                    <!--<li ui-route="/signup" ng-class="{active: $uiRoute}">
+                    <a href="/#!/signup">Sign Up</a>
+                </li>
+                <li class="divider-vertical"></li>-->
+                    <li ui-route="/signin" ng-class="{active: $uiRoute}">
+                        <a href="/#!/signin">Sign In</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span data-ng-bind="authentication.user.displayName||authentication.user.email"></span> <b
+                                class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!--<li>
+                                <a href="/#!/settings/profile">Edit Profile</a>
+                            </li>
+                            <li>
+                                <a href="/#!/settings/accounts">Manage Social Accounts</a>
+                            </li>
+                            <li data-ng-show="authentication.user.provider === 'local'">
+                                <a href="/#!/settings/password">Change Password</a>
+                            </li>
+                            <li class="divider"></li>-->
+                            <li>
+                                <a href="/auth/signout">Signout</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </nav>
         </div>
-        <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
-            <ul class="nav navbar-nav" data-ng-if="menu.shouldRender(authentication.user);">
+    </div>
+    <!--<div data-ng-if="showToolBar" class="navbar navbar-inverse navbar-fixed-top navbar-lower" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <span class="page-title">{{pageTitle}}</span>
+                <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
+            </div>
+            <div class="navbar-right toolbar">
+                <h-care-action-btn class="toolbar-btn" data-ng-repeat="item in toolbarCommands() | orderBy: 'position'"
+                                   icon="{{item.icon}}" click-event="fireCommand('{{item.command}}')"
+                                   action="{{item.action}}" redirect-url="{{item.redirect}}" title="{{item.title}}"
+                                   response-message="{{item.confirmMsg}}"></h-care-action-btn>
+            </div>
+            &lt;!&ndash;<form class="navbar-right toolbar" role="search">
+            <button class="btn btn-success" ng-click="fire()" >Button</button>
+            <button class="btn btn-default">Button</button>
+            <button class="btn btn-default">Button</button>
+            <button class="btn btn-default">Button</button>
+             </form>&ndash;&gt;
+        </div>
+    </div>-->
+    <script type="text/ng-template" id="aside.html">
+        <div class="navbar-inverse">
+        <nav role="navigation">
+            <ul class="list-unstyled main-menu" data-ng-if="menu.shouldRender(authentication.user);">
                 <li data-ng-repeat="item in menu.items | orderBy: 'position'"
                     data-ng-if="item.shouldRender(authentication.user);" ng-switch="item.menuItemType"
-                    ui-route="{{item.uiRoute}}" class="{{item.menuItemClass}}" ng-class="{active: ($uiRoute)}"
+                    ui-route="{{item.uiRoute}}" class="{{item.menuItemClass}}" ng-class="{'active': ($uiRoute)}"
                     dropdown="item.menuItemType === 'dropdown'">
-                    <a href="#" ng-switch-when="dropdown" class="dropdown-toggle">
+                    <a href="#" ng-switch-when="dropdown" class="dropdown-toggle" ng-click="item.collapsed = !item.collapsed" >
                         <span data-ng-bind="item.title"></span>
                         <b class="caret"></b>
                     </a>
-                    <ul ng-switch-when="dropdown" class="dropdown-menu">
+                    <ul ng-switch-when="dropdown" class="list-unstyled" collapse="item.collapsed">
                         <li data-ng-repeat="subitem in item.items | orderBy: 'position'"
                             data-ng-if="subitem.shouldRender(authentication.user);" ui-route="{{subitem.uiRoute}}"
                             ng-class="{active: $uiRoute}">
@@ -30,56 +104,11 @@
                     <a ng-switch-default href="/#!/{{item.link}}" data-ng-bind="item.title"></a>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
-                <!--<li ui-route="/signup" ng-class="{active: $uiRoute}">
-                    <a href="/#!/signup">Sign Up</a>
-                </li>
-                <li class="divider-vertical"></li>-->
-                <li ui-route="/signin" ng-class="{active: $uiRoute}">
-                    <a href="/#!/signin">Sign In</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <span data-ng-bind="authentication.user.displayName||authentication.user.email"></span> <b
-                            class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <!--<li>
-                            <a href="/#!/settings/profile">Edit Profile</a>
-                        </li>
-                        <li>
-                            <a href="/#!/settings/accounts">Manage Social Accounts</a>
-                        </li>
-                        <li data-ng-show="authentication.user.provider === 'local'">
-                            <a href="/#!/settings/password">Change Password</a>
-                        </li>
-                        <li class="divider"></li>-->
-                        <li>
-                            <a href="/auth/signout">Signout</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
         </nav>
-    </div>
-</div>
-<div data-ng-if="showToolBar" class="navbar navbar-inverse navbar-fixed-top navbar-lower" role="navigation">
-    <div class="container">
-            <div class="navbar-header">
-                <span class="page-title">{{pageTitle}}</span>
-                <span class="page-sub-title" data-ng-bind="pageSubTitle()"></span>
-            </div>
-        <div class="navbar-right toolbar" >
-            <h-care-action-btn class="toolbar-btn" data-ng-repeat="item in toolbarCommands() | orderBy: 'position'" icon="{{item.icon}}" click-event="fireCommand('{{item.command}}')" action="{{item.action}}" redirect-url="{{item.redirect}}" title="{{item.title}}" response-message="{{item.confirmMsg}}" ></h-care-action-btn>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <!--Include your brand here-->
+            <a href="" class="navbar-brand" ng-click="ok($event)">OphthalmoCare</a>
         </div>
-            <!--<form class="navbar-right toolbar" role="search">
-            <button class="btn btn-success" ng-click="fire()" >Button</button>
-            <button class="btn btn-default">Button</button>
-            <button class="btn btn-default">Button</button>
-            <button class="btn btn-default">Button</button>
-             </form>-->
-    </div>
-</div>
+        </div>
+    </script>
 </div>

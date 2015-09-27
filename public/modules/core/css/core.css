@@ -1,5 +1,5 @@
 .content {
-    margin-top: 100px;
+    margin-top: 50px;
 }
 
 .undecorated-link:hover {
@@ -111,6 +111,7 @@ img {
 
 .toolbar {
     padding: 8px 0px;
+    float: right !important;
 }
 
 .toolbar-btn {
@@ -136,3 +137,101 @@ img {
 .drag-over {
     border: dotted 3px green;
 }
+
+.ng-aside .modal-dialog {
+    min-width: 300px !important;
+    max-width: 300px !important;
+}
+.ng-aside > .modal-dialog > .modal-content{
+    background: #222222;
+}
+
+
+.main-menu {
+    padding-top: 50px;
+}
+
+.main-menu li {
+    border-bottom: 1px solid #323949;
+    margin-left: 20px;
+    font-size: 18px;
+    padding: 12px;
+}
+
+.main-menu li a {
+    color: #6F7D8C;
+    text-decoration: none;
+}
+
+.main-menu li a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.main-menu li .active a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.main-menu li .sub-nav {
+    border-bottom: 0px;
+    padding: 4px;
+}
+
+.main-menu a .caret {
+    width: 0;
+    height: 0;
+    display: inline-block;
+    vertical-align: top;
+    border-top: 4px solid #4f5963;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    content: "";
+    margin-top: 8px;
+}
+
+.main-menu a:hover .caret {
+    border-top-color: #FFFFFF;
+}
+
+.main-menu li.open > a > .caret {
+    border-top: none;
+    border-bottom: 4px solid #4f5963;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.main-menu li.open > a:hover > .caret {
+    border-bottom-color: #FFFFFF;
+}
+
+/*.icon:before {
+    font-family: 'FontAwesome';
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+    content: '\f105';
+}*/
+
+/*.main-menu li > a > span.icon {
+    float: right;
+    margin: 0.1em 1.7em -0.1em 0;
+    opacity: 0;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+
+}*/
+
+/*.main-menu li > a:hover > span.icon {
+    float: right;
+    margin: 0.1em 0.8em -0.1em 0;
+    opacity: 1;
+}*/
+
+
+
+
