@@ -32,12 +32,12 @@ exports.create = function (req, res, next) {
     //console.log(req.body.data);
     var patient = new Patient(JSON.parse(req.body.data));
     patient.created._user = req.user;
-    console.log(patient);
+    //console.log(patient);
     var hasPhoto = patient.personalPhoto;
     if (hasPhoto === 'true') {
         patient.personalPhoto = config.patientPhotoFileName;
     }
-    console.log(hasPhoto);
+    //console.log(hasPhoto);
     patient.save(function (err, newPatient) {
         if (err) {
             console.log(err);

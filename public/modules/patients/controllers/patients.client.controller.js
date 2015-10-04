@@ -2,8 +2,8 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar',
-    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar', 'validationManager',
+    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar, validationManager) {
 
 
         $scope.configObj = {};
@@ -115,6 +115,15 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Create new Patient
         $scope.create = function () {
+            validationManager.validateForm($scope.patientForm);
+            if (!$scope.patientForm.$valid) {
+                //$scope.patientForm.patientName.$setViewValue($scope.patientForm.patientName.$viewValue);
+                console.log(validationManager);
+
+                console.log('not valid');
+                return;
+            }
+            console.log('valid');
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if ($scope.configObj.photo) {

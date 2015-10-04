@@ -49,7 +49,11 @@ angular.module('security').provider('auth',
 
 
     });*/
-angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfiguration.applicationModuleVendorDependencies/*, function(){console.log('apppppppp')}*/);
+angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfiguration.applicationModuleVendorDependencies/*, function(){console.log('apppppppp')}*/).run([
+    'bootstrap3ElementModifier',
+    function (bootstrap3ElementModifier) {
+        bootstrap3ElementModifier.enableValidationStateIcons(true);
+    }]);
 
 
 // Setting HTML5 Location Mode

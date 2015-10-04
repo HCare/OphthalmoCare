@@ -48,7 +48,8 @@ module.exports = {
                 'public/lib/webcam/app/scripts/webcam.js',
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
                 'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
-                'public/lib/angular-aside/dist/js/angular-aside.js'
+                'public/lib/angular-aside/dist/js/angular-aside.js',
+                'public/lib/angular-auto-validate/dist/jcs-auto-validate.js'
 			]
 		},
 		css: [
