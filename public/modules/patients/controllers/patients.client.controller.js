@@ -115,7 +115,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Create new Patient
         $scope.create = function () {
-            validationManager.validateForm($scope.patientForm);
+            validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
             if (!$scope.patientForm.$valid) {
                 //$scope.patientForm.patientName.$setViewValue($scope.patientForm.patientName.$viewValue);
                 console.log(validationManager);

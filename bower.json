@@ -25,6 +25,7 @@
     "ng-lodash": "~0.0.2",
     "ngImgCrop": "~0.2.0",
     "webcam": "webcam-directive#~3.0.0",
-    "angular-auto-validate": "~1.18.17"
+    "angular-auto-validate": "~1.18.17",
+    "angular-aside": "~1.2.0"
   }
 }
