@@ -10,35 +10,13 @@ angular.module('core').service('Menus', [ 'lodash',
         // Define the menus object
         this.menus = {};
 
-        // A private function for rendering decision
-        /*var shouldRender = function(user) {
-         if (user) {
-         if (!!~this.roles.indexOf('*')) {
-         return true;
-         } else {
-         for (var userRoleIndex in user.roles) {
-         for (var roleIndex in this.roles) {
-         if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
-         return true;
-         }
-         }
-         }
-         }
-         } else {
-         return this.isPublic;
-         }
-         l
-         return false;
-         };*/
         var shouldRender = function (user) {
             if (user) {
-                //console.log(user);
-                //console.log(this.action);
                 if (this.items) {
                     for (var itemIndex in this.items) {
                         if (this.items[itemIndex].items) {
                             for (var subItemIndex in this.items[itemIndex].items) {
-                                if (lodash.contains(user._role._actions, this.items[itemIndex].items[subItemIndex].action)){
+                                if (lodash.contains(user._role._actions, this.items[itemIndex].items[subItemIndex].action)) {
                                     return true;
                                 }
                             }

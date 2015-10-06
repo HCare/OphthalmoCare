@@ -118,9 +118,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
             if (!$scope.patientForm.$valid) {
                 //$scope.patientForm.patientName.$setViewValue($scope.patientForm.patientName.$viewValue);
-                console.log(validationManager);
+               // console.log(validationManager);
 
-                console.log('not valid');
+                //console.log('not valid');
                 return;
             }
             console.log('valid');
