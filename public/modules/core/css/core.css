@@ -142,6 +142,17 @@ img {
     background: #222222;
 }
 
+.ng-aside .modal-content {
+    min-width: 300px;
+}
+
+.modal-open #content {
+    -webkit-transition:all .2s, -webkit-transform .2s;
+    transition:all .2s ease-out, -webkit-transform .2s
+}
+.modal-open.left #content {
+    transform: translate(300px, 0);
+}
 
 .main-menu {
     padding-top: 50px;
@@ -200,6 +211,7 @@ img {
 .main-menu li.open > a:hover > .caret {
     border-bottom-color: #FFFFFF;
 }
+
 
 /*.icon:before {
     font-family: 'FontAwesome';

@@ -64,6 +64,8 @@
                 <div class="form-group">
                     <label class="control-label" for="gender">Gender</label>
                     <div class="controls">
+                        <h-care-checkbtn-list id="gender" source="configObj.genders" item-label-field="name" item-value-field="_id" is-multi-selection="false" is-active-on-click="true" selected-items="patient.gender"  current-tapped-item="patient.gender">
+                        </h-care-checkbtn-list>
                         <div class="btn-group" data-toggle="buttons" id="gender">
                             <label class="btn btn-primary" ng-class="{active:gender._id===patient.gender}"
                                    ng-repeat="gender in configObj.genders">

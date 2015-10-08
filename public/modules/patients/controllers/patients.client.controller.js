@@ -259,14 +259,14 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             //$scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
             //console.log($scope.patient);
             if ($scope.patient && !lodash.isEmpty($scope.patient)) {
-                $location.search({query: JSON.stringify($scope.patient), paging:JSON.stringify(paginationConfig)});
+                $location.search({searchObj: JSON.stringify($scope.patient), paginationObj:JSON.stringify(paginationConfig)});
                 //$location.replace();
                 console.log('b4 search');
                 console.log(JSON.parse(JSON.stringify($scope.patient)));
                 console.log(paginationConfig);
             }
             //$scope.patient.paginationConfig=paginationConfig;
-            Patients.query({query:$scope.patient, paging:paginationConfig}, function (_res) {
+            Patients.query({searchObj:$scope.patient, paginationObj:paginationConfig}, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
@@ -303,8 +303,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
             var searchQuery = $location.search();
             if (searchQuery && !lodash.isEmpty(searchQuery)) {
-                $scope.patient = JSON.parse(searchQuery.query);
-                var pagingConf=JSON.parse(searchQuery.paging);
+                $scope.patient = JSON.parse(searchQuery.searchObj);
+                var pagingConf=JSON.parse(searchQuery.paginationObj);
                 $scope.paginationConfig.currentPage = pagingConf.pageNo;
                 $scope.paginationConfig.pageSize = pagingConf.pageSize;
                 //console.log('after redirect');
