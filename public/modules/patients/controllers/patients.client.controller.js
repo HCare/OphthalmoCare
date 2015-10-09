@@ -117,13 +117,8 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         $scope.create = function () {
             validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
             if (!$scope.patientForm.$valid) {
-                //$scope.patientForm.patientName.$setViewValue($scope.patientForm.patientName.$viewValue);
-               // console.log(validationManager);
-
-                //console.log('not valid');
                 return;
             }
-            console.log('valid');
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if ($scope.configObj.photo) {
@@ -191,6 +186,10 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Update existing Patient
         $scope.update = function () {
+            validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
+            if (!$scope.patientForm.$valid) {
+                return;
+            }
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if ($scope.configObj.photo) {
                 lodash.extend(patient, {personalPhoto: true});

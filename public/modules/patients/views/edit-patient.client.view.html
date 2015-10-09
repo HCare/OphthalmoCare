@@ -11,15 +11,15 @@
                         <div class="alert alert-danger" ng-show="modalConfig.webcamError">
                             <span>Webcam could not be started. Did you give access to it?</span>
                         </div>
-                        <button type="button" class="btn btn-default" ng-click="makeSnapshot()">
+                        <button type="button" class="btn btn-default" ng-click="makeSnapshot()" ng-hide="modalConfig.webcamError">
                             <i class="glyphicon glyphicon-camera"></i></button>
-                        <div deckgrid class="deckgrid" source="modalConfig.photos">
+                        <!--<div deckgrid class="deckgrid" source="modalConfig.photos">
                             <div>
                                 <a href="" class="thumbnail" ng-click="mother.selectPhoto(card.src)">
                                     <img src="" data-ng-src="{{card.src}}">
                                 </a>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </tab>
                 <tab heading="Browse" active="modalConfig.tabs[1].active" disabled="modalConfig.tabs[1].disabled">
@@ -31,7 +31,7 @@
                     </div>
                 </tab>
                 <tab heading="Crop" active="modalConfig.tabs[2].active" disabled="modalConfig.tabs[2].disabled">
-                    <div class="cropArea" ng-style="{'width': modalConfig.photoWidth, 'height': modalConfig.photoHeight }">
+                    <div class="cropArea">
                         <img-crop area-min-size="128" result-image-size="128" image="modalConfig.selectedPhoto" result-image="modalConfig.finalPhoto" on-change="photoCropped($dataURI)"></img-crop>
                     </div>
                 </tab>
@@ -46,7 +46,7 @@
         <h1>Edit Patient</h1>
     </div>
     <div class="col-md-12 content-div">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate>
+        <form name="patientForm" id="patientForm" novalidate>
             <fieldset>
                 <div class="form-group">
                     <div class="circular" back-img="{{configObj.photo||configObj.personalPhotoPath||'modules/core/img/userpic.png'}}">
@@ -89,7 +89,7 @@
                                    datepicker-options="configObj.dateOptions"
                                    show-button-bar="false"
                                    close-text="Close"
-                                   required/>
+                                   />
                         <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i
                                 class="glyphicon glyphicon-calendar"></i></button>
@@ -100,7 +100,7 @@
                 <div class="form-group">
                     <label class="control-label" for="age">Age</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="configObj.age" id="age" class="form-control"
+                        <input type="number" data-ng-model="configObj.age" id="age" class="form-control"
                                placeholder="Age" ng-change="ageChanged(configObj.age)"/>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                 <div class="form-group">
                     <label class="control-label" for="email">Email</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="patient.email" id="email" class="form-control"
+                        <input type="email" data-ng-model="patient.email" id="email" class="form-control"
                                placeholder="Email"/>
                     </div>
                 </div>
@@ -135,9 +135,9 @@
                 <!--<div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>-->
-                <div data-ng-show="error" class="text-danger">
+                <!--<div data-ng-show="error" class="text-danger">
                     <strong data-ng-bind="error"></strong>
-                </div>
+                </div>-->
             </fieldset>
         </form>
     </div>
