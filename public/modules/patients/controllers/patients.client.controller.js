@@ -250,22 +250,35 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-                var paginationConfig = {};
-                    paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-                    paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-            //$scope.patient.paginationConfig = {};
-            //$scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-            //$scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-            //console.log($scope.patient);
+            var paginationConfig = {};
+            paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+            paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+
+            if($scope.patient && $scope.patient.hasOwnProperty('gender')){
+                $scope.patient.gender=$scope.patient.gender._id;
+            }
+            if($scope.configObj && $scope.configObj.hasOwnProperty('age') && !lodash.isEmpty($scope.configObj.age) && $scope.configObj.age.hasOwnProperty('Range') && !lodash.isEmpty($scope.configObj.age.Range) && ($scope.configObj.age.Range.from || $scope.configObj.age.Range.to)){
+                $scope.patient.birthDate={};
+                $scope.patient.birthDate.Range='';
+                if($scope.configObj.age.Range.hasOwnProperty('from') && $scope.configObj.age.Range.from){
+                    $scope.patient.birthDate.Range = new Moment().subtract($scope.configObj.age.Range.from, 'years').format('YYYY/MM/DD');
+                }
+                $scope.patient.birthDate.Range+=':';
+                if($scope.configObj.age.Range.hasOwnProperty('to') && $scope.configObj.age.Range.to){
+                    $scope.patient.birthDate.Range+= new Moment().subtract($scope.configObj.age.Range.to, 'years').format('YYYY/MM/DD');
+                }
+                console.log($scope.patient.birthDate.Range);
+            }
+
             if ($scope.patient && !lodash.isEmpty($scope.patient)) {
-                $location.search({searchObj: JSON.stringify($scope.patient), paginationObj:JSON.stringify(paginationConfig)});
+                $location.search({searchObj: JSON.stringify($scope.patient), paginationObj: JSON.stringify(paginationConfig)});
                 //$location.replace();
-                console.log('b4 search');
-                console.log(JSON.parse(JSON.stringify($scope.patient)));
-                console.log(paginationConfig);
+                //console.log('b4 search');
+                //console.log(JSON.parse(JSON.stringify($scope.patient)));
+                //console.log(paginationConfig);
             }
             //$scope.patient.paginationConfig=paginationConfig;
-            Patients.query({searchObj:$scope.patient, paginationObj:paginationConfig}, function (_res) {
+            Patients.query({searchObj: $scope.patient, paginationObj: paginationConfig}, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
@@ -303,14 +316,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             var searchQuery = $location.search();
             if (searchQuery && !lodash.isEmpty(searchQuery)) {
                 $scope.patient = JSON.parse(searchQuery.searchObj);
-                var pagingConf=JSON.parse(searchQuery.paginationObj);
+                var pagingConf = JSON.parse(searchQuery.paginationObj);
                 $scope.paginationConfig.currentPage = pagingConf.pageNo;
                 $scope.paginationConfig.pageSize = pagingConf.pageSize;
-                //console.log('after redirect');
-                //console.log(searchQuery);
-                //console.log($scope.patient);
-                //console.log($scope.paginationConfig);
-                //console.log(searchQuery);
                 $scope.fireSearch();
             }
         };
@@ -321,7 +329,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.fireSearch();
         };
 
-        $scope.initPagination=function(){
+        $scope.initPagination = function () {
             $scope.tabsConfig = {};
             $scope.tabsConfig.showResuls = false;
             $scope.paginationConfig = {};

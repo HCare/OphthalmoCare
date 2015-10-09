@@ -244,28 +244,9 @@ function getSearchQuery(property){
 }
 
 exports.list = function(req,res){
-      // delete object gender and add string gender
-    //console.log(req.query);
-
     if(typeof req.query.searchObj=="string"){
         req.query.searchObj=JSON.parse(req.query.searchObj);
     }
-    //console.log(req.query.searchObj.gender);
-    if(req.query.searchObj.hasOwnProperty('gender')){
-      //console.log('gender query');
-        var gender = "";
-        if(typeof req.query.searchObj.gender == "string"){
-            var g = JSON.parse(req.query.searchObj.gender);
-            gender = g._id;
-        }
-        else if(typeof req.query.searchObj.gender == "object"){
-            gender = req.query.searchObj.gender._id;
-        }
-        //console.log(gender);
-        delete req.query.searchObj.gender;
-        req.query.searchObj.gender = gender;
-    }
-
     //pagination
     var pageNo = 0, pageSize = 10;
     if (req.query.hasOwnProperty('paginationObj')) {
@@ -274,10 +255,9 @@ exports.list = function(req,res){
         pageSize = paginationConfig.pageSize;
         delete req.query.paginationObj;
     }
-    //console.log(req.query.searchObj);
+
     var newRequest = getSearchQuery(req.query.searchObj);
-    //console.log('xxxxx');
-    //console.log(newRequest);
+
     Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
         if (err) {
             return res.status(400).send({
