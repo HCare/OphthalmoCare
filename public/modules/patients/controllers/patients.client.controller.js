@@ -102,7 +102,6 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.patient.gender = gender_id;
         };
 
-
         var dataURItoBlob = function (dataURI) {
             var binary = atob(dataURI.split(',')[1]);
             var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -222,13 +221,6 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         };
 
-        // Find a list of Patients
-        /*$scope.find = function () {
-         Patients.query(function (_patients) {
-         $scope.patients = _patients;
-         });
-
-         };*/
 
         // Find existing Patient
         $scope.findOne = function (callback) {
@@ -259,25 +251,21 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             }
             if($scope.configObj && $scope.configObj.hasOwnProperty('age') && !lodash.isEmpty($scope.configObj.age) && $scope.configObj.age.hasOwnProperty('Range') && !lodash.isEmpty($scope.configObj.age.Range) && ($scope.configObj.age.Range.from || $scope.configObj.age.Range.to)){
                 $scope.patient.birthDate={};
-                $scope.patient.birthDate.Range='';
-                if($scope.configObj.age.Range.hasOwnProperty('from') && $scope.configObj.age.Range.from){
-                    $scope.patient.birthDate.Range = new Moment().subtract($scope.configObj.age.Range.from, 'years').format('YYYY/MM/DD');
-                }
-                $scope.patient.birthDate.Range+=':';
+                $scope.patient.birthDate.__range='';
                 if($scope.configObj.age.Range.hasOwnProperty('to') && $scope.configObj.age.Range.to){
-                    $scope.patient.birthDate.Range+= new Moment().subtract($scope.configObj.age.Range.to, 'years').format('YYYY/MM/DD');
+                    $scope.patient.birthDate.__range+= new Moment().subtract($scope.configObj.age.Range.to, 'years').format('YYYY/MM/DD');
                 }
-                console.log($scope.patient.birthDate.Range);
+                $scope.patient.birthDate.__range+=':';
+                if($scope.configObj.age.Range.hasOwnProperty('from') && $scope.configObj.age.Range.from){
+                    $scope.patient.birthDate.__range+= new Moment().subtract($scope.configObj.age.Range.from, 'years').format('YYYY/MM/DD');
+                }
+                //console.log( $scope.patient.birthDate.__range);
             }
 
             if ($scope.patient && !lodash.isEmpty($scope.patient)) {
                 $location.search({searchObj: JSON.stringify($scope.patient), paginationObj: JSON.stringify(paginationConfig)});
                 //$location.replace();
-                //console.log('b4 search');
-                //console.log(JSON.parse(JSON.stringify($scope.patient)));
-                //console.log(paginationConfig);
             }
-            //$scope.patient.paginationConfig=paginationConfig;
             Patients.query({searchObj: $scope.patient, paginationObj: paginationConfig}, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
@@ -425,18 +413,6 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     $scope.modalConfig.selectedPhoto = null;
     $scope.modalConfig.inputImage = null;
     $scope.modalConfig.webcamError = false;
-    //$scope.tabs = [
-    //  { active: true, disabled: false },
-    //  { active: false, disabled: false },
-    //  { active: false, disabled: true }
-    //];
-    //$scope.photoWidth = null;
-    //$scope.photoHeight = null;
-    //$scope.finalPhoto = null;
-    //$scope.photos = [];
-    //$scope.selectedPhoto = null;
-    //$scope.inputImage = null;
-    //$scope.webcamError = false;
 
     var _video = null;
     $scope.onSuccess = function () {

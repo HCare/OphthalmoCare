@@ -171,6 +171,8 @@ exports.list= function (req, res) {
 
 function getSearchQuery(property){
 
+    console.log(property);
+
     var newQuery = {}; // the new query
 
     var queue = [];
@@ -199,14 +201,44 @@ function getSearchQuery(property){
             try{
                 var propKey = queue[0];
                 try{ // Object && Array
+
                     var propValue = JSON.parse(queueValues[0]);
                     if(Array.isArray(propValue) && propValue.length > 0){  // Array
+                        //console.log("*********************" + propKey);
                         newQuery[propKey] = {$all: propValue};
                     }
                     else if(typeof propValue == 'object'){  // Object
-                        for(var k in propValue){
-                            queue.push(propKey + "." + k);
-                            queueValues.push(propValue[k]);
+                        //console.log("*********************" + propKey);
+                        if(propValue.hasOwnProperty('__range'))
+                        {
+                            //console.log("range range range range range range range range range");
+                            var range = propValue["__range"];
+                            var arr= range.split(":");
+                            var part1=  arr[0];
+                            var part2=  arr[1];
+                            console.log(part1);
+                            console.log(part2);
+
+
+                            if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
+                            {
+                                newQuery[propKey] = { $gte: part1, $lte: part2 };
+                            }
+                            else if(part1 != null && part1.length > 0 && part2 != null && part2.length == 0)
+                            {
+                                newQuery[propKey] = { $gte: part1};
+                            }
+                            else if(part1 != null && part1.length == 0 && part2 != null && part2.length > 0)
+                            {
+                                newQuery[propKey] = {$lte: part2 };
+                            }
+                        }
+                        else{
+                            for(var k in propValue){
+                                //console.log("*********************" + k);
+                                queue.push(propKey + "." + k);
+                                queueValues.push(propValue[k]);
+                            }
                         }
                     }
                     else if(typeof propValue == "number"){
@@ -215,23 +247,67 @@ function getSearchQuery(property){
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
+                        //console.log("*********************" + propKey);
                         var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
                         if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender" || propKey == "birthDate"){  // check if field is ObjectId
                             newQuery[propKey] =  queueValues[0];
                         }
                         else{
+                            //console.log("*********************" + propKey);
                             newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
                         }
                     }
                     else if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
+                        //console.log("*********************" + propKey);
                         newQuery[propKey] = {$all: queueValues[0]};
                     }
                     else{
                         //console.log(typeof queueValues[0]);
+                        //console.log(queueValues[0]);
+                        //console.log("*********************" + propKey);
+
+                        /*for(var k in queueValues[0]){
+                            console.log("*********************" + k);
+                            queue.push(propKey + "." + k);
+                            queueValues.push(propValue[k]);
+                        }*/
+
+                        if(queueValues[0].hasOwnProperty('__range'))
+                        {
+                            //console.log("range range range range range range range range range");
+                            var range = queueValues[0]["__range"];
+                            var arr= range.split(":");
+                            var part1=  arr[0];
+                            var part2=  arr[1];
+                            console.log(part1);
+                            console.log(typeof part1);
+                            console.log(part2);
+                            console.log(typeof part2);
+                            if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
+                            {
+                                 newQuery[queue[0]] = { $gte: part1, $lte: part2 };
+                            }
+                            else if(part1 != null && part1.length > 0 && part2 != null && part2.length == 0)
+                            {
+                                newQuery[queue[0]] = { $gte: part1};
+                            }
+                            else if(part1 != null && part1.length == 0 && part2 != null && part2.length > 0)
+                            {
+                                newQuery[queue[0]] = {$lte: part2 };
+                            }
+                        }
+                        else{
+                            for(var k in queueValues[0]){
+                                console.log("*********************" + k);
+                                queue.push(queue[0] + "." + k);
+                                queueValues.push(queueValues[0][k]);
+                            }
+                        }
                     }
                 }
             }
             catch(e){
+                //console.log("*********************" + propKey);
                 console.log(typeof queueValues[0]);
             }
             queue.shift();
@@ -239,6 +315,7 @@ function getSearchQuery(property){
         }
     }
 
+    console.log(newQuery);
     return newQuery;
 
 }
