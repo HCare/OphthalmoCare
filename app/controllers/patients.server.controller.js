@@ -9,6 +9,7 @@ var config = require('../../config/config'),
     moment = require('moment'),
     Patient = mongoose.model('Patient'),
     fileHandler = require('../../app/controllers/' + config.fileHandler + '-file-handle'),
+    searchHelper=require('../../app/controllers/search-helper'),
     _ = require('lodash');
 
 
@@ -124,62 +125,12 @@ exports.delete = function (req, res) {
 /**
  * List of Patients
  */
-/*exports.list = function (req, res) {
-    Patient.find().exec(function (err, patients) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.jsonp(patients);
-        }
-    });
-};*/
-
-/*
-exports.list= function (req, res) {
-    //pagination
-    var pageNo = 0, pageSize = 10;
-    if (req.query.hasOwnProperty('paginationConfig')) {
-        var paginationConfig = JSON.parse(req.query.paginationConfig);
-        pageNo = paginationConfig.pageNo - 1;
-        pageSize = paginationConfig.pageSize;
-        delete req.query.paginationConfig;
-    }
-    Patient.find().skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            Patient.find(req.query).count(function (err, _count) {
-                if (err) {
-                    return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
-                    });
-                }
-                else {
-                    res.jsonp({list: patients, count: _count});
-                }
-
-            });
-
-        }
-    });
-};
-*/
-
-function getSearchQuery(property){
-
-    console.log(property);
-
+/*function getSearchQuery(property){
     var newQuery = {}; // the new query
-
     var queue = [];
     var queueValues = [];
     var result = "";
     var obj = null;
-
     if(typeof property == 'string'){
         try{
             obj = JSON.parse(property);
@@ -191,7 +142,6 @@ function getSearchQuery(property){
     else{
         obj = property;
     }
-
     if(obj != null && obj != undefined){
         for(var key in obj){
             queue.push(key);
@@ -201,25 +151,17 @@ function getSearchQuery(property){
             try{
                 var propKey = queue[0];
                 try{ // Object && Array
-
                     var propValue = JSON.parse(queueValues[0]);
                     if(Array.isArray(propValue) && propValue.length > 0){  // Array
-                        //console.log("*********************" + propKey);
                         newQuery[propKey] = {$all: propValue};
                     }
                     else if(typeof propValue == 'object'){  // Object
-                        //console.log("*********************" + propKey);
                         if(propValue.hasOwnProperty('__range'))
                         {
-                            //console.log("range range range range range range range range range");
                             var range = propValue["__range"];
                             var arr= range.split(":");
                             var part1=  arr[0];
                             var part2=  arr[1];
-                            console.log(part1);
-                            console.log(part2);
-
-
                             if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
                             {
                                 newQuery[propKey] = { $gte: part1, $lte: part2 };
@@ -235,7 +177,6 @@ function getSearchQuery(property){
                         }
                         else{
                             for(var k in propValue){
-                                //console.log("*********************" + k);
                                 queue.push(propKey + "." + k);
                                 queueValues.push(propValue[k]);
                             }
@@ -247,42 +188,24 @@ function getSearchQuery(property){
                 }
                 catch(e){  // string && empty array && Already sent as array
                     if(typeof queueValues[0] == 'string'){
-                        //console.log("*********************" + propKey);
                         var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
                         if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender" || propKey == "birthDate"){  // check if field is ObjectId
                             newQuery[propKey] =  queueValues[0];
                         }
                         else{
-                            //console.log("*********************" + propKey);
                             newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
                         }
                     }
                     else if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
-                        //console.log("*********************" + propKey);
                         newQuery[propKey] = {$all: queueValues[0]};
                     }
                     else{
-                        //console.log(typeof queueValues[0]);
-                        //console.log(queueValues[0]);
-                        //console.log("*********************" + propKey);
-
-                        /*for(var k in queueValues[0]){
-                            console.log("*********************" + k);
-                            queue.push(propKey + "." + k);
-                            queueValues.push(propValue[k]);
-                        }*/
-
                         if(queueValues[0].hasOwnProperty('__range'))
                         {
-                            //console.log("range range range range range range range range range");
                             var range = queueValues[0]["__range"];
                             var arr= range.split(":");
                             var part1=  arr[0];
                             var part2=  arr[1];
-                            console.log(part1);
-                            console.log(typeof part1);
-                            console.log(part2);
-                            console.log(typeof part2);
                             if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
                             {
                                  newQuery[queue[0]] = { $gte: part1, $lte: part2 };
@@ -298,7 +221,6 @@ function getSearchQuery(property){
                         }
                         else{
                             for(var k in queueValues[0]){
-                                console.log("*********************" + k);
                                 queue.push(queue[0] + "." + k);
                                 queueValues.push(queueValues[0][k]);
                             }
@@ -307,23 +229,15 @@ function getSearchQuery(property){
                 }
             }
             catch(e){
-                //console.log("*********************" + propKey);
-                console.log(typeof queueValues[0]);
             }
             queue.shift();
             queueValues.shift();
         }
     }
-
-    console.log(newQuery);
     return newQuery;
-
-}
+}*/
 
 exports.list = function(req,res){
-    if(typeof req.query.searchObj=="string"){
-        req.query.searchObj=JSON.parse(req.query.searchObj);
-    }
     //pagination
     var pageNo = 0, pageSize = 10;
     if (req.query.hasOwnProperty('paginationObj')) {
@@ -333,7 +247,7 @@ exports.list = function(req,res){
         delete req.query.paginationObj;
     }
 
-    var newRequest = getSearchQuery(req.query.searchObj);
+    var newRequest = searchHelper.transformSearchQuery(req.query.searchObj);
 
     Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
         if (err) {
@@ -353,22 +267,7 @@ exports.list = function(req,res){
             });
         }
     });
-    /*
-    Patient.find(newRequest).populate('_patient').populate('created._user').exec(function (err, patients) {
-        if (err) {
-            console.log('error');
-            console.log(err);
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            //console.log(patients);
-            res.jsonp({list: patients});
-        }
-    });*/
 };
-
-
 
 /**
  * Patient middleware
