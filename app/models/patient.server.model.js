@@ -67,6 +67,23 @@ var PatientSchema = new Schema({
             type: Schema.ObjectId,
             ref: 'User'
         }
+    },
+    medicalHistory:{
+        general:{
+            diabetesMellitus:{
+                startDate:Date,
+                medication:[String]
+            },
+            hypertension:{
+                startDate:Date,
+                medication:[String]
+            }
+        },
+        ocular:{
+            ocularSurgery:[{}],
+            ocularTrauma:[{}],
+            medication:[{}]
+        }
     }
 });
 

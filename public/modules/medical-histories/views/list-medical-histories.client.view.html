@@ -1,0 +1,19 @@
+<section data-ng-controller="MedicalHistoriesController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Medical histories</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="medicalHistory in medicalHistories" data-ng-href="#!/medical-histories/{{medicalHistory._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="medicalHistory.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="medicalHistory.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="medicalHistory.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!medicalHistories.$resolved || medicalHistories.length">
+    	No Medical histories yet, why don't you <a href="/#!/medical-histories/create">create one</a>?
+    </div>
+</section>

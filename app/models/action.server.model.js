@@ -151,6 +151,121 @@ Action.findOneAndUpdate({_id:'view_patient'}, {name: 'View Patient', order:5, _m
 });
 //endregion Patients Actions
 
+//region Medical Histories Actions
+///Create_Medical-History Action..
+Action.findOneAndUpdate({_id:'create_medical-history'}, {name: 'Create Medical History', order:1, _module:'medical-histories'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Create Medical History" Action'+JSON.stringify(err));
+        return;
+    }
+});
+///Update_Medical-History Action..
+Action.findOneAndUpdate({_id:'edit_medical-history'}, {name: 'Edit Medical History', order:2, _module:'medical-histories'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Edit Medical History" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///Delete_Medical-History Action..
+Action.findOneAndUpdate({_id:'delete_medical-history'}, {name: 'Delete Medical History', order:3, _module:'medical-histories'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Delete Medical History" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+
+///List_Medical-Histories Action..
+Action.findOneAndUpdate({_id:'list_medical-histories'}, {name: 'List Medical Histories', order:4, _module:'medical-histories'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "List Medical Histories" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///View_Medical-History Action..
+Action.findOneAndUpdate({_id:'view_medical-history'}, {name: 'View Medical History', order:5, _module:'medical-histories'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View Medical History" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+//endregion Medical Histories Actions
+
+//region Visit Actions
+///Create_Visit Action..
+Action.findOneAndUpdate({_id:'create_visit'}, {name: 'Create Visit', order:1, _module:'visits'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Create Visit" Action'+JSON.stringify(err));
+        return;
+    }
+});
+///Update_Visit Action..
+Action.findOneAndUpdate({_id:'edit_visit'}, {name: 'Edit Visit', order:2, _module:'visits'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Edit Visit" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///Delete_Visit Action..
+Action.findOneAndUpdate({_id:'delete_visit'}, {name: 'Delete Visit', order:3, _module:'visits'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Delete Visit" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///List_Visits Action..
+Action.findOneAndUpdate({_id:'list_visits'}, {name: 'List Visits', order:4, _module:'visits'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "List Visits" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///View_Visit Action..
+Action.findOneAndUpdate({_id:'view_visit'}, {name: 'View Visit', order:5, _module:'visits'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View Visit" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+//endregion Visits Actions
+
+//region Complaints Actions
+///Create_Complaint Action..
+Action.findOneAndUpdate({_id:'create_complaint'}, {name: 'Create Complaint', order:1, _module:'complaints'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Create Complaint" Action'+JSON.stringify(err));
+        return;
+    }
+});
+///Update_Complaint Action..
+Action.findOneAndUpdate({_id:'edit_complaint'}, {name: 'Edit Complaint', order:2, _module:'complaints'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Edit Complaint" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///Delete_Complaint Action..
+Action.findOneAndUpdate({_id:'delete_complaint'}, {name: 'Delete Complaint', order:3, _module:'complaints'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "Delete Complaint" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///List_Complaints Action..
+Action.findOneAndUpdate({_id:'list_complaints'}, {name: 'List Complaints', order:4, _module:'complaints'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "List Complaints" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+///View_Complaint Action..
+Action.findOneAndUpdate({_id:'view_complaint'}, {name: 'View Complaint', order:5, _module:'complaints'}, {upsert:true}, function(err){
+    if(err){
+        console.log('Error Creating "View Complaint" Action: '+JSON.stringify(err));
+        return;
+    }
+});
+//endregion Complaints Actions
+
 //region Examinations Actions
 ///Create_Examination Action..
 Action.findOneAndUpdate({_id:'create_examination'}, {name: 'Create Examination', order:1, _module:'examinations'}, {upsert:true}, function(err){
@@ -188,3 +303,5 @@ Action.findOneAndUpdate({_id:'view_examination'}, {name: 'View Examination', ord
     }
 });
 //endregion Examinations Actions
+
+

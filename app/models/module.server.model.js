@@ -53,11 +53,37 @@ Module.findOneAndUpdate({_id: 'patients'}, {name: 'Patients', order:2}, {upsert:
     }
 });
 
+///Medical-Histories Module..
+Module.findOneAndUpdate({_id: 'medical-histories'}, {name: 'Medical Histories', order:3}, {upsert: true}, function (err) {
+    if (err) {
+        console.log('Error Creating "Medical Histories" Module: ' + JSON.stringify(err));
+        return;
+    }
+});
+
+
+///Visits Module..
+Module.findOneAndUpdate({_id: 'visits'}, {name: 'Visits', order:4}, {upsert: true}, function (err) {
+    if (err) {
+        console.log('Error Creating "Visits" Module: ' + JSON.stringify(err));
+        return;
+    }
+});
+
+///Complaints Module..
+Module.findOneAndUpdate({_id: 'complaints'}, {name: 'Complaints', order:5}, {upsert: true}, function (err) {
+    if (err) {
+        console.log('Error Creating "Complaints" Module: ' + JSON.stringify(err));
+        return;
+    }
+});
 
 ///Examinations Module..
-Module.findOneAndUpdate({_id: 'examinations'}, {name: 'Examinations', order:3}, {upsert: true}, function (err) {
+Module.findOneAndUpdate({_id: 'examinations'}, {name: 'Examinations', order:6}, {upsert: true}, function (err) {
     if (err) {
         console.log('Error Creating "Examinations" Module: ' + JSON.stringify(err));
         return;
     }
 });
+
+
