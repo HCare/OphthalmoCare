@@ -181,7 +181,12 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         //redirect to examination
         $scope.examine = function () {
             $location.path('examinations/create/' + $scope.patient._id);
-        }
+        };
+
+        //redirect to new visit
+        $scope.newVisit = function () {
+            $location.path('visits/create/' + $scope.patient._id);
+        };
 
         // Update existing Patient
         $scope.update = function () {
@@ -290,6 +295,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
         $scope.initView = function () {
             $scope.findOne(function () {
+                Toolbar.addToolbarCommand('newVisit', 'create_visit', 'New Visit', 'log-in', 0)
                 Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
                 Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
                 Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
@@ -368,6 +374,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
         ActionsHandler.onActionFired('updatePatient', $scope, function (action, args) {
             $scope.update();
+        });
+        ActionsHandler.onActionFired('newVisit', $scope, function (action, args) {
+            $scope.newVisit();
         });
         ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
             $scope.examine();
