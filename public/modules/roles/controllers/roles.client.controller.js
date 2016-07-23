@@ -154,9 +154,9 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
         // Update existing Role
         $scope.update = function () {
             var _role = $scope.role;
-            role._actions  = $scope.actionsObj.role_actions;
+            _role._actions  = $scope.actionsObj.role_actions;
             _role.$update(function () {
-                $location.path('roles/' + role._id);
+                $location.path('roles/' + _role._id);
                 ///log success message
                 Logger.success('Role updated successfully', true);
             }, function (errorResponse) {
@@ -197,7 +197,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             Roles.get({
                 roleId: $stateParams.roleId
             }, function (_role) {
-                console.log(_role);
+                //console.log(_role);
                 $scope.role = _role;
 
                 $scope.actionsObj.role_actions = lodash.findByValues($scope.actionsObj.all_actions, '_id', $scope.role._actions);
@@ -242,7 +242,7 @@ angular.module('roles').controller('RolesController', ['$scope', '$stateParams',
             $scope.initOne(function(){
                 $scope.tabsConfig = {};
                 $scope.tabsConfig.showResuls = false;
-                Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+                Toolbar.addToolbarCommand('searchRole', 'list_roles', 'Search', 'search', 0);
             });
         };
 

@@ -165,7 +165,7 @@ angular.module('manage-users')
                 $scope.initOne();
                 $scope.tabsConfig={};
                 $scope.tabsConfig.showResuls=false;
-                Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+                Toolbar.addToolbarCommand('searchUser', 'list_users', 'Search', 'search', 0);
             };
 
             ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {

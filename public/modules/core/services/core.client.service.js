@@ -1,14 +1,14 @@
 'use strict';
 
 
-angular.module('core').factory('CoreProperties',function(){
+angular.module('core').factory('CoreProperties', function () {
     var pageSubTitle = null;
 
-    var setPageSubTitle = function(title) {
-        pageSubTitle=title;
+    var setPageSubTitle = function (title) {
+        pageSubTitle = title;
     };
 
-    var getPageSubTitle = function(){
+    var getPageSubTitle = function () {
         return pageSubTitle;
     };
 
@@ -17,20 +17,17 @@ angular.module('core').factory('CoreProperties',function(){
         getPageSubTitle: getPageSubTitle
     };
 });
-angular.module('core').factory('ActionsHandler',['$rootScope', function($rootScope){
+angular.module('core').factory('ActionsHandler', ['$rootScope', function ($rootScope) {
     var action = {};
-    //var _actionName=null;
-    action.fireAction=function(actionName, args){
-        //_actionName=actionName;
+
+    action.fireAction = function (actionName, args) {
         $rootScope.$emit(actionName, args);
-        //console.log('action fired');
-    }
-    action.onActionFired=function(actionName, scope, func){
+    };
+
+    action.onActionFired = function (actionName, scope, func) {
         var unbind = $rootScope.$on(actionName, func);
-        //console.log(func);
         scope.$on('$destroy', unbind);
-        //console.log('action unbind');
-    }
+    };
 
     return action;
 }]);

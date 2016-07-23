@@ -56,18 +56,18 @@ exports.uploadFile=function(req, res){
            createDir(filePath, function(err) {
                if(err){
                    warn={warn:errorHandler.getErrorMessage(err)};
-                   _.extend(req.body, warn);
-                   res.jsonp(req.body);
+                   _.extend(req.body.newPatient, warn);
+                   res.jsonp(req.body.newPatient);
                    return;
                }
                saveFile(req.files.file, filePath, function(err) {
                    if(err){
                        warn={warn:errorHandler.getErrorMessage(err)};
-                       _.extend(req.body, warn);
-                       res.jsonp(req.body);
+                       _.extend(req.body.newPatient, warn);
+                       res.jsonp(req.body.newPatient);
                        return;
                    }
-                   res.jsonp(req.body);
+                   res.jsonp(req.body.newPatient);
                });
            });
        }
@@ -75,11 +75,11 @@ exports.uploadFile=function(req, res){
            saveFile(req.files.file, filePath, function(err) {
                if(err){
                    warn={warn:errorHandler.getErrorMessage(err)};
-                   _.extend(req.body, warn);
-                   res.jsonp(req.body);
+                   _.extend(req.body.newPatient, warn);
+                   res.jsonp(req.body.newPatient);
                    return;
                }
-               res.jsonp(req.body);
+               res.jsonp(req.body.newPatient);
            });
        }
     });

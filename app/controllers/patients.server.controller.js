@@ -9,6 +9,7 @@ var config = require('../../config/config'),
     moment = require('moment'),
     Patient = mongoose.model('Patient'),
     fileHandler = require('../../app/controllers/' + config.fileHandler + '-file-handle'),
+    searchHelper=require('../../app/controllers/search-helper'),
     _ = require('lodash');
 
 
@@ -29,14 +30,18 @@ exports.renderPhoto = function (req, res) {
  * Create a Patient
  */
 exports.create = function (req, res, next) {
-    var patient = new Patient(req.body);
+    //console.log(req.body.data);
+    var patient = new Patient(JSON.parse(req.body.data));
     patient.created._user = req.user;
+    //console.log(patient);
     var hasPhoto = patient.personalPhoto;
     if (hasPhoto === 'true') {
         patient.personalPhoto = config.patientPhotoFileName;
     }
+    //console.log(hasPhoto);
     patient.save(function (err, newPatient) {
         if (err) {
+            console.log(err);
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
@@ -49,7 +54,7 @@ exports.create = function (req, res, next) {
                     moment(time).date() + '/' +
                     newPatient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, newPatient);
+                _.extend(req.body, {newPatient: newPatient});
                 next();
                 return;
             }
@@ -70,7 +75,8 @@ exports.read = function (req, res) {
  */
 exports.update = function (req, res, next) {
     var patient = req.patient;
-    patient = _.extend(patient, req.body);
+    patient = _.extend(patient, JSON.parse(req.body.data));
+
     patient.updated._user = req.user;
     patient.updated.time = Date.now();
     var hasPhoto = patient.personalPhoto;
@@ -90,7 +96,7 @@ exports.update = function (req, res, next) {
                     moment(time).date() + '/' +
                     patient._id + '/';
                 _.extend(req.body, {filePath: photoPath});
-                _.extend(req.body, patient);
+                _.extend(req.body, {newPatient: patient});
                 next();
                 return;
             }
@@ -119,104 +125,148 @@ exports.delete = function (req, res) {
 /**
  * List of Patients
  */
-exports.list = function (req, res) {
-        Patient.find().exec(function (err, patients) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.jsonp(patients);
-            }
-        });
-};
-
-exports.search=function(req,res){
-    console.log('search');
-    console.log(req.query);
-    if (req.query && Object.keys(req.query).length > 0) {
-        //fullName
-        if (req.query.hasOwnProperty('fullName') && req.query.fullName && req.query.fullName.length > 0) {
-            req.query.fullName = new RegExp('.*' + req.query.fullName + '.*', 'i');
+/*function getSearchQuery(property){
+    var newQuery = {}; // the new query
+    var queue = [];
+    var queueValues = [];
+    var result = "";
+    var obj = null;
+    if(typeof property == 'string'){
+        try{
+            obj = JSON.parse(property);
         }
-        else {
-            delete req.query.fullName; // didn't search by fullName
+        catch(e){
+            result += " - " + property;
         }
-        //gender
-        if (req.query.hasOwnProperty('gender') && req.query.gender && req.query.gender.length > 0) {
-        }
-        else {
-            delete req.query.gender; // didn't search by gender
-        }
-        //birthDate
-        if (req.query.hasOwnProperty('birthDate') && req.query.birthDate && req.query.birthDate.length > 0) {
-        }
-        else {
-            delete req.query.birthDate; // didn't search by birthDate
-        }
-        //tel
-        if (req.query.hasOwnProperty('tel') && req.query.tel && req.query.tel.length > 0) {
-            //req.query.tel = {$regex: '.*' + req.query.tel + '.*', $options: 'i'};
-            req.query.tel = new RegExp('.*' + req.query.tel + '.*', 'i');
-        }
-        else {
-            delete req.query.tel; // didn't search by tel
-        }
-        //address
-        if (req.query.hasOwnProperty('address') && req.query.address && req.query.address.length > 0) {
-            //req.query.address = {$regex: '.*' + req.query.address + '.*', $options: 'i'};
-            req.query.address = new RegExp('.*' + req.query.address + '.*', 'i');
-        }
-        else {
-            delete req.query.address; // didn't search by address
-        }
-        //email
-        if (req.query.hasOwnProperty('email') && req.query.email && req.query.email.length > 0) {
-            //req.query.email = {$regex: '.*' + req.query.email + '.*', $options: 'i'};
-            req.query.email = new RegExp('.*' + req.query.email + '.*', 'i');
-        }
-        else {
-            delete req.query.email; // didn't search by email
-        }
-        //notes
-        if (req.query.hasOwnProperty('notes') && req.query.notes && req.query.notes.length > 0) {
-            //req.query.notes = {$regex: '.*' + req.query.notes + '.*', $options: 'i'};
-            req.query.notes = new RegExp('.*' + req.query.notes + '.*', 'i');
-        }
-        else {
-            delete req.query.notes; // didn't search by notes
-        }
-
-        //pagination
-        var pageNo=0, pageSize=10;
-        if(req.query.hasOwnProperty('paginationConfig')){
-            var paginationConfig=JSON.parse(req.query.paginationConfig);
-            pageNo=paginationConfig.pageNo-1;
-            pageSize=paginationConfig.pageSize;
-            delete req.query.paginationConfig;
-        }
-
-        Patient.find(req.query).skip(pageNo*pageSize).limit(pageSize).exec(function (err, patients) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                Patient.find(req.query).count(function(err, _count){
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    }
-                        else{
-                        res.jsonp({list:patients, count:_count});
-                    }
-
-                });
-
-            }
-        });
     }
+    else{
+        obj = property;
+    }
+    if(obj != null && obj != undefined){
+        for(var key in obj){
+            queue.push(key);
+            queueValues.push(obj[key]);
+        }
+        while (queue.length > 0){
+            try{
+                var propKey = queue[0];
+                try{ // Object && Array
+                    var propValue = JSON.parse(queueValues[0]);
+                    if(Array.isArray(propValue) && propValue.length > 0){  // Array
+                        newQuery[propKey] = {$all: propValue};
+                    }
+                    else if(typeof propValue == 'object'){  // Object
+                        if(propValue.hasOwnProperty('__range'))
+                        {
+                            var range = propValue["__range"];
+                            var arr= range.split(":");
+                            var part1=  arr[0];
+                            var part2=  arr[1];
+                            if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
+                            {
+                                newQuery[propKey] = { $gte: part1, $lte: part2 };
+                            }
+                            else if(part1 != null && part1.length > 0 && part2 != null && part2.length == 0)
+                            {
+                                newQuery[propKey] = { $gte: part1};
+                            }
+                            else if(part1 != null && part1.length == 0 && part2 != null && part2.length > 0)
+                            {
+                                newQuery[propKey] = {$lte: part2 };
+                            }
+                        }
+                        else{
+                            for(var k in propValue){
+                                queue.push(propKey + "." + k);
+                                queueValues.push(propValue[k]);
+                            }
+                        }
+                    }
+                    else if(typeof propValue == "number"){
+                        newQuery[propKey] = new RegExp('.*' +  propValue + '.*', 'i');
+                    }
+                }
+                catch(e){  // string && empty array && Already sent as array
+                    if(typeof queueValues[0] == 'string'){
+                        var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+                        if(checkForHexRegExp.test(queueValues[0]) == true || propKey == "gender" || propKey == "birthDate"){  // check if field is ObjectId
+                            newQuery[propKey] =  queueValues[0];
+                        }
+                        else{
+                            newQuery[propKey] = new RegExp('.*' +  queueValues[0] + '.*', 'i');
+                        }
+                    }
+                    else if(typeof queueValues[0] == 'object'  && Array.isArray(queueValues[0]) && queueValues[0].length > 0){
+                        newQuery[propKey] = {$all: queueValues[0]};
+                    }
+                    else{
+                        if(queueValues[0].hasOwnProperty('__range'))
+                        {
+                            var range = queueValues[0]["__range"];
+                            var arr= range.split(":");
+                            var part1=  arr[0];
+                            var part2=  arr[1];
+                            if(part1 != null && part1.length >0 && part2 != null && part2.length >0)
+                            {
+                                 newQuery[queue[0]] = { $gte: part1, $lte: part2 };
+                            }
+                            else if(part1 != null && part1.length > 0 && part2 != null && part2.length == 0)
+                            {
+                                newQuery[queue[0]] = { $gte: part1};
+                            }
+                            else if(part1 != null && part1.length == 0 && part2 != null && part2.length > 0)
+                            {
+                                newQuery[queue[0]] = {$lte: part2 };
+                            }
+                        }
+                        else{
+                            for(var k in queueValues[0]){
+                                queue.push(queue[0] + "." + k);
+                                queueValues.push(queueValues[0][k]);
+                            }
+                        }
+                    }
+                }
+            }
+            catch(e){
+            }
+            queue.shift();
+            queueValues.shift();
+        }
+    }
+    return newQuery;
+}*/
+
+exports.list = function(req,res){
+    //pagination
+    var pageNo = 0, pageSize = 10;
+    if (req.query.hasOwnProperty('paginationObj')) {
+        var paginationConfig = JSON.parse(req.query.paginationObj);
+        pageNo = paginationConfig.pageNo - 1;
+        pageSize = paginationConfig.pageSize;
+        delete req.query.paginationObj;
+    }
+
+    var newRequest = searchHelper.transformSearchQuery(req.query.searchObj);
+
+    Patient.find(newRequest).skip(pageNo * pageSize).limit(pageSize).exec(function (err, patients) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            Patient.find(newRequest).count(function (err, _count) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.jsonp({list: patients, count: _count});
+                }
+            });
+        }
+    });
 };
 
 /**

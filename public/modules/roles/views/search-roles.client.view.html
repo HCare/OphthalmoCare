@@ -1,7 +1,7 @@
 <section data-ng-controller="RolesController" data-ng-init="initSearch()">
-    <!--<div class="page-header">
+    <div class="page-header">
         <h1>Search Roles</h1>
-    </div>-->
+    </div>
     <div class="content-div">
     <tabset >
         <tab heading="Search Terms">
@@ -45,7 +45,7 @@
             </div>
         </tab>
         <tab heading="Search Results" active="tabsConfig.showResults" >
-            <div class="list-group">
+            <div class="list-group topMargin">
                 <a data-ng-repeat="role in roles" data-ng-href="#!/roles/{{role._id}}" class="list-group-item">
 
                     <h4 class="list-group-item-heading" data-ng-bind="role.name"></h4>

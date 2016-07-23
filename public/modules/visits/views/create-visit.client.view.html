@@ -1,0 +1,41 @@
+<section data-ng-controller="VisitsController">
+    <div class="page-header">
+        <h1>New Visit</h1>
+    </div>
+    <div class="col-md-12">
+        <form data-ng-submit="create()" novalidate>
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="type">Visit Type</label>
+                    <div class="controls">
+                        <input type="text" data-ng-model="visit.type" id="type" class="form-control" placeholder="Visit Type" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="time">Visit Time</label>
+                    <div class="controls">
+                        <p class="input-group">
+                            <input type="text" id="time" name="time"
+                                   placeholder="Visit Time"
+                                   class="form-control"
+                                   datepicker-popup="{{configObj.format}}"
+                                   ng-change="birthDateChanged(patient.birthDate)"
+                                   ng-model="patient.birthDate"
+                                   is-open="configObj.opened"
+                                   min-date="configObj.minDate"
+                                   max-date="configObj.maxDate"
+                                   datepicker-options="configObj.dateOptions"
+                                   show-button-bar="false"
+                                   close-text="Close"
+                                    />
+                        <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="openDatePicker($event)"><i
+                                class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>

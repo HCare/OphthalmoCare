@@ -9,13 +9,11 @@ module.exports = function(app) {
 		.get(security.authorizedToDo('list_examinations'), examinations.list)
 		.post(security.authorizedToDo('create_examination'), examinations.create);
 
-	app.route('/examinations/search')
-		.get(security.authorizedToDo('search_examinations'), examinations.search);
-
 	app.route('/examinations/:examinationId')
 		.get(security.authorizedToDo('view_examination'), examinations.read)
 		.put(security.authorizedToDo('edit_examination'), examinations.update)
 		.delete(security.authorizedToDo('delete_examination'), examinations.delete);
+
 
 	// Finish by binding the Examination middleware
 	app.param('examinationId', examinations.examinationByID);

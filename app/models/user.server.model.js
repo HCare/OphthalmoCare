@@ -156,10 +156,14 @@ var Role=mongoose.model('Role');
 
 ///SysAdmin Role..
 Role.findOneAndUpdate({name:'SysAdmin'},
-                      {name: 'SysAdmin', _actions:['create_role', 'edit_role', 'delete_role', 'list_roles', 'view_role', 'search_roles',
-                                                   'create_user', 'edit_user', 'delete_user', 'list_users', 'view_user','search_users',
-                                                   'create_patient', 'edit_patient', 'delete_patient', 'list_patients', 'view_patient','search_patients',
-                                                   'create_examination', 'edit_examination', 'delete_examination', 'list_examinations', 'search_examinations', 'view_examination']},
+                      {name: 'SysAdmin', _actions:['create_role', 'edit_role', 'delete_role', 'list_roles', 'view_role',
+                                                   'create_user', 'edit_user', 'delete_user', 'list_users', 'view_user',
+                                                   'create_patient', 'edit_patient', 'delete_patient', 'list_patients', 'view_patient',
+                                                   'create_medical-history', 'edit_medical-history', 'delete_medical-history', 'list_medical-histories', 'view_medical-history',
+                                                   'create_visit', 'edit_visit', 'delete_visit', 'list_visits', 'view_visit',
+                                                   'create_complaint', 'edit_complaint', 'delete_complaint', 'list_complaints', 'view_complaint',
+                                                   'create_examination', 'edit_examination', 'delete_examination', 'list_examinations', 'view_examination']
+                      },
                        {upsert:true}, function(err, role){
     if(err){
         console.log('Error Creating "SysAdmin" Role: '+JSON.stringify(err));

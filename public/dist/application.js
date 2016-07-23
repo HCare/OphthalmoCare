@@ -482,12 +482,12 @@ angular.module('directives').directive('hCareActionBtn', [
         if (lodash.contains(Authentication.user._role._actions, atts.action)) {
           if (atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != '') {
             atts.$observe('redirectUrl', function (redirectUrl) {
-              var buttonText = '<a class="btn btn-default" href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
+              var buttonText = '<a class="btn btn-default" title=' + atts.title + ' href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
               element.html(buttonText);
             });
           }
           if (atts.clickEvent != null && atts.clickEvent != undefined && atts.clickEvent != '') {
-            var buttonText = '<a class=\'btn btn-default\' >' + '<i class=\'glyphicon glyphicon-' + atts.icon + '\'></i>' + '</a>';
+            var buttonText = '<a class=\'btn btn-default\' title=' + atts.title + ' >' + '<i class=\'glyphicon glyphicon-' + atts.icon + '\'></i>' + '</a>';
             element.html(buttonText);
             element.on('click', function () {
               if (atts.responseMessage != null && atts.responseMessage != undefined && atts.responseMessage != '') {
@@ -642,7 +642,7 @@ angular.module('examinations').run([
     // Set top bar menu items
     Menus.addMenuItem('topbar', 'Examinations', 'examinations', 'dropdown', '/examinations(/create)?', false, 3);
     Menus.addSubMenuItem('topbar', 'examinations', 'List Examinations', 'examinations', '/examinations', false, 'list_examinations', 0);
-    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'search_examinations', 1);
+    Menus.addSubMenuItem('topbar', 'examinations', 'Search Examinations', 'examinations/search', '/examinations/search', false, 'list_examinations', 1);
   }
 ]);'use strict';
 //Setting up route
@@ -658,12 +658,12 @@ angular.module('examinations').config([
     }).state('patientExaminations', {
       url: '/examinations/patient/:patientId',
       templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Patient Examinations'
     }).state('searchExaminations', {
       url: '/examinations/search',
       templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
-      action: 'search_examinations',
+      action: 'list_examinations',
       title: 'Search Examinations'
     }).state('createExamination', {
       url: '/examinations/create/:patientId',
@@ -675,6 +675,16 @@ angular.module('examinations').config([
       templateUrl: 'modules/examinations/views/view-examination.client.view.html',
       action: 'view_examination',
       title: 'View Examination'
+    }).state('viewPatientExamination', {
+      url: '/examinations/view/:examinationId',
+      templateUrl: 'modules/examinations/views/view-examination.client.view.html',
+      action: 'view_examination',
+      title: 'View Examination'
+    }).state('editPatientExamination', {
+      url: '/examinations/edit/:examinationId/edit',
+      templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+      action: 'edit_examination',
+      title: 'Edit Examinations'
     }).state('editExamination', {
       url: '/examinations/:examinationId/edit',
       templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
@@ -3594,7 +3604,7 @@ angular.module('examinations').controller('ExaminationsController', [
       $scope.$broadcast('schemaFormValidate');
       // Then we check if the form is valid
       if (form.$valid) {
-        console.log($scope.examination);
+        //console.log($scope.examination);
         $scope.create();
       }
     };
@@ -3605,7 +3615,7 @@ angular.module('examinations').controller('ExaminationsController', [
       var examination = new Examinations($scope.examination);
       // Redirect after save
       examination.$save(function (response) {
-        //$location.path('examinations/' + response._id);
+        $location.path('/examinations/patient/' + examination._patient);
         Logger.success('Examination created successfully', true);
         // Clear form fields
         $scope.examination = {};
@@ -3616,6 +3626,7 @@ angular.module('examinations').controller('ExaminationsController', [
     // Remove existing Examination
     $scope.remove = function (examination) {
       if (examination) {
+        // ?????????????
         examination.$remove();
         for (var i in $scope.examinations) {
           if ($scope.examinations[i] === examination) {
@@ -3624,15 +3635,27 @@ angular.module('examinations').controller('ExaminationsController', [
         }
       } else {
         $scope.examination.$remove(function () {
-          $location.path('examinations');
+          //console.log($scope.examination._patient);
+          if ($location.url().indexOf('/examinations/view/') > -1) {
+            //console.log($scope.examination._patient);
+            $location.path('examinations/patient/' + $scope.examination._patient._id);
+            Logger.success('Examination deleted successfully', true);
+          } else {
+            $location.path('examinations');
+          }
         });
       }
     };
     // Update existing Examination
     $scope.update = function () {
       var examination = $scope.examination;
+      //console.log(examination._patient);
       examination.$update(function () {
-        $location.path('examinations/' + examination._id);
+        if ($location.url().indexOf('/examinations/edit') > -1) {
+          $location.path('examinations/view/' + examination._id);
+        } else {
+          $location.path('examinations/' + examination._id);
+        }
         ///log success message
         Logger.success('Examination updated successfully', true);
       }, function (errorResponse) {
@@ -3641,7 +3664,10 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     // Find a list of Examinations
     $scope.find = function () {
-      $scope.examinations = Examinations.query();
+      $scope._patient = null;
+      Examinations.query(function (res) {
+        $scope.examinations = res.list;
+      });
     };
     // Find existing Examination
     $scope.findOne = function (callback) {
@@ -3655,50 +3681,60 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     // findPatientExaminations
     $scope.findPatientExaminations = function (callback) {
+      $scope._patient = $stateParams.patientId;
       $scope.initOne();
-      //console.log($stateParams.patientId);
-      /*var patient = new Patients({});
-            patient.patientId=  $stateParams.patientId;*/
       $scope.examination._patient = $stateParams.patientId;
-      //console.log($scope.examination);
-      var examination = new Examinations($scope.examination);
-      console.log(examination);
-      Examinations.search(examination, function (_examinations) {
-        $scope.examinations = _examinations.list;
-        //console.log($scope.examinations);
-        if (callback) {
-          callback();
+      Patients.get({ patientId: $stateParams.patientId }, function (patient) {
+        if (patient) {
+          CoreProperties.setPageSubTitle(patient.fullName);
+          $scope.paginationConfig = {};
+          $scope.paginationConfig.pageSize = 10;
+          $scope.paginationConfig.currentPage = 1;
+          $scope.paginationConfig.totalItems = 0;
+          $scope.paginationConfig.maxSize = 2;
+          $scope.paginationConfig.numPages = 1;
+          $scope.paginationConfig.pageSizeOptions = [
+            10,
+            50,
+            100
+          ];
+          $scope.paginationConfig.showPagination = false;
+          $scope.fireSearch();
         }
-      });  /* var examination = new Examinations($scope.examination);
-            Examinations.search(examination, function (_examinations) {
-                $scope.examinations = _examinations.list;
-                //console.log($scope.examinations);
-                if(callback){
-                    callback();
-                }
-            });
-
-            Patients.get({
-            patientId: $stateParams.patientId
-            }, function (patient) {
-            if (patient) {
-            $scope.examination._patient = patient._id;
-            CoreProperties.setPageSubTitle(patient.fullName);
-            Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
-            Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
-            }
-            });*/
+      });
     };
+    /*
+         // findPatientExaminations
+         $scope.findPatientExaminations = function (callback) {
+         $scope._patient = $stateParams.patientId;
+         $scope.initOne();
+         $scope.examination._patient =  $stateParams.patientId;
+         Patients.get({
+         patientId: $stateParams.patientId
+         }, function (patient) {
+         if (patient) {
+         CoreProperties.setPageSubTitle(patient.fullName);
+         var examination = new Examinations($scope.examination);
+         Examinations.query(examination, function (_examinations) {
+         $scope.examinations = _examinations.list;
+         if(callback){
+         callback();
+         }
+         });
+         }
+         });
+         };
+         */
     // Search existing Examinations
     $scope.search = function (callback) {
-      var examination = new Examinations($scope.examination);
-      //console.log($scope.examination);
-      console.log(examination);
-      Examinations.search(examination, function (_examinations) {
+      $scope.examination.paginationConfig = {};
+      $scope.examination.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      $scope.examination.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      //var examination = new Examinations($scope.examination);
+      Examinations.query($scope.examination, function (_examinations) {
         $scope.examinations = _examinations.list;
-        //console.log($scope.examinations);
         if (callback) {
-          callback();
+          callback(_examinations.count);
         }
       });
     };
@@ -3732,7 +3768,74 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     $scope.initSearch = function () {
       $scope.initOne();
-      Toolbar.addToolbarCommand('searchExaminations', 'search_examinations', 'Search', 'search', 0);
+      //$scope.tabsConfig = {};
+      //$scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
+      Toolbar.addToolbarCommand('searchExaminations', 'list_examinations', 'Search', 'search', 0);
+    };
+    $scope.isPageSizeOptionEnabled = function (_option) {
+      var optionIndex = $scope.paginationConfig.pageSizeOptions.indexOf(_option);
+      if (optionIndex == 0) {
+        return true;
+      }
+      return $scope.paginationConfig.pageSizeOptions[optionIndex - 1] < $scope.paginationConfig.totalItems;
+    };
+    $scope.isPageSizeOptionSelecetd = function (_option) {
+      return $scope.paginationConfig.pageSize == _option;
+    };
+    $scope.selectPageSizeOption = function (_option) {
+      if ($scope.isPageSizeOptionEnabled(_option)) {
+        $scope.paginationConfig.pageSize = _option;
+        $scope.fireSearch();
+      }
+    };
+    $scope.pageChanged = function () {
+      //console.log($scope.paginationConfig.currentPage);
+      $scope.fireSearch();
+    };
+    $scope.getShowPagination = function () {
+      //console.log($scope.paginationConfig.totalItems);
+      return $scope.paginationConfig.totalItems > 0;
+    };
+    $scope.getNumOfPages = function () {
+      return $scope.paginationConfig.totalItems / $scope.paginationConfig.maxSize;
+    };
+    $scope.fireSearch = function () {
+      $scope.search(function (_count) {
+        $scope.tabsConfig.showResults = true;
+        $scope.paginationConfig.totalItems = _count;
+        $scope.paginationConfig.showPagination = $scope.getShowPagination();
+        $scope.paginationConfig.numPages = $scope.getNumOfPages();
+      });
+    };
+    $scope.initList = function () {
+      $scope.initOne();
+      //$scope.tabsConfig = {};
+      //$scope.tabsConfig.showResuls = false;
+      $scope.paginationConfig = {};
+      $scope.paginationConfig.pageSize = 10;
+      $scope.paginationConfig.currentPage = 1;
+      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.maxSize = 2;
+      $scope.paginationConfig.numPages = 1;
+      $scope.paginationConfig.pageSizeOptions = [
+        10,
+        50,
+        100
+      ];
+      $scope.paginationConfig.showPagination = false;
+      $scope.fireSearch();
     };
     ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
       $scope.onSubmit($scope.forms.examinationForm);
@@ -3741,12 +3844,14 @@ angular.module('examinations').controller('ExaminationsController', [
       $scope.update();
     });
     ActionsHandler.onActionFired('searchExaminations', $scope, function (action, args) {
-      $scope.search(function () {
-        $scope.tabsConfig.showResults = true;
-      });
+      $scope.fireSearch();
     });
     ActionsHandler.onActionFired('editExamination', $scope, function (action, args) {
-      $location.path('examinations/' + $scope.examination._id + '/edit');
+      if ($location.url().indexOf('/examinations/view/') > -1) {
+        $location.path('examinations/edit/' + $scope.examination._id + '/edit');
+      } else {
+        $location.path('examinations/' + $scope.examination._id + '/edit');
+      }
     });
     ActionsHandler.onActionFired('deleteExamination', $scope, function (action, args) {
       $scope.remove();
@@ -3759,10 +3864,7 @@ angular.module('examinations').factory('Examinations', [
   function ($resource) {
     return $resource('examinations/:examinationId', { examinationId: '@_id' }, {
       update: { method: 'PUT' },
-      search: {
-        method: 'GET',
-        url: 'examinations/search'
-      }
+      query: { isArray: false }
     });
   }
 ]);'use strict';
@@ -3774,7 +3876,7 @@ angular.module('manage-users').run([
     Menus.addMenuItem('topbar', 'Users', 'manage-users', 'dropdown', '/manage-users(/create)?', false, 1);
     Menus.addSubMenuItem('topbar', 'manage-users', 'List users', 'manage-users', '/manage-users', false, 'list_users', 0);
     Menus.addSubMenuItem('topbar', 'manage-users', 'New user', 'manage-users/create', '/manage-users/create', false, 'create_user', 1);
-    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'search_users', 2);
+    Menus.addSubMenuItem('topbar', 'manage-users', 'Search users', 'manage-users/search', '/manage-users/search', false, 'list_users', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -3795,7 +3897,7 @@ angular.module('manage-users').config([
     }).state('searchManageUser', {
       url: '/manage-users/search',
       templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
-      action: 'search_users',
+      action: 'list_users',
       title: 'Search Users'
     }).state('viewManageUser', {
       url: '/manage-users/:manageUserId',
@@ -3958,7 +4060,7 @@ angular.module('manage-users').controller('ManageUsersController', [
       $scope.initOne();
       $scope.tabsConfig = {};
       $scope.tabsConfig.showResuls = false;
-      Toolbar.addToolbarCommand('searchUser', 'search_users', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchUser', 'list_users', 'Search', 'search', 0);
     };
     ActionsHandler.onActionFired('saveUser', $scope, function (action, args) {
       $scope.create();
@@ -4003,7 +4105,7 @@ angular.module('patients').run([
     Menus.addMenuItem('topbar', 'Patients', 'patients', 'dropdown', '/patients(/create)?', false, 2);
     Menus.addSubMenuItem('topbar', 'patients', 'List Patients', 'patients', '/patients', false, 'list_patients', 0);
     Menus.addSubMenuItem('topbar', 'patients', 'New Patient', 'patients/create', '/patients/create', false, 'create_patient', 1);
-    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'search_patients', 2);
+    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'list_patients', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4024,7 +4126,7 @@ angular.module('patients').config([
     }).state('searchPatients', {
       url: '/patients/search',
       templateUrl: 'modules/patients/views/search-patients.client.view.html',
-      action: 'search_patients',
+      action: 'list_patients',
       title: 'Search Patients'
     }).state('viewPatient', {
       url: '/patients/:patientId',
@@ -4045,6 +4147,7 @@ angular.module('patients').controller('PatientsController', [
   '$stateParams',
   '$location',
   'Patients',
+  'CoreProperties',
   'Logger',
   'lodash',
   'moment',
@@ -4052,7 +4155,7 @@ angular.module('patients').controller('PatientsController', [
   '$upload',
   'ActionsHandler',
   'Toolbar',
-  function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+  function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
     $scope.configObj = {};
     $scope.configObj._ = lodash;
     $scope.configObj.Moment = Moment;
@@ -4240,23 +4343,23 @@ angular.module('patients').controller('PatientsController', [
         };*/
     // Find existing Patient
     $scope.findOne = function (callback) {
-      var patient = Patients.get({ patientId: $stateParams.patientId }, function () {
-          $scope.patient = patient;
-          $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
-          if ($scope.patient.personalPhoto) {
-            $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
-          }
-          if (callback) {
-            callback();
-          }
-        });
+      Patients.get({ patientId: $stateParams.patientId }, function (patient) {
+        $scope.patient = patient;
+        CoreProperties.setPageSubTitle(patient.fullName);
+        $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
+        if ($scope.patient.personalPhoto) {
+          $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
+        }
+        if (callback) {
+          callback();
+        }
+      });
     };
     // Search existing patients
     $scope.search = function (callback) {
-      var query = $scope.patient;
-      query.paginationConfig = {};
-      query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-      query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      $scope.patient.paginationConfig = {};
+      $scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      $scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
       Patients.query($scope.patient, function (_res) {
         $scope.patients = _res.list;
         if (callback) {
@@ -4280,7 +4383,7 @@ angular.module('patients').controller('PatientsController', [
     $scope.initView = function () {
       $scope.findOne(function () {
         Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-        Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+        Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
         Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
         Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
       });
@@ -4301,7 +4404,7 @@ angular.module('patients').controller('PatientsController', [
         100
       ];
       $scope.paginationConfig.showPagination = false;
-      Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+      Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
     };
     $scope.initList = function () {
       $scope.initOne();
@@ -4322,6 +4425,7 @@ angular.module('patients').controller('PatientsController', [
       $scope.fireSearch();
     };
     $scope.getShowPagination = function () {
+      //console.log($scope.paginationConfig.totalItems);
       return $scope.paginationConfig.totalItems > 0;
     };
     $scope.pageChanged = function () {
@@ -4512,22 +4616,22 @@ angular.module('patients').factory('Patients', [
     });
   }
 ]);  /*
-angular.module('patients').factory('Patient',function(){
-    var currentPatient = null;
+ angular.module('patients').factory('Patient',function(){
+ var currentPatient = null;
 
-    var setCurrentPatient = function(patient) {
-        currentPatient=patient;
-    };
+ var setCurrentPatient = function(patient) {
+ currentPatient=patient;
+ };
 
-    var getCurrentPatient = function(){
-        return currentPatient;
-    };
+ var getCurrentPatient = function(){
+ return currentPatient;
+ };
 
-    return {
-        setCurrentPatient: setCurrentPatient,
-        getCurrentPatient: getCurrentPatient
-    };
-});*/'use strict';
+ return {
+ setCurrentPatient: setCurrentPatient,
+ getCurrentPatient: getCurrentPatient
+ };
+ });*/'use strict';
 // Configuring the Articles module
 angular.module('roles').run([
   'Menus',
@@ -4536,7 +4640,7 @@ angular.module('roles').run([
     Menus.addMenuItem('topbar', 'Roles', 'roles', 'dropdown', '/roles(/create)?(/search)?', false, 0);
     Menus.addSubMenuItem('topbar', 'roles', 'List Roles', 'roles', '/roles', false, 'list_roles', 0);
     Menus.addSubMenuItem('topbar', 'roles', 'New Role', 'roles/create', '/roles/create', false, 'create_role', 1);
-    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'search_roles', 2);
+    Menus.addSubMenuItem('topbar', 'roles', 'Search Roles', 'roles/search', '/roles/search', false, 'list_roles', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4604,7 +4708,7 @@ angular.module('roles').config([
       url: '/roles/search',
       templateUrl: 'modules/roles/views/search-roles.client.view.html',
       requiresLogin: true,
-      action: 'search_roles',
+      action: 'list_roles',
       title: 'Search Roles'
     }).state('editRole', {
       url: '/roles/:roleId/edit',
@@ -4764,9 +4868,9 @@ angular.module('roles').controller('RolesController', [
     // Update existing Role
     $scope.update = function () {
       var _role = $scope.role;
-      role._actions = $scope.actionsObj.role_actions;
+      _role._actions = $scope.actionsObj.role_actions;
       _role.$update(function () {
-        $location.path('roles/' + role._id);
+        $location.path('roles/' + _role._id);
         ///log success message
         Logger.success('Role updated successfully', true);
       }, function (errorResponse) {
@@ -4797,7 +4901,7 @@ angular.module('roles').controller('RolesController', [
     // Find existing Role
     $scope.findOne = function (callback) {
       Roles.get({ roleId: $stateParams.roleId }, function (_role) {
-        console.log(_role);
+        //console.log(_role);
         $scope.role = _role;
         $scope.actionsObj.role_actions = lodash.findByValues($scope.actionsObj.all_actions, '_id', $scope.role._actions);
         for (var i = 0; i < $scope.actionsObj.modules.length; i++) {
@@ -4835,7 +4939,7 @@ angular.module('roles').controller('RolesController', [
       $scope.initOne(function () {
         $scope.tabsConfig = {};
         $scope.tabsConfig.showResuls = false;
-        Toolbar.addToolbarCommand('searchRole', 'search_roles', 'Search', 'search', 0);
+        Toolbar.addToolbarCommand('searchRole', 'list_roles', 'Search', 'search', 0);
       });
     };
     $scope.initList = function () {

@@ -2,8 +2,9 @@
 
 
 // Patients controller
-angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'Logger', 'lodash', 'moment', '$modal', '$upload', 'ActionsHandler', 'Toolbar',
-    function ($scope, $stateParams, $location, Patients, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+angular.module('patients').controller('PatientsController', ['$scope', '$stateParams', '$location', 'Patients', 'CoreProperties', 'Logger', 'lodash', 'moment', '$modal', 'Upload', 'ActionsHandler', 'Toolbar', 'validationManager',
+    function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar, validationManager) {
+
 
         $scope.configObj = {};
         $scope.configObj._ = lodash;
@@ -101,7 +102,6 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
             $scope.patient.gender = gender_id;
         };
 
-
         var dataURItoBlob = function (dataURI) {
             var binary = atob(dataURI.split(',')[1]);
             var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
@@ -114,13 +114,17 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Create new Patient
         $scope.create = function () {
+            validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
+            if (!$scope.patientForm.$valid) {
+                return;
+            }
             // Create new Patient object
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if ($scope.configObj.photo) {
                 lodash.extend(patient, {personalPhoto: true});
             }
             var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
-            $upload.upload({
+            Upload.upload({
                 url: '/patients',
                 method: 'POST',
                 headers: {'Content-Type': 'multipart/form-data'},
@@ -177,16 +181,25 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         //redirect to examination
         $scope.examine = function () {
             $location.path('examinations/create/' + $scope.patient._id);
-        }
+        };
+
+        //redirect to new visit
+        $scope.newVisit = function () {
+            $location.path('visits/create/' + $scope.patient._id);
+        };
 
         // Update existing Patient
         $scope.update = function () {
+            validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
+            if (!$scope.patientForm.$valid) {
+                return;
+            }
             var patient = angular.fromJson(angular.toJson($scope.patient));
             if ($scope.configObj.photo) {
                 lodash.extend(patient, {personalPhoto: true});
             }
             var blob = ($scope.configObj.photo) ? dataURItoBlob($scope.configObj.photo) : null;
-            $upload.upload({
+            Upload.upload({
                 url: '/patients/' + patient._id, //upload.php script, node.js route, or servlet url
                 method: 'PUT',
                 headers: {'Content-Type': 'multipart/form-data'},
@@ -213,24 +226,19 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         };
 
-        // Find a list of Patients
-        /*$scope.find = function () {
-            Patients.query(function (_patients) {
-                $scope.patients = _patients;
-            });
-
-        };*/
 
         // Find existing Patient
         $scope.findOne = function (callback) {
-            var patient = Patients.get({
+            Patients.get({
                 patientId: $stateParams.patientId
-            }, function () {
+            }, function (patient) {
                 $scope.patient = patient;
+                CoreProperties.setPageSubTitle(patient.fullName);
                 $scope.configObj.age = new Moment().diff(new Moment($scope.patient.birthDate, 'YYYY/MM/DD'), 'years');
                 if ($scope.patient.personalPhoto) {
                     $scope.configObj.personalPhotoPath = 'patients/personal-photo/' + $scope.patient._id;
                 }
+
                 if (callback) {
                     callback();
                 }
@@ -239,11 +247,31 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         // Search existing patients
         $scope.search = function (callback) {
-            var query = $scope.patient;
-            query.paginationConfig = {};
-            query.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-            query.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-            Patients.query($scope.patient, function (_res) {
+            var paginationConfig = {};
+            paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+            paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+
+            if($scope.patient && $scope.patient.hasOwnProperty('gender')){
+                $scope.patient.gender=$scope.patient.gender._id;
+            }
+            if($scope.configObj && $scope.configObj.hasOwnProperty('age') && !lodash.isEmpty($scope.configObj.age) && $scope.configObj.age.hasOwnProperty('Range') && !lodash.isEmpty($scope.configObj.age.Range) && ($scope.configObj.age.Range.from || $scope.configObj.age.Range.to)){
+                $scope.patient.birthDate={};
+                $scope.patient.birthDate.__range='';
+                if($scope.configObj.age.Range.hasOwnProperty('to') && $scope.configObj.age.Range.to){
+                    $scope.patient.birthDate.__range+= new Moment().subtract($scope.configObj.age.Range.to, 'years').format('YYYY/MM/DD');
+                }
+                $scope.patient.birthDate.__range+=':';
+                if($scope.configObj.age.Range.hasOwnProperty('from') && $scope.configObj.age.Range.from){
+                    $scope.patient.birthDate.__range+= new Moment().subtract($scope.configObj.age.Range.from, 'years').format('YYYY/MM/DD');
+                }
+                //console.log( $scope.patient.birthDate.__range);
+            }
+
+            if ($scope.patient && !lodash.isEmpty($scope.patient)) {
+                $location.search({searchObj: JSON.stringify($scope.patient), paginationObj: JSON.stringify(paginationConfig)});
+                //$location.replace();
+            }
+            Patients.query({searchObj: $scope.patient, paginationObj: paginationConfig}, function (_res) {
                 $scope.patients = _res.list;
                 if (callback) {
                     callback(_res.count);
@@ -267,8 +295,9 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         };
         $scope.initView = function () {
             $scope.findOne(function () {
+                Toolbar.addToolbarCommand('newVisit', 'create_visit', 'New Visit', 'log-in', 0)
                 Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
-                Toolbar.addToolbarCommand('patientExaminations', 'search_examinations', 'List', 'list', 1);
+                Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
                 Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
                 Toolbar.addToolbarCommand('deletePatient', 'delete_patient', 'Delete', 'trash', 3, null, 'Are you sure to delete patient "' + $scope.patient.fullName + '"?');
             });
@@ -276,40 +305,45 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.initSearch = function () {
             $scope.initOne();
-            $scope.tabsConfig = {};
-            $scope.tabsConfig.showResuls = false;
-            $scope.paginationConfig = {};
-            $scope.paginationConfig.pageSize = 10;
-            $scope.paginationConfig.currentPage = 1;
-            $scope.paginationConfig.totalItems = 0;
-            $scope.paginationConfig.maxSize = 2;
-            $scope.paginationConfig.numPages = 1;
-            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
-            $scope.paginationConfig.showPagination = false;
-            Toolbar.addToolbarCommand('searchPatient', 'search_patients', 'Search', 'search', 0);
+            $scope.initPagination();
+            Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
+            var searchQuery = $location.search();
+            if (searchQuery && !lodash.isEmpty(searchQuery)) {
+                $scope.patient = JSON.parse(searchQuery.searchObj);
+                var pagingConf = JSON.parse(searchQuery.paginationObj);
+                $scope.paginationConfig.currentPage = pagingConf.pageNo;
+                $scope.paginationConfig.pageSize = pagingConf.pageSize;
+                $scope.fireSearch();
+            }
         };
 
-        $scope.initList=function(){
+        $scope.initList = function () {
             $scope.initOne();
-            $scope.tabsConfig = {};
-            $scope.tabsConfig.showResuls = false;
-            $scope.paginationConfig = {};
-            $scope.paginationConfig.pageSize = 10;
-            $scope.paginationConfig.currentPage = 1;
-            $scope.paginationConfig.totalItems = 0;
-            $scope.paginationConfig.maxSize = 2;
-            $scope.paginationConfig.numPages = 1;
-            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
-            $scope.paginationConfig.showPagination = false;
+            $scope.initPagination();
             $scope.fireSearch();
         };
 
+        $scope.initPagination = function () {
+            $scope.tabsConfig = {};
+            $scope.tabsConfig.showResuls = false;
+            $scope.paginationConfig = {};
+            $scope.paginationConfig.pageSize = 10;
+            $scope.paginationConfig.currentPage = 1;
+            $scope.paginationConfig.totalItems = Number.MAX_VALUE;
+            $scope.paginationConfig.maxSize = 2;
+            $scope.paginationConfig.numPages = 1;
+            $scope.paginationConfig.pageSizeOptions = [10, 50, 100];
+            $scope.paginationConfig.showPagination = false;
+        };
+
         $scope.getShowPagination = function () {
+            //console.log($scope.paginationConfig.totalItems);
             return $scope.paginationConfig.totalItems > 0;
         };
 
         $scope.pageChanged = function () {
             //console.log($scope.paginationConfig.currentPage);
+            console.log('page changed');
             $scope.fireSearch();
         };
 
@@ -341,11 +375,14 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         ActionsHandler.onActionFired('updatePatient', $scope, function (action, args) {
             $scope.update();
         });
+        ActionsHandler.onActionFired('newVisit', $scope, function (action, args) {
+            $scope.newVisit();
+        });
         ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
             $scope.examine();
         });
         ActionsHandler.onActionFired('patientExaminations', $scope, function (action, args) {
-            $location.path('examinations/patient/' + $scope.patient._id );
+            $location.path('examinations/patient/' + $scope.patient._id);
         });
         ActionsHandler.onActionFired('editPatient', $scope, function (action, args) {
             $location.path('patients/' + $scope.patient._id + '/edit');
@@ -355,6 +392,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
         });
 
         ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+            $scope.initPagination();
             $scope.fireSearch();
         });
 
@@ -384,24 +422,17 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     $scope.modalConfig.selectedPhoto = null;
     $scope.modalConfig.inputImage = null;
     $scope.modalConfig.webcamError = false;
-    //$scope.tabs = [
-    //  { active: true, disabled: false },
-    //  { active: false, disabled: false },
-    //  { active: false, disabled: true }
-    //];
-    //$scope.photoWidth = null;
-    //$scope.photoHeight = null;
-    //$scope.finalPhoto = null;
-    //$scope.photos = [];
-    //$scope.selectedPhoto = null;
-    //$scope.inputImage = null;
-    //$scope.webcamError = false;
 
     var _video = null;
-    $scope.onSuccess = function (videoElem) {
-        _video = videoElem;
+    $scope.onSuccess = function () {
+        _video = $scope.myChannel.video;
     };
-
+    $scope.myChannel = {
+        // the fields below are all optional
+        videoHeight: '240',
+        videoWidth: '320',
+        video: null // Will reference the video element on success
+    };
     var getVideoData = function getVideoData() {
         var hiddenCanvas = document.createElement('canvas');
         hiddenCanvas.width = _video.width;
@@ -415,7 +446,8 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
     $scope.makeSnapshot = function makeSnapshot() {
         if (_video) {
             var idata = getVideoData();
-            $scope.modalConfig.photos.push({src: idata})
+            $scope.selectPhoto(idata);
+            //$scope.modalConfig.photos.push({src: idata})
         }
     };
 
@@ -438,6 +470,20 @@ angular.module('patients').controller('ModalInstanceCtrl', function ($scope, $mo
         reader.readAsDataURL(file);
 
     };
+
+    $scope.selectFile = function (file) {
+        var reader = new FileReader();
+
+        reader.onload = function (event) {
+            $scope.$apply(function ($scope) {
+                $scope.selectPhoto(event.target.result);
+            });
+        };
+        // when the file is read it triggers the onload event above.
+        reader.readAsDataURL(file);
+
+    };
+
 
     $scope.selectInputPhoto = function () {
         $scope.modalConfig.photoWidth = img.width;

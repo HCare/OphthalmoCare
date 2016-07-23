@@ -1,7 +1,7 @@
 <section data-ng-controller="ExaminationsController" data-ng-init="findPatientExaminations()">
     <div class="content-div">
         <div class="list-group">
-            <a data-ng-repeat="examination in examinations" data-ng-href="#!/examinations/{{examination._id}}" class="list-group-item">
+            <a data-ng-repeat="examination in examinations" data-ng-href="#!/examinations/view/{{examination._id}}" class="list-group-item">
                 <small class="list-group-item-text">
                     <h4 class="list-group-item-heading" data-ng-bind="examination._patient.fullName"></h4>
                     <em class="text-muted">
@@ -13,8 +13,20 @@
                 </small>
             </a>
         </div>
+        <pagination ng-hide="!paginationConfig.showPagination" total-items="paginationConfig.totalItems"
+                    ng-model="paginationConfig.currentPage" ng-change="pageChanged()"
+                    max-size="paginationConfig.maxSize" items-per-page="paginationConfig.pageSize" class="pagination-sm"
+                    boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;"
+                    first-text="&laquo;" last-text="&raquo;">
+        </pagination>
+        <ul ng-hide="!paginationConfig.showPagination" class="pagination-sm pagination">
+            <li ng-repeat="item in paginationConfig.pageSizeOptions"
+                ng-class="{active: isPageSizeOptionSelecetd(item), disabled:!isPageSizeOptionEnabled(item)}">
+                <a href="" ng-click="selectPageSizeOption(item)">{{item}}</a>
+            </li>
+        </ul>
         <div class="alert alert-warning text-center" data-ng-hide="!examinations || examinations.length">
-            No Examinations yet, why don't you <a href="/#!/examinations/create">create one</a>?
+            No Examinations yet, why don't you <a data-ng-href="/#!/examinations/create/{{examination._patient}}">create one</a>?
         </div>
     </div>
 </section>

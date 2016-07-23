@@ -6,11 +6,11 @@ angular.module('directives')
             restrict: "E",
             replace: true,
             link :function(scope, element, atts){
-                if(lodash.contains(Authentication.user._role._actions, atts.action)){
+                if(Authentication.user && lodash.contains(Authentication.user._role._actions, atts.action)){
 
                     if(atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != ''){
                         atts.$observe('redirectUrl', function(redirectUrl){
-                            var buttonText = '<a class="btn btn-default" href='+ redirectUrl +'>' +
+                            var buttonText = '<a class="btn btn-default" title='+ atts.title +' href='+ redirectUrl +'>' +
                                 '<i class="glyphicon glyphicon-' +  atts.icon + '"></i>' +
                                 '</a>';
                             element.html(buttonText);
@@ -18,7 +18,7 @@ angular.module('directives')
                     }
 
                     if(atts.clickEvent != null && atts.clickEvent != undefined && atts.clickEvent !='') {
-                        var buttonText = "<a class='btn btn-default' >" +
+                        var buttonText = "<a class='btn btn-default' title="+ atts.title +" >" +
                             "<i class='glyphicon glyphicon-"+ atts.icon +"'></i>" +
                             "</a>";
                         element.html(buttonText);
