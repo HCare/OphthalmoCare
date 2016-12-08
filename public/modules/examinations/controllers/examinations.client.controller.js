@@ -2364,6 +2364,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         };
 
         $scope.initList = function () {
+
+            CoreProperties.setPageSubTitle("Examinations");
             $scope.initOne();
             //$scope.tabsConfig = {};
             //$scope.tabsConfig.showResuls = false;
