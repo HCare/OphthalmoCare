@@ -7,3 +7,6 @@ app/tests/coverage/
 .bower-*/
 .idea/
 files/
+public/modules/
+public/application.js
+public/config.js
