@@ -38,7 +38,10 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 
         $scope.closeAside = function() {
             if($scope.asideInstance) {
-                $scope.asideInstance.close();
+                if($rootScope.asideState && $rootScope.asideState.open){
+                    $scope.asideInstance.close();
+                }
+
             }
         };
 

@@ -1,0 +1,10 @@
+<div class="btn-group" data-toggle="buttons" id={{atts.id}}>
+    <label class="btn btn-primary"
+           ng-class="{active:selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1}"
+           ng-repeat="item in source">
+        <input type="checkbox"
+               value="{{item[itemLabelField]}}"
+               ng-checked="selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1"
+               ng-click="itemClicked(item)">{{item[itemLabelField]}}
+    </label>
+</div>

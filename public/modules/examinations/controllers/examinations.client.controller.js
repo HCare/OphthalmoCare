@@ -2131,6 +2131,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Create new Examination
         $scope.create = function () {
+
+            if($scope.getImageDataUrl){
+               var commentsImageData=$scope.getImageDataUrl();
+                if(commentsImageData){
+                    $scope.examination.commentsImageData=commentsImageData;
+
+                }
+            }
+
             // Create new Examination object
             var examination = new Examinations($scope.examination);
             // Redirect after save
@@ -2172,6 +2181,15 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
 
         // Update existing Examination
         $scope.update = function () {
+
+            if($scope.getImageDataUrl){
+                var commentsImageData=$scope.getImageDataUrl();
+                if(commentsImageData){
+                    $scope.examination.commentsImageData=commentsImageData;
+
+                }
+            }
+
             var examination = $scope.examination;
             //console.log(examination._patient);
             examination.$update(function () {
@@ -2204,6 +2222,14 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
                 examinationId: $stateParams.examinationId
             }, function (_examination) {
                 $scope.examination = _examination;
+                $scope.canvasVersion=0;
+                var canvasOptions={undo: true};
+
+                if($scope.examination.commentsImageData){
+                    canvasOptions.imageSrc=$scope.examination.commentsImageData;
+                }
+                $scope.canvasOptions=canvasOptions;
+
                 $scope.$broadcast('schemaFormRedraw');
                 if (callback) {
                     callback();
@@ -2276,15 +2302,20 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             $scope.examination = new Examinations({});
         };
 
+        $scope.canvasUndo=function(){
+            $scope.canvasVersion-=1
+        };
         $scope.initCreate = function () {
             $scope.initOne();
+            $scope.canvasVersion=0;
+            $scope.canvasOptions={undo: true};
             Patients.get({
                 patientId: $stateParams.patientId
             }, function (patient) {
                 if (patient) {
                     $scope.examination._patient = patient._id;
                     CoreProperties.setPageSubTitle(patient.fullName);
-                    Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
+                    //Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
                     Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
                 }
             });
@@ -2364,6 +2395,8 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
         };
 
         $scope.initList = function () {
+
+            CoreProperties.setPageSubTitle("Examinations");
             $scope.initOne();
             //$scope.tabsConfig = {};
             //$scope.tabsConfig.showResuls = false;
@@ -2378,6 +2411,9 @@ angular.module('examinations').controller('ExaminationsController', ['$scope', '
             $scope.fireSearch();
         };
 
+        /*ActionsHandler.onActionFired('clearExamination', $scope, function (action, args) {
+            $scope.forms={};
+        });*/
 
         ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
             $scope.onSubmit($scope.forms.examinationForm);
