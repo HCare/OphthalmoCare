@@ -2,7 +2,6 @@
 
 module.exports = {
 	db: 'mongodb://localhost/ophthalmocare-test',
-    graphDB:'http://localhost:7474/',
     fileHandler:(process.env.CLOUDINARY_URL)?'cloudinary':'local',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',

@@ -49,7 +49,7 @@ angular.module('security').provider('auth',
 
 
     });*/
-angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfiguration.applicationModuleVendorDependencies/*, function(){console.log('apppppppp')}*/);
+angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfiguration.applicationModuleVendorDependencies);
 
 
 // Setting HTML5 Location Mode

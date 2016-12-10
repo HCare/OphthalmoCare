@@ -6,7 +6,7 @@ angular.module('directives')
             restrict: "E",
             replace: true,
             link :function(scope, element, atts){
-                if(lodash.contains(Authentication.user._role._actions, atts.action)){
+                if(Authentication.user && lodash.contains(Authentication.user._role._actions, atts.action)){
 
                     if(atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != ''){
                         atts.$observe('redirectUrl', function(redirectUrl){

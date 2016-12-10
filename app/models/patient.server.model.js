@@ -4,7 +4,10 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+    autoIncrement = require('mongoose-auto-increment');
+
+autoIncrement.initialize(mongoose.connection);
 
 /**
  * Patient Schema
@@ -64,7 +67,26 @@ var PatientSchema = new Schema({
             type: Schema.ObjectId,
             ref: 'User'
         }
+    },
+    medicalHistory:{
+        general:{
+            diabetesMellitus:{
+                startDate:Date,
+                medication:[String]
+            },
+            hypertension:{
+                startDate:Date,
+                medication:[String]
+            }
+        },
+        ocular:{
+            ocularSurgery:[{}],
+            ocularTrauma:[{}],
+            medication:[{}]
+        }
     }
 });
+
+PatientSchema.plugin(autoIncrement.plugin, { model: 'Patient', field: 'seq', startAt: 1, incrementBy: 1 });
 
 mongoose.model('Patient', PatientSchema);

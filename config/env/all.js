@@ -18,12 +18,13 @@ module.exports = {
                 'public/lib/angular-loading-bar/build/loading-bar.css',
                 'public/lib/angularjs-toaster/toaster.css',
                 'public/lib/ngImgCrop/compile/unminified/ng-img-crop.css',
-                'public/lib/angular-ui-select/dist/select.css'
+                'public/lib/angular-ui-select/dist/select.css',
+                'public/lib/angular-aside/dist/css/angular-aside.css'
 			],
 			js: [
-                'public/lib/ng-file-upload/angular-file-upload-shim.js',
 				'public/lib/angular/angular.js',
-                'public/lib/ng-file-upload/angular-file-upload.js',
+				'public/lib/ng-file-upload/ng-file-upload-shim.js',
+                'public/lib/ng-file-upload/ng-file-upload.js',
 				'public/lib/angular-resource/angular-resource.js', 
 				'public/lib/angular-cookies/angular-cookies.js', 
 				'public/lib/angular-animate/angular-animate.js', 
@@ -44,9 +45,11 @@ module.exports = {
                 'public/lib/angularjs-toaster/toaster.js',
                 'public/lib/moment/moment.js',
                 'public/lib/angular-moment/angular-moment.js',
-                'public/lib/webcam-directive/app/scripts/webcam.js',
+                'public/lib/webcam/app/scripts/webcam.js',
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
-                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
+                'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
+                'public/lib/angular-aside/dist/js/angular-aside.js',
+                'public/lib/angular-auto-validate/dist/jcs-auto-validate.js'
 			]
 		},
 		css: [

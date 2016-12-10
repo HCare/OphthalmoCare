@@ -2,7 +2,6 @@
 
 module.exports = {
 	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/ophthalmocare',
-    graphDB: process.env.NEO4JGRAPHENE_URL || 'http://localhost:7474/',
     fileHandler:(process.env.CLOUDINARY_URL)?'cloudinary':'local',
     filesTemp:'files/temp/',
     filesUpload:'files/upload/',
@@ -19,12 +18,13 @@ module.exports = {
 				'public/lib/angular-loading-bar/build/loading-bar.min.css',
 				'public/lib/angularjs-toaster/toaster.css',
 				'public/lib/ngImgCrop/compile/minified/ng-img-crop.css',
-				'public/lib/angular-ui-select/dist/select.min.css'
+				'public/lib/angular-ui-select/dist/select.min.css',
+                'public/lib/angular-aside/dist/css/angular-aside.min.css'
 			],
 			js: [
-				'public/lib/ng-file-upload/angular-file-upload-shim.min.js',
 				'public/lib/angular/angular.min.js',
-				'public/lib/ng-file-upload/angular-file-upload.min.js',
+				'public/lib/ng-file-upload/ng-file-upload-shim.min.js',
+				'public/lib/ng-file-upload/ng-file-upload.min.js',
 				'public/lib/angular-resource/angular-resource.min.js',
 				'public/lib/angular-cookies/angular-cookies.min.js',
 				'public/lib/angular-animate/angular-animate.min.js',
@@ -45,9 +45,11 @@ module.exports = {
 				'public/lib/angularjs-toaster/toaster.js',
 				'public/lib/moment/min/moment.min.js',
 				'public/lib/angular-moment/angular-moment.min.js',
-				'public/lib/webcam-directive/dist/1.1.0/webcam.min.js',
+				'public/lib/webcam/dist/webcam.min.js',
 				'public/lib/angular-deckgrid/angular-deckgrid.min.js',
-				'public/lib/ngImgCrop/compile/minified/ng-img-crop.js'
+				'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
+                'public/lib/angular-aside/dist/js/angular-aside.min.js',
+                'public/lib/angular-auto-validate/dist/jcs-auto-validate.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
