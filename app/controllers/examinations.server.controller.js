@@ -12,10 +12,10 @@ var mongoose = require('mongoose'),
  * Create a Examination
  */
 exports.create = function(req, res) {
-    //console.log(req.body);
+
 	var examination = new Examination(req.body);
 	examination.created._user = req.user;
-    //console.log(examination);
+
 	examination.save(function(err) {
         //console.log(err);
 		if (err) {

@@ -49,7 +49,8 @@ module.exports = {
                 'public/lib/angular-deckgrid/angular-deckgrid.js',
                 'public/lib/ngImgCrop/compile/minified/ng-img-crop.js',
                 'public/lib/angular-aside/dist/js/angular-aside.js',
-                'public/lib/angular-auto-validate/dist/jcs-auto-validate.js'
+                'public/lib/angular-auto-validate/dist/jcs-auto-validate.js',
+                'public/lib/angular-canvas-painter/dist/angular-canvas-painter.js'
 			]
 		},
 		css: [

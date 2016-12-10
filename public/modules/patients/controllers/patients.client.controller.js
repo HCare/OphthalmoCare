@@ -343,7 +343,7 @@ angular.module('patients').controller('PatientsController', ['$scope', '$statePa
 
         $scope.pageChanged = function () {
             //console.log($scope.paginationConfig.currentPage);
-            console.log('page changed');
+            //console.log('page changed');
             $scope.fireSearch();
         };
 
