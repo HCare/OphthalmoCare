@@ -12,6 +12,7 @@ var ApplicationConfiguration = function () {
         'ngSanitize',
         'ui.router',
         'ui.bootstrap',
+        'ngAside',
         'ui.utils',
         'ngLodash',
         'angular-loading-bar',
@@ -20,10 +21,11 @@ var ApplicationConfiguration = function () {
         'akoenig.deckgrid',
         'ngImgCrop',
         'angularMoment',
-        'angularFileUpload',
+        'ngFileUpload',
         'pascalprecht.translate',
         'ui.select',
-        'schemaForm'
+        'schemaForm',
+        'jcs-autoValidate'
       ];
     // Add a new vertical module
     var registerModule = function (moduleName, dependencies) {
@@ -110,14 +112,18 @@ angular.element(document).ready(function () {
 });'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('action');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('complaints');'use strict';
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('directives');'use strict';
 // Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('examinations');'use strict';
+ApplicationConfiguration.registerModule('examinations', ['pw.canvas-painter']);'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('manage-users');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('medical-histories');'use strict';
 // Use applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('module');'use strict';
 // Use applicaion configuration module to register a new module
@@ -128,6 +134,8 @@ ApplicationConfiguration.registerModule('roles');'use strict';
 ApplicationConfiguration.registerModule('security');'use strict';
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('visits');'use strict';
 angular.module('action').factory('Action', [
   '$resource',
   function ($resource) {
@@ -135,6 +143,99 @@ angular.module('action').factory('Action', [
     // ...
     // Public API
     return $resource('action/list');
+  }
+]);'use strict';
+// Configuring the Articles module
+angular.module('complaints').run([
+  'Menus',
+  function (Menus) {
+    // Set top bar menu items
+    Menus.addMenuItem('topbar', 'Complaints', 'complaints', 'dropdown', '/complaints(/create)?');
+    Menus.addSubMenuItem('topbar', 'complaints', 'List Complaints', 'complaints');
+    Menus.addSubMenuItem('topbar', 'complaints', 'New Complaint', 'complaints/create');
+  }
+]);'use strict';
+//Setting up route
+angular.module('complaints').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Complaints state routing
+    $stateProvider.state('listComplaints', {
+      url: '/complaints',
+      templateUrl: 'modules/complaints/views/list-complaints.client.view.html'
+    }).state('createComplaint', {
+      url: '/complaints/create',
+      templateUrl: 'modules/complaints/views/create-complaint.client.view.html'
+    }).state('viewComplaint', {
+      url: '/complaints/:complaintId',
+      templateUrl: 'modules/complaints/views/view-complaint.client.view.html'
+    }).state('editComplaint', {
+      url: '/complaints/:complaintId/edit',
+      templateUrl: 'modules/complaints/views/edit-complaint.client.view.html'
+    });
+  }
+]);'use strict';
+// Complaints controller
+angular.module('complaints').controller('ComplaintsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Complaints',
+  function ($scope, $stateParams, $location, Authentication, Complaints) {
+    $scope.authentication = Authentication;
+    // Create new Complaint
+    $scope.create = function () {
+      // Create new Complaint object
+      var complaint = new Complaints({ name: this.name });
+      // Redirect after save
+      complaint.$save(function (response) {
+        $location.path('complaints/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Complaint
+    $scope.remove = function (complaint) {
+      if (complaint) {
+        complaint.$remove();
+        for (var i in $scope.complaints) {
+          if ($scope.complaints[i] === complaint) {
+            $scope.complaints.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.complaint.$remove(function () {
+          $location.path('complaints');
+        });
+      }
+    };
+    // Update existing Complaint
+    $scope.update = function () {
+      var complaint = $scope.complaint;
+      complaint.$update(function () {
+        $location.path('complaints/' + complaint._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Complaints
+    $scope.find = function () {
+      $scope.complaints = Complaints.query();
+    };
+    // Find existing Complaint
+    $scope.findOne = function () {
+      $scope.complaint = Complaints.get({ complaintId: $stateParams.complaintId });
+    };
+  }
+]);'use strict';
+//Complaints service used to communicate Complaints REST endpoints
+angular.module('complaints').factory('Complaints', [
+  '$resource',
+  function ($resource) {
+    return $resource('complaints/:complaintId', { complaintId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]);'use strict';
 // Setting up route
@@ -160,7 +261,9 @@ angular.module('core').controller('HeaderController', [
   'CoreProperties',
   'ActionsHandler',
   'Toolbar',
-  function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler, Toolbar) {
+  '$aside',
+  '$rootScope',
+  function ($scope, Authentication, Menus, $state, CoreProperties, ActionsHandler, Toolbar, $aside, $rootScope) {
     $scope.authentication = Authentication;
     $scope.isCollapsed = false;
     $scope.menu = Menus.getMenu('topbar');
@@ -177,6 +280,7 @@ angular.module('core').controller('HeaderController', [
     };
     // Collapsing the menu after navigation
     $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+      $scope.closeAside();
       if (toState.title) {
         $scope.pageTitle = toState.title;
       }
@@ -185,6 +289,45 @@ angular.module('core').controller('HeaderController', [
     });
     $scope.fireCommand = function (command) {
       ActionsHandler.fireAction(command, null);
+    };
+    $rootScope.asideState = { open: false };
+    $scope.closeAside = function () {
+      if ($scope.asideInstance) {
+        if ($rootScope.asideState && $rootScope.asideState.open) {
+          $scope.asideInstance.close();
+        }
+      }
+    };
+    $scope.openAside = function (template, position, slideOver) {
+      $rootScope.asideState = {
+        open: true,
+        position: position
+      };
+      $scope.postClose = function () {
+        $rootScope.asideState.open = false;
+      };
+      $aside.open({
+        templateUrl: template,
+        placement: position,
+        backdrop: slideOver,
+        controller: function ($scope, $modalInstance, Authentication, Menus) {
+          $scope.$parent.asideInstance = $modalInstance;
+          $scope.ok = function (e) {
+            $modalInstance.close();
+            e.stopPropagation();
+          };
+          $scope.cancel = function (e) {
+            $modalInstance.dismiss();
+            e.stopPropagation();
+          };
+          $scope.authentication = Authentication;
+          $scope.isCollapsed = false;
+          $scope.menu = Menus.getMenu('topbar');
+          $scope.toggleCollapsibleMenu = function () {
+            $scope.isCollapsed = !$scope.isCollapsed;
+          };
+        }
+      }).result.then($scope.postClose, $scope.postClose);
     };
   }
 ]);'use strict';
@@ -213,15 +356,12 @@ angular.module('core').factory('ActionsHandler', [
   '$rootScope',
   function ($rootScope) {
     var action = {};
-    //var _actionName=null;
     action.fireAction = function (actionName, args) {
-      //_actionName=actionName;
-      $rootScope.$emit(actionName, args);  //console.log('action fired');
+      $rootScope.$emit(actionName, args);
     };
     action.onActionFired = function (actionName, scope, func) {
       var unbind = $rootScope.$on(actionName, func);
-      //console.log(func);
-      scope.$on('$destroy', unbind);  //console.log('action unbind');
+      scope.$on('$destroy', unbind);
     };
     return action;
   }
@@ -281,30 +421,8 @@ angular.module('core').service('Menus', [
     this.defaultRoles = ['*'];
     // Define the menus object
     this.menus = {};
-    // A private function for rendering decision
-    /*var shouldRender = function(user) {
-         if (user) {
-         if (!!~this.roles.indexOf('*')) {
-         return true;
-         } else {
-         for (var userRoleIndex in user.roles) {
-         for (var roleIndex in this.roles) {
-         if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
-         return true;
-         }
-         }
-         }
-         }
-         } else {
-         return this.isPublic;
-         }
-         l
-         return false;
-         };*/
     var shouldRender = function (user) {
       if (user) {
-        //console.log(user);
-        //console.log(this.action);
         if (this.items) {
           for (var itemIndex in this.items) {
             if (this.items[itemIndex].items) {
@@ -377,7 +495,8 @@ angular.module('core').service('Menus', [
         isPublic: isPublic === null || typeof isPublic === 'undefined' ? this.menus[menuId].isPublic : isPublic,
         position: position || 0,
         items: [],
-        shouldRender: shouldRender
+        shouldRender: shouldRender,
+        collapsed: true
       });
       // Return the menu object
       return this.menus[menuId];
@@ -479,7 +598,7 @@ angular.module('directives').directive('hCareActionBtn', [
       restrict: 'E',
       replace: true,
       link: function (scope, element, atts) {
-        if (lodash.contains(Authentication.user._role._actions, atts.action)) {
+        if (Authentication.user && lodash.contains(Authentication.user._role._actions, atts.action)) {
           if (atts.redirectUrl != null && atts.redirectUrl != undefined && atts.redirectUrl != '') {
             atts.$observe('redirectUrl', function (redirectUrl) {
               var buttonText = '<a class="btn btn-default" title=' + atts.title + ' href=' + redirectUrl + '>' + '<i class="glyphicon glyphicon-' + atts.icon + '"></i>' + '</a>';
@@ -521,7 +640,7 @@ angular.module('directives').directive('hCareCheckbtnList', [
         selectedItemsIds: '@',
         currentTappedItem: '='
       },
-      template: '<div class="btn-group" data-toggle="buttons" id={{atts.id}}>' + '<label class="btn btn-primary" ' + 'ng-class="{active:selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1}"' + 'ng-repeat="item in source"> ' + '<input type="checkbox"' + 'value="{{item[itemLabelField]}}" ' + 'ng-checked="selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1"' + 'ng-click="itemClicked(item)">{{item[itemLabelField]}}' + '</label>' + '</div>',
+      templateUrl: 'modules/directives/views/h-care-checkbtn-list.client.view.html',
       link: function (scope, el, atts) {
         scope.$watch('selectedItems', function (value) {
           scope.selectedItems = scope.selectedItems || [];
@@ -653,41 +772,49 @@ angular.module('examinations').config([
     $stateProvider.state('listExaminations', {
       url: '/examinations',
       templateUrl: 'modules/examinations/views/list-examinations.client.view.html',
+      requiresLogin: true,
       action: 'list_examinations',
       title: 'Examinations'
     }).state('patientExaminations', {
       url: '/examinations/patient/:patientId',
       templateUrl: 'modules/examinations/views/patient-examinations.client.view.html',
+      requiresLogin: true,
       action: 'list_examinations',
       title: 'Patient Examinations'
     }).state('searchExaminations', {
       url: '/examinations/search',
       templateUrl: 'modules/examinations/views/search-examinations.client.view.html',
+      requiresLogin: true,
       action: 'list_examinations',
       title: 'Search Examinations'
     }).state('createExamination', {
       url: '/examinations/create/:patientId',
       templateUrl: 'modules/examinations/views/create-examination.client.view.html',
+      requiresLogin: true,
       action: 'create_examination',
       title: 'New Examination'
     }).state('viewExamination', {
       url: '/examinations/:examinationId',
       templateUrl: 'modules/examinations/views/view-examination.client.view.html',
+      requiresLogin: true,
       action: 'view_examination',
       title: 'View Examination'
     }).state('viewPatientExamination', {
       url: '/examinations/view/:examinationId',
       templateUrl: 'modules/examinations/views/view-examination.client.view.html',
+      requiresLogin: true,
       action: 'view_examination',
       title: 'View Examination'
     }).state('editPatientExamination', {
       url: '/examinations/edit/:examinationId/edit',
       templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+      requiresLogin: true,
       action: 'edit_examination',
       title: 'Edit Examinations'
     }).state('editExamination', {
       url: '/examinations/:examinationId/edit',
       templateUrl: 'modules/examinations/views/edit-examination.client.view.html',
+      requiresLogin: true,
       action: 'edit_examination',
       title: 'Edit Examinations'
     });
@@ -3611,6 +3738,12 @@ angular.module('examinations').controller('ExaminationsController', [
     //endregion schema form
     // Create new Examination
     $scope.create = function () {
+      if ($scope.getImageDataUrl) {
+        var commentsImageData = $scope.getImageDataUrl();
+        if (commentsImageData) {
+          $scope.examination.commentsImageData = commentsImageData;
+        }
+      }
       // Create new Examination object
       var examination = new Examinations($scope.examination);
       // Redirect after save
@@ -3648,6 +3781,12 @@ angular.module('examinations').controller('ExaminationsController', [
     };
     // Update existing Examination
     $scope.update = function () {
+      if ($scope.getImageDataUrl) {
+        var commentsImageData = $scope.getImageDataUrl();
+        if (commentsImageData) {
+          $scope.examination.commentsImageData = commentsImageData;
+        }
+      }
       var examination = $scope.examination;
       //console.log(examination._patient);
       examination.$update(function () {
@@ -3673,6 +3812,12 @@ angular.module('examinations').controller('ExaminationsController', [
     $scope.findOne = function (callback) {
       Examinations.get({ examinationId: $stateParams.examinationId }, function (_examination) {
         $scope.examination = _examination;
+        $scope.canvasVersion = 0;
+        var canvasOptions = { undo: true };
+        if ($scope.examination.commentsImageData) {
+          canvasOptions.imageSrc = $scope.examination.commentsImageData;
+        }
+        $scope.canvasOptions = canvasOptions;
         $scope.$broadcast('schemaFormRedraw');
         if (callback) {
           callback();
@@ -3741,13 +3886,18 @@ angular.module('examinations').controller('ExaminationsController', [
     $scope.initOne = function () {
       $scope.examination = new Examinations({});
     };
+    $scope.canvasUndo = function () {
+      $scope.canvasVersion -= 1;
+    };
     $scope.initCreate = function () {
       $scope.initOne();
+      $scope.canvasVersion = 0;
+      $scope.canvasOptions = { undo: true };
       Patients.get({ patientId: $stateParams.patientId }, function (patient) {
         if (patient) {
           $scope.examination._patient = patient._id;
           CoreProperties.setPageSubTitle(patient.fullName);
-          Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
+          //Toolbar.addToolbarCommand('clearExamination', 'create_examination', 'Clear', 'refresh', 0);
           Toolbar.addToolbarCommand('saveExamination', 'create_examination', 'Save', 'floppy-save', 1);
         }
       });
@@ -3820,6 +3970,7 @@ angular.module('examinations').controller('ExaminationsController', [
       });
     };
     $scope.initList = function () {
+      CoreProperties.setPageSubTitle('Examinations');
       $scope.initOne();
       //$scope.tabsConfig = {};
       //$scope.tabsConfig.showResuls = false;
@@ -3837,6 +3988,9 @@ angular.module('examinations').controller('ExaminationsController', [
       $scope.paginationConfig.showPagination = false;
       $scope.fireSearch();
     };
+    /*ActionsHandler.onActionFired('clearExamination', $scope, function (action, args) {
+            $scope.forms={};
+        });*/
     ActionsHandler.onActionFired('saveExamination', $scope, function (action, args) {
       $scope.onSubmit($scope.forms.examinationForm);
     });
@@ -3887,26 +4041,31 @@ angular.module('manage-users').config([
     $stateProvider.state('listManageUsers', {
       url: '/manage-users',
       templateUrl: 'modules/manage-users/views/list-manage-users.client.view.html',
+      requiresLogin: true,
       action: 'list_users',
       title: 'Users'
     }).state('createManageUser', {
       url: '/manage-users/create',
       templateUrl: 'modules/manage-users/views/create-manage-user.client.view.html',
+      requiresLogin: true,
       action: 'create_user',
       title: 'New user'
     }).state('searchManageUser', {
       url: '/manage-users/search',
       templateUrl: 'modules/manage-users/views/search-manage-users.client.view.html',
+      requiresLogin: true,
       action: 'list_users',
       title: 'Search Users'
     }).state('viewManageUser', {
       url: '/manage-users/:manageUserId',
       templateUrl: 'modules/manage-users/views/view-manage-user.client.view.html',
+      requiresLogin: true,
       action: 'view_user',
       title: 'View User'
     }).state('editManageUser', {
       url: '/manage-users/:manageUserId/edit',
       templateUrl: 'modules/manage-users/views/edit-manage-user.client.view.html',
+      requiresLogin: true,
       action: 'edit_user',
       title: 'Edit User'
     });
@@ -4088,6 +4247,99 @@ angular.module('manage-users').factory('ManageUsers', [
     return $resource('manage-users/:manageUserId', { manageUserId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]);'use strict';
+// Configuring the Articles module
+angular.module('medical-histories').run([
+  'Menus',
+  function (Menus) {
+    // Set top bar menu items
+    Menus.addMenuItem('topbar', 'Medical histories', 'medical-histories', 'dropdown', '/medical-histories(/create)?');
+    Menus.addSubMenuItem('topbar', 'medical-histories', 'List Medical histories', 'medical-histories');
+    Menus.addSubMenuItem('topbar', 'medical-histories', 'New Medical history', 'medical-histories/create');
+  }
+]);'use strict';
+//Setting up route
+angular.module('medical-histories').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Medical histories state routing
+    $stateProvider.state('listMedicalHistories', {
+      url: '/medical-histories',
+      templateUrl: 'modules/medical-histories/views/list-medical-histories.client.view.html'
+    }).state('createMedicalHistory', {
+      url: '/medical-histories/create',
+      templateUrl: 'modules/medical-histories/views/create-medical-history.client.view.html'
+    }).state('viewMedicalHistory', {
+      url: '/medical-histories/:medicalHistoryId',
+      templateUrl: 'modules/medical-histories/views/view-medical-history.client.view.html'
+    }).state('editMedicalHistory', {
+      url: '/medical-histories/:medicalHistoryId/edit',
+      templateUrl: 'modules/medical-histories/views/edit-medical-history.client.view.html'
+    });
+  }
+]);'use strict';
+// Medical histories controller
+angular.module('medical-histories').controller('MedicalHistoriesController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'MedicalHistories',
+  function ($scope, $stateParams, $location, Authentication, MedicalHistories) {
+    $scope.authentication = Authentication;
+    // Create new Medical history
+    $scope.create = function () {
+      // Create new Medical history object
+      var medicalHistory = new MedicalHistories({ name: this.name });
+      // Redirect after save
+      medicalHistory.$save(function (response) {
+        $location.path('medical-histories/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Medical history
+    $scope.remove = function (medicalHistory) {
+      if (medicalHistory) {
+        medicalHistory.$remove();
+        for (var i in $scope.medicalHistories) {
+          if ($scope.medicalHistories[i] === medicalHistory) {
+            $scope.medicalHistories.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.medicalHistory.$remove(function () {
+          $location.path('medical-histories');
+        });
+      }
+    };
+    // Update existing Medical history
+    $scope.update = function () {
+      var medicalHistory = $scope.medicalHistory;
+      medicalHistory.$update(function () {
+        $location.path('medical-histories/' + medicalHistory._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Medical histories
+    $scope.find = function () {
+      $scope.medicalHistories = MedicalHistories.query();
+    };
+    // Find existing Medical history
+    $scope.findOne = function () {
+      $scope.medicalHistory = MedicalHistories.get({ medicalHistoryId: $stateParams.medicalHistoryId });
+    };
+  }
+]);'use strict';
+//Medical histories service used to communicate Medical histories REST endpoints
+angular.module('medical-histories').factory('MedicalHistories', [
+  '$resource',
+  function ($resource) {
+    return $resource('medical-histories/:medicalHistoryId', { medicalHistoryId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';
 angular.module('module').factory('Module', [
   '$resource',
   function ($resource) {
@@ -4105,7 +4357,7 @@ angular.module('patients').run([
     Menus.addMenuItem('topbar', 'Patients', 'patients', 'dropdown', '/patients(/create)?', false, 2);
     Menus.addSubMenuItem('topbar', 'patients', 'List Patients', 'patients', '/patients', false, 'list_patients', 0);
     Menus.addSubMenuItem('topbar', 'patients', 'New Patient', 'patients/create', '/patients/create', false, 'create_patient', 1);
-    Menus.addSubMenuItem('topbar', 'patients', 'Search Patient', 'patients/search', '/patients/search', false, 'list_patients', 2);
+    Menus.addSubMenuItem('topbar', 'patients', 'Search Patients', 'patients/search', '/patients/search', false, 'list_patients', 2);
   }
 ]);'use strict';
 //Setting up route
@@ -4116,26 +4368,31 @@ angular.module('patients').config([
     $stateProvider.state('listPatients', {
       url: '/patients',
       templateUrl: 'modules/patients/views/list-patients.client.view.html',
+      requiresLogin: true,
       action: 'list_patients',
       title: 'Patients'
     }).state('createPatient', {
       url: '/patients/create',
       templateUrl: 'modules/patients/views/create-patient.client.view.html',
+      requiresLogin: true,
       action: 'create_patient',
       title: 'New Patient'
     }).state('searchPatients', {
       url: '/patients/search',
       templateUrl: 'modules/patients/views/search-patients.client.view.html',
+      requiresLogin: true,
       action: 'list_patients',
       title: 'Search Patients'
     }).state('viewPatient', {
       url: '/patients/:patientId',
       templateUrl: 'modules/patients/views/view-patient.client.view.html',
+      requiresLogin: true,
       action: 'view_patient',
       title: 'View Patient'
     }).state('editPatient', {
       url: '/patients/:patientId/edit',
       templateUrl: 'modules/patients/views/edit-patient.client.view.html',
+      requiresLogin: true,
       action: 'edit_patient',
       title: 'Edit Patient'
     });
@@ -4152,10 +4409,11 @@ angular.module('patients').controller('PatientsController', [
   'lodash',
   'moment',
   '$modal',
-  '$upload',
+  'Upload',
   'ActionsHandler',
   'Toolbar',
-  function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, $upload, ActionsHandler, Toolbar) {
+  'validationManager',
+  function ($scope, $stateParams, $location, Patients, CoreProperties, Logger, lodash, Moment, $modal, Upload, ActionsHandler, Toolbar, validationManager) {
     $scope.configObj = {};
     $scope.configObj._ = lodash;
     $scope.configObj.Moment = Moment;
@@ -4251,13 +4509,17 @@ angular.module('patients').controller('PatientsController', [
     };
     // Create new Patient
     $scope.create = function () {
+      validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
+      if (!$scope.patientForm.$valid) {
+        return;
+      }
       // Create new Patient object
       var patient = angular.fromJson(angular.toJson($scope.patient));
       if ($scope.configObj.photo) {
         lodash.extend(patient, { personalPhoto: true });
       }
       var blob = $scope.configObj.photo ? dataURItoBlob($scope.configObj.photo) : null;
-      $upload.upload({
+      Upload.upload({
         url: '/patients',
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -4307,14 +4569,22 @@ angular.module('patients').controller('PatientsController', [
     $scope.examine = function () {
       $location.path('examinations/create/' + $scope.patient._id);
     };
+    //redirect to new visit
+    $scope.newVisit = function () {
+      $location.path('visits/create/' + $scope.patient._id);
+    };
     // Update existing Patient
     $scope.update = function () {
+      validationManager.validateForm(angular.element(document.querySelector('#patientForm')));
+      if (!$scope.patientForm.$valid) {
+        return;
+      }
       var patient = angular.fromJson(angular.toJson($scope.patient));
       if ($scope.configObj.photo) {
         lodash.extend(patient, { personalPhoto: true });
       }
       var blob = $scope.configObj.photo ? dataURItoBlob($scope.configObj.photo) : null;
-      $upload.upload({
+      Upload.upload({
         url: '/patients/' + patient._id,
         method: 'PUT',
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -4334,13 +4604,6 @@ angular.module('patients').controller('PatientsController', [
         Logger.error(err.message, true);  //$scope.error = errorResponse.data.message;
       });
     };
-    // Find a list of Patients
-    /*$scope.find = function () {
-            Patients.query(function (_patients) {
-                $scope.patients = _patients;
-            });
-
-        };*/
     // Find existing Patient
     $scope.findOne = function (callback) {
       Patients.get({ patientId: $stateParams.patientId }, function (patient) {
@@ -4357,10 +4620,33 @@ angular.module('patients').controller('PatientsController', [
     };
     // Search existing patients
     $scope.search = function (callback) {
-      $scope.patient.paginationConfig = {};
-      $scope.patient.paginationConfig.pageNo = $scope.paginationConfig.currentPage;
-      $scope.patient.paginationConfig.pageSize = $scope.paginationConfig.pageSize;
-      Patients.query($scope.patient, function (_res) {
+      var paginationConfig = {};
+      paginationConfig.pageNo = $scope.paginationConfig.currentPage;
+      paginationConfig.pageSize = $scope.paginationConfig.pageSize;
+      if ($scope.patient && $scope.patient.hasOwnProperty('gender')) {
+        $scope.patient.gender = $scope.patient.gender._id;
+      }
+      if ($scope.configObj && $scope.configObj.hasOwnProperty('age') && !lodash.isEmpty($scope.configObj.age) && $scope.configObj.age.hasOwnProperty('Range') && !lodash.isEmpty($scope.configObj.age.Range) && ($scope.configObj.age.Range.from || $scope.configObj.age.Range.to)) {
+        $scope.patient.birthDate = {};
+        $scope.patient.birthDate.__range = '';
+        if ($scope.configObj.age.Range.hasOwnProperty('to') && $scope.configObj.age.Range.to) {
+          $scope.patient.birthDate.__range += new Moment().subtract($scope.configObj.age.Range.to, 'years').format('YYYY/MM/DD');
+        }
+        $scope.patient.birthDate.__range += ':';
+        if ($scope.configObj.age.Range.hasOwnProperty('from') && $scope.configObj.age.Range.from) {
+          $scope.patient.birthDate.__range += new Moment().subtract($scope.configObj.age.Range.from, 'years').format('YYYY/MM/DD');
+        }  //console.log( $scope.patient.birthDate.__range);
+      }
+      if ($scope.patient && !lodash.isEmpty($scope.patient)) {
+        $location.search({
+          searchObj: JSON.stringify($scope.patient),
+          paginationObj: JSON.stringify(paginationConfig)
+        });  //$location.replace();
+      }
+      Patients.query({
+        searchObj: $scope.patient,
+        paginationObj: paginationConfig
+      }, function (_res) {
         $scope.patients = _res.list;
         if (callback) {
           callback(_res.count);
@@ -4382,6 +4668,7 @@ angular.module('patients').controller('PatientsController', [
     };
     $scope.initView = function () {
       $scope.findOne(function () {
+        Toolbar.addToolbarCommand('newVisit', 'create_visit', 'New Visit', 'log-in', 0);
         Toolbar.addToolbarCommand('examinePatient', 'create_examination', 'Examine', 'eye-open', 0);
         Toolbar.addToolbarCommand('patientExaminations', 'list_examinations', 'List', 'list', 1);
         Toolbar.addToolbarCommand('editPatient', 'edit_patient', 'Edit', 'edit', 2);
@@ -4390,30 +4677,29 @@ angular.module('patients').controller('PatientsController', [
     };
     $scope.initSearch = function () {
       $scope.initOne();
-      $scope.tabsConfig = {};
-      $scope.tabsConfig.showResuls = false;
-      $scope.paginationConfig = {};
-      $scope.paginationConfig.pageSize = 10;
-      $scope.paginationConfig.currentPage = 1;
-      $scope.paginationConfig.totalItems = 0;
-      $scope.paginationConfig.maxSize = 2;
-      $scope.paginationConfig.numPages = 1;
-      $scope.paginationConfig.pageSizeOptions = [
-        10,
-        50,
-        100
-      ];
-      $scope.paginationConfig.showPagination = false;
+      $scope.initPagination();
       Toolbar.addToolbarCommand('searchPatient', 'list_patients', 'Search', 'search', 0);
+      var searchQuery = $location.search();
+      if (searchQuery && !lodash.isEmpty(searchQuery)) {
+        $scope.patient = JSON.parse(searchQuery.searchObj);
+        var pagingConf = JSON.parse(searchQuery.paginationObj);
+        $scope.paginationConfig.currentPage = pagingConf.pageNo;
+        $scope.paginationConfig.pageSize = pagingConf.pageSize;
+        $scope.fireSearch();
+      }
     };
     $scope.initList = function () {
       $scope.initOne();
+      $scope.initPagination();
+      $scope.fireSearch();
+    };
+    $scope.initPagination = function () {
       $scope.tabsConfig = {};
       $scope.tabsConfig.showResuls = false;
       $scope.paginationConfig = {};
       $scope.paginationConfig.pageSize = 10;
       $scope.paginationConfig.currentPage = 1;
-      $scope.paginationConfig.totalItems = 0;
+      $scope.paginationConfig.totalItems = Number.MAX_VALUE;
       $scope.paginationConfig.maxSize = 2;
       $scope.paginationConfig.numPages = 1;
       $scope.paginationConfig.pageSizeOptions = [
@@ -4422,7 +4708,6 @@ angular.module('patients').controller('PatientsController', [
         100
       ];
       $scope.paginationConfig.showPagination = false;
-      $scope.fireSearch();
     };
     $scope.getShowPagination = function () {
       //console.log($scope.paginationConfig.totalItems);
@@ -4430,6 +4715,7 @@ angular.module('patients').controller('PatientsController', [
     };
     $scope.pageChanged = function () {
       //console.log($scope.paginationConfig.currentPage);
+      //console.log('page changed');
       $scope.fireSearch();
     };
     $scope.getNumOfPages = function () {
@@ -4457,6 +4743,9 @@ angular.module('patients').controller('PatientsController', [
     ActionsHandler.onActionFired('updatePatient', $scope, function (action, args) {
       $scope.update();
     });
+    ActionsHandler.onActionFired('newVisit', $scope, function (action, args) {
+      $scope.newVisit();
+    });
     ActionsHandler.onActionFired('examinePatient', $scope, function (action, args) {
       $scope.examine();
     });
@@ -4470,6 +4759,7 @@ angular.module('patients').controller('PatientsController', [
       $scope.remove();
     });
     ActionsHandler.onActionFired('searchPatient', $scope, function (action, args) {
+      $scope.initPagination();
       $scope.fireSearch();
     });
     $scope.fireSearch = function () {
@@ -4510,21 +4800,14 @@ angular.module('patients').controller('ModalInstanceCtrl', [
     $scope.modalConfig.selectedPhoto = null;
     $scope.modalConfig.inputImage = null;
     $scope.modalConfig.webcamError = false;
-    //$scope.tabs = [
-    //  { active: true, disabled: false },
-    //  { active: false, disabled: false },
-    //  { active: false, disabled: true }
-    //];
-    //$scope.photoWidth = null;
-    //$scope.photoHeight = null;
-    //$scope.finalPhoto = null;
-    //$scope.photos = [];
-    //$scope.selectedPhoto = null;
-    //$scope.inputImage = null;
-    //$scope.webcamError = false;
     var _video = null;
-    $scope.onSuccess = function (videoElem) {
-      _video = videoElem;
+    $scope.onSuccess = function () {
+      _video = $scope.myChannel.video;
+    };
+    $scope.myChannel = {
+      videoHeight: '240',
+      videoWidth: '320',
+      video: null
     };
     var getVideoData = function getVideoData() {
       var hiddenCanvas = document.createElement('canvas');
@@ -4539,7 +4822,7 @@ angular.module('patients').controller('ModalInstanceCtrl', [
     $scope.makeSnapshot = function makeSnapshot() {
       if (_video) {
         var idata = getVideoData();
-        $scope.modalConfig.photos.push({ src: idata });
+        $scope.selectPhoto(idata);  //$scope.modalConfig.photos.push({src: idata})
       }
     };
     var img = new Image();
@@ -4557,6 +4840,16 @@ angular.module('patients').controller('ModalInstanceCtrl', [
           img.src = evt.target.result;
         });
       };
+      reader.readAsDataURL(file);
+    };
+    $scope.selectFile = function (file) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        $scope.$apply(function ($scope) {
+          $scope.selectPhoto(event.target.result);
+        });
+      };
+      // when the file is read it triggers the onload event above.
       reader.readAsDataURL(file);
     };
     $scope.selectInputPhoto = function () {
@@ -4981,18 +5274,22 @@ angular.module('security').run([
   'lodash',
   'CoreProperties',
   'Toolbar',
-  function ($rootScope, Authentication, $location, lodash, CoreProperties, Toolbar) {
+  'bootstrap3ElementModifier',
+  function ($rootScope, Authentication, $location, lodash, CoreProperties, Toolbar, bootstrap3ElementModifier) {
+    bootstrap3ElementModifier.enableValidationStateIcons(true);
     //console.log($rootScope.authentication.user);
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
       CoreProperties.setPageSubTitle(null);
       Toolbar.clearToolbarCommands();
       if (toState.requiresLogin) {
-        if (!Authentication.user) {
+        if (lodash.isEmpty(Authentication.user) || !Authentication.user) {
+          event.preventDefault();
           $location.path('/signin');
           return;
         }
         if (toState.action) {
           if (!lodash.contains(Authentication.user._role._actions, toState.action)) {
+            event.preventDefault();
             $location.path('/not-authorized');
           }
         }
@@ -5346,5 +5643,110 @@ angular.module('users').factory('Users', [
   '$resource',
   function ($resource) {
     return $resource('users/:userId', { userId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';  // Configuring the Articles module
+               /*
+angular.module('visits').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Visits', 'visits', 'dropdown', '/visits(/create)?');
+		Menus.addSubMenuItem('topbar', 'visits', 'List Visits', 'visits');
+		Menus.addSubMenuItem('topbar', 'visits', 'New Visit', 'visits/create');
+	}
+]);
+*/'use strict';
+//Setting up route
+angular.module('visits').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Visits state routing
+    $stateProvider.state('listVisits', {
+      url: '/visits',
+      templateUrl: 'modules/visits/views/list-visits.client.view.html',
+      requiresLogin: true,
+      action: 'list_visits',
+      title: 'Visits'
+    }).state('createVisit', {
+      url: '/visits/create/:patientId',
+      templateUrl: 'modules/visits/views/create-visit.client.view.html',
+      requiresLogin: true,
+      action: 'create_visit',
+      title: 'New Visit'
+    }).state('viewVisit', {
+      url: '/visits/:visitId',
+      templateUrl: 'modules/visits/views/view-visit.client.view.html',
+      requiresLogin: true,
+      action: 'view_visit',
+      title: 'View Visit'
+    }).state('editVisit', {
+      url: '/visits/:visitId/edit',
+      templateUrl: 'modules/visits/views/edit-visit.client.view.html',
+      requiresLogin: true,
+      action: 'edit_visit',
+      title: 'Edit Visit'
+    });
+  }
+]);'use strict';
+// Visits controller
+angular.module('visits').controller('VisitsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Visits',
+  function ($scope, $stateParams, $location, Authentication, Visits) {
+    $scope.authentication = Authentication;
+    // Create new Visit
+    $scope.create = function () {
+      // Create new Visit object
+      var visit = new Visits({ name: this.name });
+      // Redirect after save
+      visit.$save(function (response) {
+        $location.path('visits/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Visit
+    $scope.remove = function (visit) {
+      if (visit) {
+        visit.$remove();
+        for (var i in $scope.visits) {
+          if ($scope.visits[i] === visit) {
+            $scope.visits.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.visit.$remove(function () {
+          $location.path('visits');
+        });
+      }
+    };
+    // Update existing Visit
+    $scope.update = function () {
+      var visit = $scope.visit;
+      visit.$update(function () {
+        $location.path('visits/' + visit._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Visits
+    $scope.find = function () {
+      $scope.visits = Visits.query();
+    };
+    // Find existing Visit
+    $scope.findOne = function () {
+      $scope.visit = Visits.get({ visitId: $stateParams.visitId });
+    };
+  }
+]);'use strict';
+//Visits service used to communicate Visits REST endpoints
+angular.module('visits').factory('Visits', [
+  '$resource',
+  function ($resource) {
+    return $resource('visits/:visitId', { visitId: '@_id' }, { update: { method: 'PUT' } });
   }
 ]);
