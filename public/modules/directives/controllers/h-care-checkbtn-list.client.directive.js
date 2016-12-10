@@ -14,7 +14,7 @@ angular.module('directives')
                 selectedItemsIds: '@',
                 currentTappedItem: '='
             },
-            template: '<div class="btn-group" data-toggle="buttons" id={{atts.id}}>' +
+           /* template: '<div class="btn-group" data-toggle="buttons" id={{atts.id}}>' +
                 '<label class="btn btn-primary" ' +
                 'ng-class="{active:selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1}"' +
                 'ng-repeat="item in source"> ' +
@@ -23,7 +23,8 @@ angular.module('directives')
                 'ng-checked="selectedItemsIds  && selectedItemsIds.indexOf(item[itemValueField]) !== -1"' +
                 'ng-click="itemClicked(item)">{{item[itemLabelField]}}' +
                 '</label>' +
-                '</div>',
+                '</div>',*/
+            templateUrl: 'modules/directives/views/h-care-checkbtn-list.client.view.html',
             link: function (scope, el, atts) {
 
                 scope.$watch('selectedItems', function(value){

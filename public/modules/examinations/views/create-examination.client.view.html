@@ -5,6 +5,14 @@
               sf-form="form"
               sf-model="examination">
         </form>
+        <div class="row">
+            <div pw-canvas
+                    data-get-image-data-url="getImageDataUrl"
+                    options="canvasOptions"
+                    version="canvasVersion"
+                    data-undo-enabled="true"></div>
+            <button ng-click="canvasUndo()" ng-disabled="canvasVersion < 1" >Undo</button>
+        </div>
 
     </div>
 </section>

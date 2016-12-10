@@ -52,6 +52,9 @@ var ExaminationSchema = new Schema({
     comment: {
         type: String
     },
+    commentsImageData:{
+        type: String
+    },
 	created: {
         time: {
 		type: Date,
